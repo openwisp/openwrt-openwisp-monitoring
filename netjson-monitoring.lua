@@ -1,4 +1,8 @@
+#!/usr/bin/env lua
+-- retrieve monitoring information
+-- and return it as NetJSON Output
 ubus_lib = require('ubus')
+cjson = require('cjson')
 
 function cat(file)
     local f = assert(io.open(file, 'rb'))
@@ -14,7 +18,7 @@ end
 
 -- collect wireless interface names
 status = ubus:call('network.wireless', 'status', {})
-netjson = {interfaces={}}
+netjson = {type='DeviceMonitoring', interfaces={}}
 
 -- collect relevant wireless interface stats
 -- (traffic and connected clients)
@@ -34,3 +38,6 @@ for radio_name, radio in pairs(status) do
         })
     end
 end
+
+cjson = require('cjson')
+print(cjson.encode(netjson))
