@@ -4,13 +4,6 @@
 ubus_lib = require('ubus')
 cjson = require('cjson')
 
-function cat(file)
-    local f = assert(io.open(file, 'rb'))
-    local content = f:read('*all')
-    f:close()
-    return content
-end
-
 -- takes ubus wireless.status clients output and converts it to NetJSON
 function netjson_clients(clients)
     local data = {}
