@@ -59,7 +59,7 @@ for radio_name, radio in pairs(wireless_status) do
         if name then
             clients = ubus:call('hostapd.'..name, 'get_clients', {})
             iwinfo = ubus:call('iwinfo', 'info', {device = name})
-            table.insert(interfaces, {
+            netjson_interface = {
                 name = name,
                 statistics = network_status[name].statistics,
                 wireless = {
@@ -70,10 +70,13 @@ for radio_name, radio in pairs(wireless_status) do
                     tx_power = iwinfo.txpower,
                     signal = iwinfo.signal,
                     noise = iwinfo.noise,
-                    country = iwinfo.country,
-                    clients = netjson_clients(clients.clients)
+                    country = iwinfo.country
                 }
-            })
+            }
+            if next(clients.clients) ~= nil then
+              netjson_interface.wireless.clients = netjson_clients(clients.clients)
+            end
+            table.insert(interfaces, netjson_interface)
         end
     end
 end
