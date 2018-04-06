@@ -37,7 +37,7 @@ netjson = {
     general = {
         hostname = board.hostname,
         local_time = system_info.localtime,
-        uptime = system_info.localtime
+        uptime = system_info.uptime
     },
     resources = {
         load = system_info.load,
