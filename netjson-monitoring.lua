@@ -1,8 +1,29 @@
 #!/usr/bin/env lua
 -- retrieve monitoring information
 -- and return it as NetJSON Output
+io = require('io')
 ubus_lib = require('ubus')
 cjson = require('cjson')
+
+-- split function
+function split(str, pat)
+   local t = {}
+   local fpat = "(.-)" .. pat
+   local last_end = 1
+   local s, e, cap = str:find(fpat, 1)
+   while s do
+      if s ~= 1 or cap ~= "" then
+         table.insert(t, cap)
+      end
+      last_end = e+1
+      s, e, cap = str:find(fpat, last_end)
+   end
+   if last_end <= #str then
+      cap = str:sub(last_end)
+      table.insert(t, cap)
+   end
+   return t
+end
 
 -- takes ubus wireless.status clients output and converts it to NetJSON
 function netjson_clients(clients)
@@ -30,6 +51,11 @@ iwinfo_modes = {
 -- collect system info
 system_info = ubus:call('system', 'info', {})
 board = ubus:call('system', 'board', {})
+loadavg_output = io.popen('cat /proc/loadavg'):read()
+loadavg_output = split(loadavg_output, ' ')
+load_average = {tonumber(loadavg_output[1]),
+                tonumber(loadavg_output[2]),
+                tonumber(loadavg_output[3])}
 
 -- init netjson data structure
 netjson = {
@@ -40,7 +66,7 @@ netjson = {
         uptime = system_info.uptime
     },
     resources = {
-        load = system_info.load,
+        load = load_average,
         memory = system_info.memory,
         swap = system_info.swap
     }
