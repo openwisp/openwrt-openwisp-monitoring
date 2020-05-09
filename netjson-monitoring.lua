@@ -155,6 +155,39 @@ function is_excluded(name)
   end
 end
 
+-- collect interface addresses
+function get_addresses(name)
+    interface_data = ubus:call('network.interface', 'dump', {})
+    addresses = {}
+    interface_list = interface_data['interface']
+    for _, interface in pairs(interface_list) do
+        if interface['l3_device'] == name then
+            if interface['ipv4-address'] and next(interface['ipv4-address'])then
+                family = 'ipv4'
+            elseif interface['ipv6-address'] and next(interface['ipv6-address'])then
+                family = 'ipv6'
+            end
+            if interface[family..'-address'] then
+                for _,address in pairs(interface[family..'-address']) do
+                    if address['proto'] == 'static' then
+                        proto = 'static'
+                    else
+                        -- expected values are: dhcp, dhcpv6
+                        proto = 'dhcp'
+                    table.insert(addresses, {
+                        address = address['address'],
+                        mask = address['mask'],
+                        proto = proto,
+                        family = family
+                    })
+                    end
+                end
+            end
+        end
+    end
+    return addresses
+end
+
 -- collect device data
 network_status = ubus:call('network.device', 'status', {})
 wireless_status = ubus:call('network.wireless', 'status', {})
@@ -182,7 +215,8 @@ for radio_name, radio in pairs(wireless_status) do
                     signal = iwinfo.signal,
                     noise = iwinfo.noise,
                     country = iwinfo.country
-                }
+                },
+                addresses = get_addresses(name)
             }
             if clients and next(clients.clients) ~= nil then
               netjson_interface.wireless.clients = netjson_clients(clients.clients)
