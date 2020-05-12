@@ -28,17 +28,14 @@ end
 -- parse /proc/net/arp
 function parse_arp()
    arp_info = {}
-   for line in io.lines('/proc/net/arp') do
+   for line in io.lines('/proc/net/arp 2> /dev/null') do
       if line:sub(1, 10) ~= 'IP address' then
-         ip, hw, flags, mac, mask, dev = line:match("(%S+)%s+(%S+)%s+(%S+)%s+(%S+)%s+(%S+)%s+(%S+)")
-         table.insert(arp_info, {
+        ip, hw, flags, mac, mask, dev = line:match("(%S+)%s+(%S+)%s+(%S+)%s+(%S+)%s+(%S+)%s+(%S+)")
+        table.insert(arp_info, {
             ip_address = ip,
             mac_address = mac,
             interface = dev,
-	    state = ''
-            -- type = hw,
-            -- flags = flags,
-            -- mask = mask
+	        state = ''
          })
       end
    end
@@ -47,15 +44,15 @@ end
 
 function get_ip_neigh_json()
    arp_info = {}
-   output = io.popen('ip -json neigh'):read()
+   output = io.popen('ip -json neigh 2> /dev/null'):read()
    if output ~= nil then
       json_output = cjson.decode(output)
       for _, arp_entry in pairs(json_output) do
          table.insert(arp_info, {
-            ip_address = arp_entry["dst"],
-            mac_address = arp_entry["lladdr"],
-            interface = arp_entry["dev"],
-            state = arp_entry["state"][1]
+           ip_address = arp_entry["dst"],
+           mac_address = arp_entry["lladdr"],
+           interface = arp_entry["dev"],
+           state = arp_entry["state"][1]
          })
       end
    end
@@ -64,20 +61,22 @@ end
 
 function get_ip_neigh()
    arp_info = {}
-   output = io.popen('ip neigh')
+   output = io.popen('ip neigh 2> /dev/null')
    for line in output:lines() do
       ip, dev, mac, state = line:match("(%S+)%s+dev%s+(%S+)%s+lladdr%s+(%S+).*%s(%S+)")
-      table.insert(arp_info, {
-         ip_address = ip,
-         mac_address = mac,
-         interface = dev,
-         state = state
-      })
+      if mac ~= nil then
+        table.insert(arp_info, {
+          ip_address = ip,
+          mac_address = mac,
+          interface = dev,
+          state = state
+        })
+      end
    end
    return arp_info
 end
 
-function get_arp_table()
+function get_neighbors()
    arp_table = get_ip_neigh_json()
    if next(arp_table) == nil then
       arp_table = get_ip_neigh()
@@ -133,7 +132,7 @@ netjson = {
         memory = system_info.memory,
         swap = system_info.swap
     },
-    arp_table = get_arp_table()
+    neighbors = get_neighbors()
 }
 
 -- collect device data
