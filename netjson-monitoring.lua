@@ -136,8 +136,9 @@ netjson = {
 }
 
 -- collect device data
-wireless_status = ubus:call('network.wireless', 'status', {})
 network_status = ubus:call('network.device', 'status', {})
+wireless_status = ubus:call('network.wireless', 'status', {})
+
 interfaces = {}
 
 -- collect relevant wireless interface stats
@@ -147,27 +148,25 @@ for radio_name, radio in pairs(wireless_status) do
         name = interface.ifname
         if name then
             clients = ubus:call('hostapd.'..name, 'get_clients', {})
-            if clients ~= nil then
-                iwinfo = ubus:call('iwinfo', 'info', {device = name})
-                netjson_interface = {
-                    name = name,
-                    statistics = network_status[name].statistics,
-                    wireless = {
-                        ssid = iwinfo.ssid,
-                        mode = iwinfo_modes[iwinfo.mode] or iwinfo.mode,
-                        channel = iwinfo.channel,
-                        frequency = iwinfo.frequency,
-                        tx_power = iwinfo.txpower,
-                        signal = iwinfo.signal,
-                        noise = iwinfo.noise,
-                        country = iwinfo.country
-                    }
+            iwinfo = ubus:call('iwinfo', 'info', {device = name})
+            netjson_interface = {
+                name = name,
+                statistics = network_status[name].statistics,
+                wireless = {
+                    ssid = iwinfo.ssid,
+                    mode = iwinfo_modes[iwinfo.mode] or iwinfo.mode,
+                    channel = iwinfo.channel,
+                    frequency = iwinfo.frequency,
+                    tx_power = iwinfo.txpower,
+                    signal = iwinfo.signal,
+                    noise = iwinfo.noise,
+                    country = iwinfo.country
                 }
-                if next(clients.clients) ~= nil then
-                  netjson_interface.wireless.clients = netjson_clients(clients.clients)
-                end
-                table.insert(interfaces, netjson_interface)
+            }
+            if clients and next(clients.clients) ~= nil then
+              netjson_interface.wireless.clients = netjson_clients(clients.clients)
             end
+            table.insert(interfaces, netjson_interface)
         end
     end
 end
