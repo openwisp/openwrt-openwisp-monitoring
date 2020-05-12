@@ -135,18 +135,39 @@ netjson = {
     neighbors = get_neighbors()
 }
 
+-- determine the interfaces to monitor
+included_interfaces = arg[1]
+included = {}
+if included_interfaces then
+  included_interfaces = split(included_interfaces, ' ')
+  for i, name in pairs(included_interfaces) do
+    included[name] = true
+  end
+end
+
+function is_excluded(name)
+  if next(included) ~= nil then
+    return included[name] == nil
+  -- if list of included interfaces is empty
+  -- consider all interfaces incldued
+  else
+    return name == 'lo'
+  end
+end
+
 -- collect device data
 network_status = ubus:call('network.device', 'status', {})
 wireless_status = ubus:call('network.wireless', 'status', {})
 
 interfaces = {}
+processed = {}
 
 -- collect relevant wireless interface stats
 -- (traffic and connected clients)
 for radio_name, radio in pairs(wireless_status) do
     for i, interface in ipairs(radio.interfaces) do
         name = interface.ifname
-        if name then
+        if name and not is_excluded(name) then
             clients = ubus:call('hostapd.'..name, 'get_clients', {})
             iwinfo = ubus:call('iwinfo', 'info', {device = name})
             netjson_interface = {
@@ -167,8 +188,22 @@ for radio_name, radio in pairs(wireless_status) do
               netjson_interface.wireless.clients = netjson_clients(clients.clients)
             end
             table.insert(interfaces, netjson_interface)
+            -- avoid duplicating interface info
+            processed[name] = true
         end
     end
+end
+
+-- collect interface stats
+for name, interface in pairs(network_status) do
+  -- only collect data from iterfaces which have not been excluded
+  if not is_excluded(name) and not processed[name] then
+    netjson_interface = {
+        name = name,
+        statistics = interface.statistics
+    }
+    table.insert(interfaces, netjson_interface)
+  end
 end
 
 if next(interfaces) ~= nil then
