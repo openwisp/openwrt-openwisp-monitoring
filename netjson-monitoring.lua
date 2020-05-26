@@ -170,10 +170,18 @@ netjson = {
         load = load_average,
         memory = system_info.memory,
         swap = system_info.swap
-    },
-    dhcp_leases = get_dhcp_leases(),
-    neighbors = get_neighbors()
+    }
 }
+
+dhcp_leases = get_dhcp_leases()
+if next(dhcp_leases) then
+    netjson.dhcp_leases = dhcp_leases
+end
+
+neighbors = get_neighbors()
+if next(neighbors) then
+    netjson.neighbors = neighbors
+end
 
 -- determine the interfaces to monitor
 included_interfaces = arg[1]
