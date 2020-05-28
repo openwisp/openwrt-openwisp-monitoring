@@ -4,6 +4,8 @@
 io = require('io')
 ubus_lib = require('ubus')
 cjson = require('cjson')
+uci = require('uci')
+uci_cursor = uci.cursor()
 
 -- split function
 function split(str, pat)
@@ -87,6 +89,43 @@ function get_neighbors()
    return arp_table
 end
 
+function parse_dhcp_lease_file(path, leases)
+    local f = io.open(path, 'r')
+    if not f then
+        return leases
+    end
+
+    for line in f:lines() do
+        local expiry, mac, ip, name, id = line:match('(%S+)%s+(%S+)%s+(%S+)%s+(%S+)%s+(%S+)')
+        table.insert(leases, {
+            expiry = tonumber(expiry),
+            mac_address = mac,
+            ip_address = ip,
+            client_name = name,
+            client_id = id
+         })
+    end
+
+    return leases
+end
+
+function get_dhcp_leases()
+    local uci_cursor = uci.cursor()
+    local dhcp_configs = uci_cursor:get_all('dhcp')
+    local leases = {}
+
+    if not dhcp_configs or not next(dhcp_configs) then
+        return nil
+    end
+
+    for name, config in pairs(dhcp_configs) do
+        if config and config['.type'] == 'dnsmasq' and config.leasefile then
+            leases = parse_dhcp_lease_file(config.leasefile, leases)
+        end
+    end
+    return leases
+end
+
 -- takes ubus wireless.status clients output and converts it to NetJSON
 function netjson_clients(clients)
     local data = {}
@@ -163,9 +202,18 @@ netjson = {
         swap = system_info.swap,
         cpus = get_cpus(),
         disk = parse_disk_usage()
-    },
-    neighbors = get_neighbors()
+    }
 }
+
+dhcp_leases = get_dhcp_leases()
+if next(dhcp_leases) then
+    netjson.dhcp_leases = dhcp_leases
+end
+
+neighbors = get_neighbors()
+if next(neighbors) then
+    netjson.neighbors = neighbors
+end
 
 -- determine the interfaces to monitor
 included_interfaces = arg[1]
