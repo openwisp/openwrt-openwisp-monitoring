@@ -163,7 +163,7 @@ function parse_disk_usage()
     disk_usage_info = {}
     for line in file:lines() do
         if line:sub(1, 10) ~= 'Filesystem' then
-            filesystem, size, used, available, percent, location = line:match("(%S+)%s+(%S+)%s+(%S+)%s+(%S+)%s+(%S+)%s+(%S+)")
+            filesystem, size, used, available, percent, location = line:match('(%S+)%s+(%S+)%s+(%S+)%s+(%S+)%s+(%S+)%s+(%S+)')
             if filesystem ~= 'tmpfs' and not string.match(filesystem, 'overlayfs') then
                 percent = percent:gsub('%W', '')
                 table.insert(disk_usage_info, {
@@ -183,7 +183,7 @@ end
 
 function get_cpus()
     processors = io.popen('cat /proc/cpuinfo | grep -c processor')
-    cpus = tonumber(processors:read("*a"))
+    cpus = tonumber(processors:read('*a'))
     processors:close()
     return cpus
 end
