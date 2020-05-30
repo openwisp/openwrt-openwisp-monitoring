@@ -158,6 +158,36 @@ load_average = {tonumber(loadavg_output[1]),
                 tonumber(loadavg_output[2]),
                 tonumber(loadavg_output[3])}
 
+function parse_disk_usage()
+    file = io.popen('df')
+    disk_usage_info = {}
+    for line in file:lines() do
+        if line:sub(1, 10) ~= 'Filesystem' then
+            filesystem, size, used, available, percent, location = line:match('(%S+)%s+(%S+)%s+(%S+)%s+(%S+)%s+(%S+)%s+(%S+)')
+            if filesystem ~= 'tmpfs' and not string.match(filesystem, 'overlayfs') then
+                percent = percent:gsub('%W', '')
+                table.insert(disk_usage_info, {
+                    filesystem = filesystem,
+                    available_bytes = tonumber(available),
+                    size_bytes = tonumber(size),
+                    used_bytes = tonumber(used),
+                    used_percent = tonumber(percent),
+                    mount_point = location,
+                })
+            end
+        end
+    end
+    file:close()
+    return disk_usage_info
+end
+
+function get_cpus()
+    processors = io.popen('cat /proc/cpuinfo | grep -c processor')
+    cpus = tonumber(processors:read('*a'))
+    processors:close()
+    return cpus
+end
+
 -- init netjson data structure
 netjson = {
     type = 'DeviceMonitoring',
@@ -169,7 +199,9 @@ netjson = {
     resources = {
         load = load_average,
         memory = system_info.memory,
-        swap = system_info.swap
+        swap = system_info.swap,
+        cpus = get_cpus(),
+        disk = parse_disk_usage()
     }
 }
 
