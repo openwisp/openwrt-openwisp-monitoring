@@ -166,11 +166,12 @@ function parse_disk_usage()
             filesystem, size, used, available, percent, location = line:match('(%S+)%s+(%S+)%s+(%S+)%s+(%S+)%s+(%S+)%s+(%S+)')
             if filesystem ~= 'tmpfs' and not string.match(filesystem, 'overlayfs') then
                 percent = percent:gsub('%W', '')
+                -- available, size and used are in KiB
                 table.insert(disk_usage_info, {
                     filesystem = filesystem,
-                    available_bytes = tonumber(available),
-                    size_bytes = tonumber(size),
-                    used_bytes = tonumber(used),
+                    available_bytes = tonumber(available)*1024,
+                    size_bytes = tonumber(size)*1024,
+                    used_bytes = tonumber(used)*1024,
                     used_percent = tonumber(percent),
                     mount_point = location,
                 })
