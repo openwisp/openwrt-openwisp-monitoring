@@ -280,13 +280,28 @@ function new_address_array(address, interface, family)
         family = family,
         gateway = find_default_gateway(interface.route),
     }
-    if next(interface['dns-search']) then
-        new_address.dns_search = interface['dns-search']
-    end
-    if next(interface['dns-server']) then
-        new_address.dns_server = interface['dns-server']
-    end
     return new_address
+end
+
+function get_dns_info(name)
+    dns_info = {
+        search = nil,
+        server = nil
+    }
+    interface_list = interface_data['interface']
+    for _, interface in pairs(interface_list) do
+        if interface['l3_device'] == name then
+            if next(interface['dns-search']) then
+                dns_info.search = interface['dns-search']
+            end
+            if next(interface['dns-server']) then
+                dns_info.server = interface['dns-server']
+            end
+            table.insert(dns_info, dns)
+            dns_info[name] = dns_info
+        end
+    end
+    return dns_info
 end
 
 -- collect interface addresses
@@ -367,6 +382,7 @@ for radio_name, radio in pairs(wireless_status) do
             iwinfo = ubus:call('iwinfo', 'info', {device = name})
             netjson_interface = {
                 name = name,
+                type = 'wireless',
                 statistics = network_status[name].statistics,
                 wireless = {
                     ssid = iwinfo.ssid,
@@ -409,21 +425,29 @@ for name, interface in pairs(network_status) do
         stp = interface.stp,  -- XXX: untested
     }
     if interface.type == 'Network device' then
-        if interface['link-supported'] then
+        link_supported = interface['link-supported']
+        if link_supported and next(link_supported) then
             -- XXX: untested
             netjson_interface.type = 'ethernet'
-            netjson_interface.link_supported = interface['link-supported']
+            netjson_interface.link_supported = link_supported
         else
             netjson_interface.type = 'other'
-            -- TODO: guess 'wireless' and 'virtual'
+            -- TODO: guess 'virtual'
         end
     end
     if include_traffic_stats then
         netjson_interface.statistics = interface.statistics
     end
     addresses = get_addresses(name)
-    if next(addresses) ~= nil then
+    if next(addresses) then
         netjson_interface.addresses = addresses
+    end
+    dns_info = get_dns_info(name)
+    if dns_info.search then
+        netjson_interface.dns_search = dns_info.search
+    end
+    if dns_info.server then
+        netjson_interface.dns_server = dns_info.server
     end
     table.insert(interfaces, netjson_interface)
   end
