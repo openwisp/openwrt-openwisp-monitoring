@@ -202,6 +202,23 @@ function get_cpus()
     return cpus
 end
 
+function get_vpn_interfaces()
+    -- only openvpn supported for now
+    local items = uci_cursor:get_all('openvpn')
+    local vpn_interfaces = {}
+
+    if not next(items) then
+        return {}
+    end
+
+    for name, config in pairs(items) do
+        if config and config.dev then
+            vpn_interfaces[config.dev] = true
+        end
+    end
+    return vpn_interfaces
+end
+
 -- init netjson data structure
 netjson = {
     type = 'DeviceMonitoring',
@@ -230,26 +247,17 @@ if next(neighbors) then
 end
 
 -- determine the interfaces to monitor
-included_interfaces = arg[1]
-included = {}
-if included_interfaces then
-  included_interfaces = split(included_interfaces, ' ')
-  for i, name in pairs(included_interfaces) do
-    included[name] = true
+traffic_monitored = arg[1]
+include_stats = {}
+if traffic_monitored then
+  traffic_monitored = split(traffic_monitored, ' ')
+  for i, name in pairs(traffic_monitored) do
+    include_stats[name] = true
   end
 end
 
--- determine the interfaces to monitor
-include_traffic_stats = arg[2] and arg[2] == '--stats'
-
 function is_excluded(name)
-  if next(included) ~= nil then
-    return included[name] == nil
-  -- if list of included interfaces is empty
-  -- consider all interfaces incldued
-  else
-    return name == 'lo'
-  end
+  return name == 'lo'
 end
 
 function find_default_gateway(routes)
@@ -266,7 +274,11 @@ network_status = ubus:call('network.device', 'status', {})
 wireless_status = ubus:call('network.wireless', 'status', {})
 interface_data = ubus:call('network.interface', 'dump', {})
 nixio_data = nixio.getifaddrs()
-
+vpn_interfaces = get_vpn_interfaces()
+wireless_interfaces = {}
+interfaces = {}
+dns_servers = {}
+dns_search = {}
 
 function new_address_array(address, interface, family)
     proto = interface['proto']
@@ -283,25 +295,33 @@ function new_address_array(address, interface, family)
     return new_address
 end
 
-function get_dns_info(name)
-    dns_info = {
-        search = nil,
-        server = nil
+function get_interface_info(name, netjson_interface)
+    info = {
+        dns_search = nil,
+        dns_servers = nil
     }
-    interface_list = interface_data['interface']
-    for _, interface in pairs(interface_list) do
+    for _, interface in pairs(interface_data['interface']) do
         if interface['l3_device'] == name then
             if next(interface['dns-search']) then
-                dns_info.search = interface['dns-search']
+                info.dns_search = interface['dns-search']
             end
             if next(interface['dns-server']) then
-                dns_info.server = interface['dns-server']
+                info.dns_servers = interface['dns-server']
             end
-            table.insert(dns_info, dns)
-            dns_info[name] = dns_info
+            if netjson_interface.type == 'bridge' then
+                info.stp = uci_cursor.get('network', interface['interface'], 'stp') == '1'
+            end
         end
     end
-    return dns_info
+    return info
+end
+
+function array_concat(source, destination)
+    table.foreach(source, function(key, value) table.insert(destination, value) end)
+end
+
+function dict_merge(source, destination)
+    table.foreach(source, function(key, value) destination[key] = value end)
 end
 
 -- collect interface addresses
@@ -369,9 +389,6 @@ function get_addresses(name)
     return addresses
 end
 
-interfaces = {}
-processed = {}
-
 -- collect relevant wireless interface stats
 -- (traffic and connected clients)
 for radio_name, radio in pairs(wireless_status) do
@@ -383,7 +400,6 @@ for radio_name, radio in pairs(wireless_status) do
             netjson_interface = {
                 name = name,
                 type = 'wireless',
-                statistics = network_status[name].statistics,
                 wireless = {
                     ssid = iwinfo.ssid,
                     mode = iwinfo_modes[iwinfo.mode] or iwinfo.mode,
@@ -395,16 +411,10 @@ for radio_name, radio in pairs(wireless_status) do
                     country = iwinfo.country
                 }
             }
-            addresses = get_addresses(name)
-            if next(addresses) ~= nil then
-              netjson_interface.addresses = addresses
-            end
             if clients and next(clients.clients) ~= nil then
               netjson_interface.wireless.clients = netjson_clients(clients.clients)
             end
-            table.insert(interfaces, netjson_interface)
-            -- avoid duplicating interface info
-            processed[name] = true
+            wireless_interfaces[name] = netjson_interface
         end
     end
 end
@@ -412,7 +422,7 @@ end
 -- collect interface stats
 for name, interface in pairs(network_status) do
   -- only collect data from iterfaces which have not been excluded
-  if not is_excluded(name) and not processed[name] then
+  if not is_excluded(name) then
     netjson_interface = {
         name = name,
         type = string.lower(interface.type),
@@ -420,41 +430,55 @@ for name, interface in pairs(network_status) do
         mac = interface.macaddr,
         txqueuelen = interface.txqueuelen,
         mtu = interface.mtu,
-        speed = interface.speed,  -- XXX: untested
+        speed = interface.speed,
         bridge_members = interface['bridge-members'],
-        stp = interface.stp,  -- XXX: untested
+        multicast = interface.multicast,
     }
+    if wireless_interfaces[name] then
+        dict_merge(wireless_interfaces[name], netjson_interface)
+        interface.type = netjson_interface.type
+    end
     if interface.type == 'Network device' then
         link_supported = interface['link-supported']
         if link_supported and next(link_supported) then
-            -- XXX: untested
             netjson_interface.type = 'ethernet'
             netjson_interface.link_supported = link_supported
+        elseif vpn_interfaces[name] then
+            netjson_interface.type = 'virtual'
         else
             netjson_interface.type = 'other'
-            -- TODO: guess 'virtual'
         end
     end
-    if include_traffic_stats then
+    if include_stats[name] then
         netjson_interface.statistics = interface.statistics
     end
     addresses = get_addresses(name)
     if next(addresses) then
         netjson_interface.addresses = addresses
     end
-    dns_info = get_dns_info(name)
-    if dns_info.search then
-        netjson_interface.dns_search = dns_info.search
-    end
-    if dns_info.server then
-        netjson_interface.dns_server = dns_info.server
+    info = get_interface_info(name, netjson_interface)
+    if info.stp ~= nil then
+        netjson_interface.stp = info.stp
     end
     table.insert(interfaces, netjson_interface)
+    -- DNS info is independent from interface
+    if info.dns_servers then
+        array_concat(info.dns_servers, dns_servers)
+    end
+    if info.dns_search then
+        array_concat(info.dns_search, dns_search)
+    end
   end
 end
 
 if next(interfaces) ~= nil then
     netjson.interfaces = interfaces
+end
+if next(dns_servers) ~= nil then
+    netjson.dns_servers = dns_servers
+end
+if next(dns_search) ~= nil then
+    netjson.dns_search = dns_search
 end
 
 print(cjson.encode(netjson))
