@@ -237,7 +237,7 @@ netjson = {
 }
 
 dhcp_leases = get_dhcp_leases()
-if next(dhcp_leases) then
+if dhcp_leases and next(dhcp_leases) then
     netjson.dhcp_leases = dhcp_leases
 end
 
