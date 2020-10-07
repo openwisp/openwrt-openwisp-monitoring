@@ -10,25 +10,25 @@ uci_cursor = uci.cursor()
 
 -- split function
 function split(str, pat)
-   local t = {}
-   local fpat = "(.-)" .. pat
-   local last_end = 1
-   local s, e, cap = str:find(fpat, 1)
-   while s do
-      if s ~= 1 or cap ~= "" then
-         table.insert(t, cap)
-      end
-      last_end = e+1
-      s, e, cap = str:find(fpat, last_end)
-   end
-   if last_end <= #str then
-      cap = str:sub(last_end)
-      table.insert(t, cap)
-   end
-   return t
+    local t = {}
+    local fpat = "(.-)" .. pat
+    local last_end = 1
+    local s, e, cap = str:find(fpat, 1)
+    while s do
+        if s ~= 1 or cap ~= "" then
+            table.insert(t, cap)
+        end
+        last_end = e + 1
+        s, e, cap = str:find(fpat, last_end)
+    end
+    if last_end <= #str then
+        cap = str:sub(last_end)
+        table.insert(t, cap)
+    end
+    return t
 end
 
-local function has_value (tab, val)
+local function has_value(tab, val)
     for index, value in ipairs(tab) do
         if value == val then
             return true
@@ -38,69 +38,69 @@ local function has_value (tab, val)
 end
 
 local function starts_with(str, start)
-   return str:sub(1, #start) == start
+    return str:sub(1, #start) == start
 end
 
 -- parse /proc/net/arp
 function parse_arp()
-   arp_info = {}
-   for line in io.lines('/proc/net/arp 2> /dev/null') do
-      if line:sub(1, 10) ~= 'IP address' then
-        ip, hw, flags, mac, mask, dev = line:match("(%S+)%s+(%S+)%s+(%S+)%s+(%S+)%s+(%S+)%s+(%S+)")
-        table.insert(arp_info, {
-            ip_address = ip,
-            mac_address = mac,
-            interface = dev,
-	        state = ''
-         })
-      end
-   end
-   return arp_info
+    arp_info = {}
+    for line in io.lines('/proc/net/arp 2> /dev/null') do
+        if line:sub(1, 10) ~= 'IP address' then
+            ip, hw, flags, mac, mask, dev = line:match("(%S+)%s+(%S+)%s+(%S+)%s+(%S+)%s+(%S+)%s+(%S+)")
+            table.insert(arp_info, {
+                ip_address = ip,
+                mac_address = mac,
+                interface = dev,
+                state = ''
+            })
+        end
+    end
+    return arp_info
 end
 
 function get_ip_neigh_json()
-   arp_info = {}
-   output = io.popen('ip -json neigh 2> /dev/null'):read()
-   if output ~= nil then
-      json_output = cjson.decode(output)
-      for _, arp_entry in pairs(json_output) do
-         table.insert(arp_info, {
-           ip_address = arp_entry["dst"],
-           mac_address = arp_entry["lladdr"],
-           interface = arp_entry["dev"],
-           state = arp_entry["state"][1]
-         })
-      end
-   end
-   return arp_info
+    arp_info = {}
+    output = io.popen('ip -json neigh 2> /dev/null'):read()
+    if output ~= nil then
+        json_output = cjson.decode(output)
+        for _, arp_entry in pairs(json_output) do
+            table.insert(arp_info, {
+                ip_address = arp_entry["dst"],
+                mac_address = arp_entry["lladdr"],
+                interface = arp_entry["dev"],
+                state = arp_entry["state"][1]
+            })
+        end
+    end
+    return arp_info
 end
 
 function get_ip_neigh()
-   arp_info = {}
-   output = io.popen('ip neigh 2> /dev/null')
-   for line in output:lines() do
-      ip, dev, mac, state = line:match("(%S+)%s+dev%s+(%S+)%s+lladdr%s+(%S+).*%s(%S+)")
-      if mac ~= nil then
-        table.insert(arp_info, {
-          ip_address = ip,
-          mac_address = mac,
-          interface = dev,
-          state = state
-        })
-      end
-   end
-   return arp_info
+    arp_info = {}
+    output = io.popen('ip neigh 2> /dev/null')
+    for line in output:lines() do
+        ip, dev, mac, state = line:match("(%S+)%s+dev%s+(%S+)%s+lladdr%s+(%S+).*%s(%S+)")
+        if mac ~= nil then
+            table.insert(arp_info, {
+                ip_address = ip,
+                mac_address = mac,
+                interface = dev,
+                state = state
+            })
+        end
+    end
+    return arp_info
 end
 
 function get_neighbors()
-   arp_table = get_ip_neigh_json()
-   if next(arp_table) == nil then
-      arp_table = get_ip_neigh()
-   end
-   if next(arp_table) == nil then
-      arp_table = parse_arp()
-   end
-   return arp_table
+    arp_table = get_ip_neigh_json()
+    if next(arp_table) == nil then
+        arp_table = get_ip_neigh()
+    end
+    if next(arp_table) == nil then
+        arp_table = parse_arp()
+    end
+    return arp_table
 end
 
 function parse_dhcp_lease_file(path, leases)
@@ -117,7 +117,7 @@ function parse_dhcp_lease_file(path, leases)
             ip_address = ip,
             client_name = name,
             client_id = id
-         })
+        })
     end
 
     return leases
@@ -157,7 +157,7 @@ end
 -- helpers
 iwinfo_modes = {
     ['Master'] = 'access_point',
-    ['Client']= 'station',
+    ['Client'] = 'station',
     ['Mesh Point'] = '802.11s',
     ['Ad-Hoc'] = 'adhoc'
 }
@@ -167,26 +167,25 @@ system_info = ubus:call('system', 'info', {})
 board = ubus:call('system', 'board', {})
 loadavg_output = io.popen('cat /proc/loadavg'):read()
 loadavg_output = split(loadavg_output, ' ')
-load_average = {tonumber(loadavg_output[1]),
-                tonumber(loadavg_output[2]),
-                tonumber(loadavg_output[3])}
+load_average = {tonumber(loadavg_output[1]), tonumber(loadavg_output[2]), tonumber(loadavg_output[3])}
 
 function parse_disk_usage()
     file = io.popen('df')
     disk_usage_info = {}
     for line in file:lines() do
         if line:sub(1, 10) ~= 'Filesystem' then
-            filesystem, size, used, available, percent, location = line:match('(%S+)%s+(%S+)%s+(%S+)%s+(%S+)%s+(%S+)%s+(%S+)')
+            filesystem, size, used, available, percent, location =
+                line:match('(%S+)%s+(%S+)%s+(%S+)%s+(%S+)%s+(%S+)%s+(%S+)')
             if filesystem ~= 'tmpfs' and not string.match(filesystem, 'overlayfs') then
                 percent = percent:gsub('%W', '')
                 -- available, size and used are in KiB
                 table.insert(disk_usage_info, {
                     filesystem = filesystem,
-                    available_bytes = tonumber(available)*1024,
-                    size_bytes = tonumber(size)*1024,
-                    used_bytes = tonumber(used)*1024,
+                    available_bytes = tonumber(available) * 1024,
+                    size_bytes = tonumber(size) * 1024,
+                    used_bytes = tonumber(used) * 1024,
                     used_percent = tonumber(percent),
-                    mount_point = location,
+                    mount_point = location
                 })
             end
         end
@@ -250,23 +249,23 @@ end
 traffic_monitored = arg[1]
 include_stats = {}
 if traffic_monitored then
-  traffic_monitored = split(traffic_monitored, ' ')
-  for i, name in pairs(traffic_monitored) do
-    include_stats[name] = true
-  end
+    traffic_monitored = split(traffic_monitored, ' ')
+    for i, name in pairs(traffic_monitored) do
+        include_stats[name] = true
+    end
 end
 
 function is_excluded(name)
-  return name == 'lo'
+    return name == 'lo'
 end
 
 function find_default_gateway(routes)
-  for i = 1, #routes do
-    if routes[i].target == '0.0.0.0' then
-      return routes[i].nexthop
+    for i = 1, #routes do
+        if routes[i].target == '0.0.0.0' then
+            return routes[i].nexthop
+        end
     end
-  end
-  return nil
+    return nil
 end
 
 -- collect device data
@@ -290,7 +289,7 @@ function new_address_array(address, interface, family)
         mask = address['mask'],
         proto = proto,
         family = family,
-        gateway = find_default_gateway(interface.route),
+        gateway = find_default_gateway(interface.route)
     }
     return new_address
 end
@@ -317,11 +316,15 @@ function get_interface_info(name, netjson_interface)
 end
 
 function array_concat(source, destination)
-    table.foreach(source, function(key, value) table.insert(destination, value) end)
+    table.foreach(source, function(key, value)
+        table.insert(destination, value)
+    end)
 end
 
 function dict_merge(source, destination)
-    table.foreach(source, function(key, value) destination[key] = value end)
+    table.foreach(source, function(key, value)
+        destination[key] = value
+    end)
 end
 
 -- collect interface addresses
@@ -395,8 +398,10 @@ for radio_name, radio in pairs(wireless_status) do
     for i, interface in ipairs(radio.interfaces) do
         name = interface.ifname
         if name and not is_excluded(name) then
-            clients = ubus:call('hostapd.'..name, 'get_clients', {})
-            iwinfo = ubus:call('iwinfo', 'info', {device = name})
+            clients = ubus:call('hostapd.' .. name, 'get_clients', {})
+            iwinfo = ubus:call('iwinfo', 'info', {
+                device = name
+            })
             netjson_interface = {
                 name = name,
                 type = 'wireless',
@@ -412,7 +417,7 @@ for radio_name, radio in pairs(wireless_status) do
                 }
             }
             if clients and next(clients.clients) ~= nil then
-              netjson_interface.wireless.clients = netjson_clients(clients.clients)
+                netjson_interface.wireless.clients = netjson_clients(clients.clients)
             end
             wireless_interfaces[name] = netjson_interface
         end
@@ -421,54 +426,54 @@ end
 
 -- collect interface stats
 for name, interface in pairs(network_status) do
-  -- only collect data from iterfaces which have not been excluded
-  if not is_excluded(name) then
-    netjson_interface = {
-        name = name,
-        type = string.lower(interface.type),
-        up = interface.up,
-        mac = interface.macaddr,
-        txqueuelen = interface.txqueuelen,
-        mtu = interface.mtu,
-        speed = interface.speed,
-        bridge_members = interface['bridge-members'],
-        multicast = interface.multicast,
-    }
-    if wireless_interfaces[name] then
-        dict_merge(wireless_interfaces[name], netjson_interface)
-        interface.type = netjson_interface.type
-    end
-    if interface.type == 'Network device' then
-        link_supported = interface['link-supported']
-        if link_supported and next(link_supported) then
-            netjson_interface.type = 'ethernet'
-            netjson_interface.link_supported = link_supported
-        elseif vpn_interfaces[name] then
-            netjson_interface.type = 'virtual'
-        else
-            netjson_interface.type = 'other'
+    -- only collect data from iterfaces which have not been excluded
+    if not is_excluded(name) then
+        netjson_interface = {
+            name = name,
+            type = string.lower(interface.type),
+            up = interface.up,
+            mac = interface.macaddr,
+            txqueuelen = interface.txqueuelen,
+            mtu = interface.mtu,
+            speed = interface.speed,
+            bridge_members = interface['bridge-members'],
+            multicast = interface.multicast
+        }
+        if wireless_interfaces[name] then
+            dict_merge(wireless_interfaces[name], netjson_interface)
+            interface.type = netjson_interface.type
+        end
+        if interface.type == 'Network device' then
+            link_supported = interface['link-supported']
+            if link_supported and next(link_supported) then
+                netjson_interface.type = 'ethernet'
+                netjson_interface.link_supported = link_supported
+            elseif vpn_interfaces[name] then
+                netjson_interface.type = 'virtual'
+            else
+                netjson_interface.type = 'other'
+            end
+        end
+        if include_stats[name] then
+            netjson_interface.statistics = interface.statistics
+        end
+        addresses = get_addresses(name)
+        if next(addresses) then
+            netjson_interface.addresses = addresses
+        end
+        info = get_interface_info(name, netjson_interface)
+        if info.stp ~= nil then
+            netjson_interface.stp = info.stp
+        end
+        table.insert(interfaces, netjson_interface)
+        -- DNS info is independent from interface
+        if info.dns_servers then
+            array_concat(info.dns_servers, dns_servers)
+        end
+        if info.dns_search then
+            array_concat(info.dns_search, dns_search)
         end
     end
-    if include_stats[name] then
-        netjson_interface.statistics = interface.statistics
-    end
-    addresses = get_addresses(name)
-    if next(addresses) then
-        netjson_interface.addresses = addresses
-    end
-    info = get_interface_info(name, netjson_interface)
-    if info.stp ~= nil then
-        netjson_interface.stp = info.stp
-    end
-    table.insert(interfaces, netjson_interface)
-    -- DNS info is independent from interface
-    if info.dns_servers then
-        array_concat(info.dns_servers, dns_servers)
-    end
-    if info.dns_search then
-        array_concat(info.dns_search, dns_search)
-    end
-  end
 end
 
 if next(interfaces) ~= nil then

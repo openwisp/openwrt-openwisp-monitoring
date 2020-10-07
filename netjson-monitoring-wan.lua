@@ -7,22 +7,22 @@ cjson = require('cjson')
 
 -- split function
 function split(str, pat)
-   local t = {}
-   local fpat = "(.-)" .. pat
-   local last_end = 1
-   local s, e, cap = str:find(fpat, 1)
-   while s do
-      if s ~= 1 or cap ~= "" then
-         table.insert(t, cap)
-      end
-      last_end = e+1
-      s, e, cap = str:find(fpat, last_end)
-   end
-   if last_end <= #str then
-      cap = str:sub(last_end)
-      table.insert(t, cap)
-   end
-   return t
+    local t = {}
+    local fpat = "(.-)" .. pat
+    local last_end = 1
+    local s, e, cap = str:find(fpat, 1)
+    while s do
+        if s ~= 1 or cap ~= "" then
+            table.insert(t, cap)
+        end
+        last_end = e + 1
+        s, e, cap = str:find(fpat, last_end)
+    end
+    if last_end <= #str then
+        cap = str:sub(last_end)
+        table.insert(t, cap)
+    end
+    return t
 end
 
 ubus = ubus_lib.connect()
@@ -35,9 +35,7 @@ system_info = ubus:call('system', 'info', {})
 board = ubus:call('system', 'board', {})
 loadavg_output = io.popen('cat /proc/loadavg'):read()
 loadavg_output = split(loadavg_output, ' ')
-load_average = {tonumber(loadavg_output[1]),
-                tonumber(loadavg_output[2]),
-                tonumber(loadavg_output[3])}
+load_average = {tonumber(loadavg_output[1]), tonumber(loadavg_output[2]), tonumber(loadavg_output[3])}
 
 -- init netjson data structure
 netjson = {
@@ -58,10 +56,10 @@ netjson = {
 monitored_interfaces = arg[1]
 monitored = {}
 if monitored_interfaces then
-  monitored_interfaces = split(monitored_interfaces, ' ')
-  for i, name in pairs(monitored_interfaces) do
-    monitored[name] = true
-  end
+    monitored_interfaces = split(monitored_interfaces, ' ')
+    for i, name in pairs(monitored_interfaces) do
+        monitored[name] = true
+    end
 end
 
 -- collect device data
@@ -70,14 +68,14 @@ interfaces = {}
 
 -- collect interface stats
 for name, interface in pairs(network_status) do
-  -- only collect data for specified interfaces
-  if monitored[name] then
-    netjson_interface = {
-        name = name,
-        statistics = interface.statistics
-    }
-    table.insert(interfaces, netjson_interface)
-  end
+    -- only collect data for specified interfaces
+    if monitored[name] then
+        netjson_interface = {
+            name = name,
+            statistics = interface.statistics
+        }
+        table.insert(interfaces, netjson_interface)
+    end
 end
 
 if next(interfaces) ~= nil then
