@@ -61,7 +61,7 @@ end
 function get_ip_neigh_json()
     arp_info = {}
     output = io.popen('ip -json neigh 2> /dev/null'):read()
-    if output ~= nil then
+    if output ~= nil and pcall(function () json_output = cjson.decode(output) end) then
         json_output = cjson.decode(output)
         for _, arp_entry in pairs(json_output) do
             table.insert(arp_info, {
