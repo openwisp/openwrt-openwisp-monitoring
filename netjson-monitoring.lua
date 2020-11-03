@@ -206,7 +206,7 @@ function get_vpn_interfaces()
     local items = uci_cursor:get_all('openvpn')
     local vpn_interfaces = {}
 
-    if not next(items) then
+    if not items or not next(items) then
         return {}
     end
 
