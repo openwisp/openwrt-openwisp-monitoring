@@ -139,6 +139,10 @@ function get_dhcp_leases()
     return leases
 end
 
+function is_table_empty(table_)
+    return not table_ or next(table_) == nil
+end
+
 -- takes ubus wireless.status clients output and converts it to NetJSON
 function netjson_clients(clients)
     local data = {}
@@ -206,7 +210,7 @@ function get_vpn_interfaces()
     local items = uci_cursor:get_all('openvpn')
     local vpn_interfaces = {}
 
-    if not items or not next(items) then
+    if is_table_empty(items) then
         return {}
     end
 
@@ -236,12 +240,12 @@ netjson = {
 }
 
 dhcp_leases = get_dhcp_leases()
-if dhcp_leases and next(dhcp_leases) then
+if not is_table_empty(dhcp_leases) then
     netjson.dhcp_leases = dhcp_leases
 end
 
 neighbors = get_neighbors()
-if next(neighbors) then
+if not is_table_empty(neighbors) then
     netjson.neighbors = neighbors
 end
 
