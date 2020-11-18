@@ -320,6 +320,56 @@ function new_address_array(address, interface, family)
     return new_address
 end
 
+specialized_interfaces = {
+    modemmanager = function(name, interface)
+        local modem = uci_cursor.get('network', interface['interface'], 'device')
+        local info = {}
+
+        local general = io.popen('mmcli --output-json -m '..modem):read("*a")
+        if general and pcall(function () general = cjson.decode(general) end) then
+            general = general.modem
+
+            if not is_table_empty(general['3gpp']) then
+                info.imei = general['3gpp'].imei
+                info.operator_name = general['3gpp']['operator-name']
+                info.operator_code = general['3gpp']['operator-code']
+            end
+
+            if not is_table_empty(general.generic) then
+                info.manufacturer = general.generic.manufacturer
+                info.model = general.generic.model
+                info.connection_status = general.generic.state
+                info.power_status = general.generic['power-state']
+            end
+        end
+
+        local signal = io.popen('mmcli --output-json -m '..modem..' --signal-get'):read()
+        if signal and pcall(function () signal = cjson.decode(signal) end) then
+            -- only send data if not empty to avoid generating too much traffic
+            if not is_table_empty(signal.modem) and not is_table_empty(signal.modem.signal) then
+                -- omit refresh rate
+                signal.modem.signal.refresh = nil
+                info.signal = {}
+                -- collect section only if not empty
+                for section_key, section_values in pairs(signal.modem.signal) do
+                    for key, value in pairs(section_values) do
+                        if value ~= '--' then
+                            -- convert to number
+                            section_values[key] = tonumber(value)
+                            -- store in info
+                            if is_table_empty(info[section_key]) then
+                              info.signal[section_key] = section_values
+                            end
+                        end
+                    end
+                end
+            end
+        end
+
+        return {type='modem-manager', mobile=info}
+    end
+}
+
 function get_interface_info(name, netjson_interface)
     info = {
         dns_search = nil,
@@ -335,6 +385,11 @@ function get_interface_info(name, netjson_interface)
             end
             if netjson_interface.type == 'bridge' then
                 info.stp = uci_cursor.get('network', interface['interface'], 'stp') == '1'
+            end
+            -- collect specialized info if available
+            local specialized_info = specialized_interfaces[interface.proto]
+            if specialized_info then
+                info.specialized = specialized_info(name, interface)
             end
         end
     end
@@ -523,6 +578,11 @@ for name, interface in pairs(network_status) do
         info = get_interface_info(name, netjson_interface)
         if info.stp ~= nil then
             netjson_interface.stp = info.stp
+        end
+        if info.specialized then
+            for key, value in pairs(info.specialized) do
+                netjson_interface[key] = value
+            end
         end
         table.insert(interfaces, netjson_interface)
         -- DNS info is independent from interface
