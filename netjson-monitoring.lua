@@ -48,8 +48,8 @@ function parse_arp()
         if line:sub(1, 10) ~= 'IP address' then
             ip, hw, flags, mac, mask, dev = line:match("(%S+)%s+(%S+)%s+(%S+)%s+(%S+)%s+(%S+)%s+(%S+)")
             table.insert(arp_info, {
-                ip_address = ip,
-                mac_address = mac,
+                ip = ip,
+                mac = mac,
                 interface = dev,
                 state = ''
             })
@@ -65,8 +65,8 @@ function get_ip_neigh_json()
         json_output = cjson.decode(output)
         for _, arp_entry in pairs(json_output) do
             table.insert(arp_info, {
-                ip_address = arp_entry["dst"],
-                mac_address = arp_entry["lladdr"],
+                ip = arp_entry["dst"],
+                mac = arp_entry["lladdr"],
                 interface = arp_entry["dev"],
                 state = arp_entry["state"][1]
             })
@@ -82,8 +82,8 @@ function get_ip_neigh()
         ip, dev, mac, state = line:match("(%S+)%s+dev%s+(%S+)%s+lladdr%s+(%S+).*%s(%S+)")
         if mac ~= nil then
             table.insert(arp_info, {
-                ip_address = ip,
-                mac_address = mac,
+                ip = ip,
+                mac = mac,
                 interface = dev,
                 state = state
             })
@@ -113,8 +113,8 @@ function parse_dhcp_lease_file(path, leases)
         local expiry, mac, ip, name, id = line:match('(%S+)%s+(%S+)%s+(%S+)%s+(%S+)%s+(%S+)')
         table.insert(leases, {
             expiry = tonumber(expiry),
-            mac_address = mac,
-            ip_address = ip,
+            mac = mac,
+            ip = ip,
             client_name = name,
             client_id = id
         })
@@ -146,8 +146,8 @@ end
 -- takes ubus wireless.status clients output and converts it to NetJSON
 function netjson_clients(clients)
     local data = {}
-    for mac_address, properties in pairs(clients) do
-        properties.mac = mac_address
+    for mac, properties in pairs(clients) do
+        properties.mac = mac
         table.insert(data, properties)
     end
     return data
