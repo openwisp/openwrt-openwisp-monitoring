@@ -143,14 +143,36 @@ function is_table_empty(table_)
     return not table_ or next(table_) == nil
 end
 
+function parse_hostapd_clients(clients)
+  local data = {}
+  for mac, properties in pairs(clients) do
+      properties.mac = mac
+      table.insert(data, properties)
+  end
+  return data
+end
+
+function parse_iwinfo_clients(clients)
+  local data = {}
+  for i, p in pairs(clients) do
+      client = {}
+      client.ht = p.rx.ht
+      client.mac = p.mac
+      client.authorized = p.authorized
+      client.vht = p.rx.vht
+      client.wmm = p.wme
+      client.mfp = p.mfp
+      client.auth = p.authenticated
+      client.signal = p.signal
+      client.noise = p.noise
+      table.insert(data, client)
+  end
+  return data
+end
+
 -- takes ubus wireless.status clients output and converts it to NetJSON
-function netjson_clients(clients)
-    local data = {}
-    for mac, properties in pairs(clients) do
-        properties.mac = mac
-        table.insert(data, properties)
-    end
-    return data
+function netjson_clients(clients, is_mesh)
+    return (is_mesh and parse_iwinfo_clients(clients) or parse_hostapd_clients(clients))
 end
 
 ubus = ubus_lib.connect()
@@ -401,8 +423,8 @@ end
 for radio_name, radio in pairs(wireless_status) do
     for i, interface in ipairs(radio.interfaces) do
         name = interface.ifname
+        local is_mesh = false
         if name and not is_excluded(name) then
-            clients = ubus:call('hostapd.' .. name, 'get_clients', {})
             iwinfo = ubus:call('iwinfo', 'info', {
                 device = name
             })
@@ -420,8 +442,16 @@ for radio_name, radio in pairs(wireless_status) do
                     country = iwinfo.country
                 }
             }
-            if clients and next(clients.clients) ~= nil then
-                netjson_interface.wireless.clients = netjson_clients(clients.clients)
+            if iwinfo.mode == 'Ad-Hoc' or iwinfo.mode == 'Mesh Point' then
+              clients = ubus:call('iwinfo', 'assoclist', {
+                device = name
+              }).results
+              is_mesh = true
+            else
+              clients = ubus:call('hostapd.' .. name, 'get_clients', {}).clients
+            end
+            if clients and next(clients) ~= nil then
+                netjson_interface.wireless.clients = netjson_clients(clients, is_mesh)
             end
             wireless_interfaces[name] = netjson_interface
         end
