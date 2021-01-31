@@ -458,6 +458,31 @@ for radio_name, radio in pairs(wireless_status) do
     end
 end
 
+function is_part_of_bridge(name)
+    for _, interface in pairs(network_status) do
+        if interface['bridge-members'] then
+            for _, key in pairs(interface['bridge-members']) do
+                if key  == name then
+                    return true
+                end
+            end
+        end
+    end
+    return false
+end
+
+function inverse_rx_and_tx(interface)
+    for k, v in pairs(interface) do
+        if string.sub(k, 0, 3) == "rx_" then
+            local tx_key = "tx_" .. string.sub(k, 4)
+            local tx_val = interface[tx_key]
+            interface[tx_key] = v
+            interface[k] = tx_val
+        end
+    end
+    return interface
+end
+
 -- collect interface stats
 for name, interface in pairs(network_status) do
     -- only collect data from iterfaces which have not been excluded
@@ -489,6 +514,11 @@ for name, interface in pairs(network_status) do
             end
         end
         if include_stats[name] then
+            if is_part_of_bridge(name) then
+                --- Inversing the rx and tx values here as members of a bridge
+                --- have those values inverted by default
+                interface.statistics = inverse_rx_and_tx(interface.statistics)
+            end
             netjson_interface.statistics = interface.statistics
         end
         addresses = get_addresses(name)
