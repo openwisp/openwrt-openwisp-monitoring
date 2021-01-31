@@ -458,20 +458,11 @@ for radio_name, radio in pairs(wireless_status) do
     end
 end
 
-function is_part_of_bridge(name)
-    for _, interface in pairs(network_status) do
-        if interface['bridge-members'] then
-            for _, key in pairs(interface['bridge-members']) do
-                if key  == name then
-                    return true
-                end
-            end
-        end
-    end
-    return false
+function needs_inversion(interface)
+    return interface.type == 'wireless' and interface.wireless.mode == 'access_point'
 end
 
-function inverse_rx_and_tx(interface)
+function invert_rx_tx(interface)
     for k, v in pairs(interface) do
         if string.sub(k, 0, 3) == "rx_" then
             local tx_key = "tx_" .. string.sub(k, 4)
@@ -514,10 +505,11 @@ for name, interface in pairs(network_status) do
             end
         end
         if include_stats[name] then
-            if is_part_of_bridge(name) then
-                --- Inversing the rx and tx values here as members of a bridge
-                --- have those values inverted by default
-                interface.statistics = inverse_rx_and_tx(interface.statistics)
+            if needs_inversion(netjson_interface) then
+                --- ensure wifi access point interfaces
+                --- show download and upload values from
+                --- the user's perspective and not from the router perspective
+                interface.statistics = invert_rx_tx(interface.statistics)
             end
             netjson_interface.statistics = interface.statistics
         end
