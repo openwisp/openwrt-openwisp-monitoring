@@ -458,7 +458,6 @@ for radio_name, radio in pairs(wireless_status) do
     end
 end
 
-
 function is_part_of_bridge(name)
     for _, interface in pairs(network_status) do
         if interface['bridge-members'] then
@@ -471,7 +470,6 @@ function is_part_of_bridge(name)
     end
     return false
 end
-
 
 function inverse_rx_and_tx(interface)
     for k, v in pairs(interface) do
