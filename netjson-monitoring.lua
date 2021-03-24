@@ -448,7 +448,10 @@ for radio_name, radio in pairs(wireless_status) do
                 }).results
                 is_mesh = true
             else
-              clients = ubus:call('hostapd.' .. name, 'get_clients', {}).clients
+              hostapd_output = ubus:call('hostapd.' .. name, 'get_clients', {})
+              if hostapd_output then
+                  clients = hostapd_output.clients
+              end
             end
             if clients and next(clients) ~= nil then
                 netjson_interface.wireless.clients = netjson_clients(clients, is_mesh)
