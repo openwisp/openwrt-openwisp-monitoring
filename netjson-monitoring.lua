@@ -443,10 +443,10 @@ for radio_name, radio in pairs(wireless_status) do
                 }
             }
             if iwinfo.mode == 'Ad-Hoc' or iwinfo.mode == 'Mesh Point' then
-              clients = ubus:call('iwinfo', 'assoclist', {
-                device = name
-              }).results
-              is_mesh = true
+                clients = ubus:call('iwinfo', 'assoclist', {
+                    device = name
+                }).results
+                is_mesh = true
             else
               clients = ubus:call('hostapd.' .. name, 'get_clients', {}).clients
             end
