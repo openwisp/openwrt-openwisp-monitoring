@@ -1,0 +1,5 @@
+#!/bin/sh
+touch /etc/crontabs/root
+/etc/init.d/cron start
+/usr/sbin/update-openwisp-packages
+/usr/sbin/openwisp-monitoring

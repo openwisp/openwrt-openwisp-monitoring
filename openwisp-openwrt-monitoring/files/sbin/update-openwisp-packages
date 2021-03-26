@@ -1,0 +1,54 @@
+#!/bin/sh
+reboot=false
+
+# updates opkg lists only if necessary
+opkg_update(){
+    (
+        test -d /tmp/opkg-lists/ && \
+        test -f /tmp/opkg-lists/openwrt_base && \
+        test -f /tmp/opkg-lists/openwrt_packages && \
+        test -f /tmp/opkg-lists/openwrt_core
+    ) || opkg update;
+}
+
+# installs libubus-lua if necessary
+libubus_lua_installed=$(opkg list-installed | grep libubus-lua -c)
+if [ "$libubus_lua_installed" == "0" ]; then
+    opkg_update
+    opkg install libubus-lua
+fi
+
+# installs lua-cjson if necessary
+luacjson_installed=$(opkg list-installed | grep lua-cjson -c)
+if [ "$luacjson_installed" == "0" ]; then
+    opkg_update
+    opkg install lua-cjson
+fi
+
+# installs rpcd-mod-iwinfo if necessary
+rpcd_mod_iwinfo_installed=$(opkg list-installed | grep rpcd-mod-iwinfo -c)
+if [ "$rpcd_mod_iwinfo_installed" == "0" ]; then
+    opkg_update
+    opkg install rpcd-mod-iwinfo
+    reboot=true 
+fi
+
+# upgrades openwisp-config if necessary
+openwisp_config_version=$(openwisp_config --version)
+if [ "$openwisp_config_version" != "openwisp-config 0.5.0" ]; then
+    # backup config just in case...
+    cp /etc/config/openwisp /etc/config/openwisp-backup
+    opkg_update
+    opkg install http://downloads.openwisp.io/openwisp-config/2021-01-07-162007/openwisp-config-mbedtls_0.5.0-1_all.ipk
+    # restore backup
+    mv /etc/config/openwisp-backup /etc/config/openwisp
+    # remove default conf
+    rm /etc/config/openwisp-opkg
+    /etc/init.d/openwisp_config restart
+fi
+
+# reboots if rpcd-mod-iwinfo has been installed
+if [ "$reboot" == "true" ]; then
+    sleep 5
+    reboot && exit
+fi
