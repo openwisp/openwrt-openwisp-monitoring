@@ -274,7 +274,7 @@ end
 -- determine the interfaces to monitor
 traffic_monitored = arg[1]
 include_stats = {}
-if traffic_monitored then
+if traffic_monitored and traffic_monitored ~= '*' then
     traffic_monitored = split(traffic_monitored, ' ')
     for i, name in pairs(traffic_monitored) do
         include_stats[name] = true
@@ -562,7 +562,7 @@ for name, interface in pairs(network_status) do
                 netjson_interface.type = 'other'
             end
         end
-        if include_stats[name] then
+        if include_stats[name] or traffic_monitored == '*' then
             if needs_inversion(netjson_interface) then
                 --- ensure wifi access point interfaces
                 --- show download and upload values from
