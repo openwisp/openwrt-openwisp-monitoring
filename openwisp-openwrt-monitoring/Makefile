@@ -5,7 +5,7 @@
 
 include $(TOPDIR)/rules.mk
 
-PKG_NAME:=openwisp-openwrt-monitoring
+PKG_NAME:=openwisp-monitoring
 PKG_VERSION:=$(shell cat ../VERSION)
 PKG_RELEASE:=1
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)/$(PKG_SOURCE_SUBDIR)
@@ -13,23 +13,22 @@ PKG_LICENSE:=GPL-3.0
 
 include $(INCLUDE_DIR)/package.mk
 
-define Package/openwisp-openwrt-monitoring/default
-	TITLE:=OpenWRT NetJson Monitoring
+define Package/openwisp-monitoring/default
+	TITLE:=OpenWISP NetJson Monitoring
 	CATEGORY:=Administration
 	SECTION:=admin
 	SUBMENU:=openwisp
-	VARIANT:=1
 	PKGARCH:=all
 	MAINTAINER:=Federico Capoano <f.capoano@openwisp.io>
 	URL:=http://openwisp.org
 endef
 
-Package/openwisp-openwrt-monitoring=$(call Package/openwisp-openwrt-monitoring/default)
+Package/openwisp-monitoring=$(call Package/openwisp-openwrt-monitoring/default)
 
 define Build/Compile
 endef
 
-define Package/openwisp-openwrt-monitoring-$(BUILD_VARIANT)/install
+define Package/openwisp-monitoring/install
 	$(INSTALL_DIR) \
 		$(1)/usr/sbin \
 		$(1)/etc/crontabs \
@@ -56,4 +55,4 @@ define Package/openwisp-openwrt-monitoring-$(BUILD_VARIANT)/install
 		$(1)/usr/sbin/openwisp-monitoring
 endef
 
-$(eval $(call BuildPackage,openwisp-openwrt-monitoring))
+$(eval $(call BuildPackage,openwisp-monitoring))
