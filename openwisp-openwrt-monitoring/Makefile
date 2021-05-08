@@ -38,6 +38,10 @@ define Package/openwisp-monitoring/install
 		files/post-reload-hook \
 		$(1)/etc/openwisp/post-reload-hook
 
+	$(INSTALL_COONF) \
+		files/monitoring.config \
+		$(1)/etc/config/monitoring
+
 	$(INSTALL_BIN) \
 		files/sbin/update-openwisp-packages \
 		$(1)/usr/sbin/update-openwisp-packages

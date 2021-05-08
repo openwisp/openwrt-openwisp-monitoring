@@ -2,7 +2,7 @@ uuid=$(uci get openwisp.http.uuid)
 key=$(uci get openwisp.http.key)
 base_url=$(uci get openwisp.http.url)
 verify_ssl=$(uci get openwisp.http.verify_ssl)
-monitored_interfaces=$(uci get openwisp.http.monitored_interfaces)
+monitored_interfaces=$(uci get monitoring.interface.monitored_interfaces)
 url="$base_url/api/v1/monitoring/device/$uuid/?key=$key"
 data=$(/usr/sbin/netjson-monitoring "$monitored_interfaces")
 if [ "$verify_ssl" = 0 ]; then
