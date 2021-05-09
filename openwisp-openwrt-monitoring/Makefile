@@ -18,6 +18,7 @@ define Package/openwisp-monitoring/default
 	CATEGORY:=Administration
 	SECTION:=admin
 	SUBMENU:=openwisp
+	DEPENDS:=+libubus-lua +lua-cjson +rpcd-mod-iwinfo +openwisp_config
 	PKGARCH:=all
 	MAINTAINER:=Federico Capoano <f.capoano@openwisp.io>
 	URL:=http://openwisp.org
@@ -41,10 +42,6 @@ define Package/openwisp-monitoring/install
 	$(INSTALL_COONF) \
 		files/monitoring.config \
 		$(1)/etc/config/monitoring
-
-	$(INSTALL_BIN) \
-		files/sbin/update-openwisp-packages \
-		$(1)/usr/sbin/update-openwisp-packages
 
 	$(INSTALL_BIN) \
 		files/cronjob \
