@@ -1,0 +1,37 @@
+#!/bin/sh /etc/rc.common
+
+START=99
+STOP=15
+USE_PROCD=1
+PROG = "/usr/sbin/monitoring"
+PROG_NAME = "OpenWISP monitoring daemon"
+
+start_service() {
+		config_load openwisp
+		base_url=$(config_get http url)
+		uuid=$(config_get http uuid)
+		key=$(config_get http key)
+		verify_ssl=$(config_get http verify_ssl)
+		respawn_threshold=$(config_get http respawn_threshold)
+		respawn_timeout=$(config_get http respawn_timeout)
+		respawn_retry=$(config_get http respawn_retry)
+		config_load monitoring
+		interval=$(config_get monitoring interval)
+		monitored_interfaces=$(config_get monitoring monitored_interfaces)
+		if [ $base_url ]; then base_url="--url $base_url"; fi
+		if [ $uuid ]; then uuid="--uuid $uuid"; fi
+		if [ $key]; then key="--key $key"; fi
+		if [ $verify_ssl ]; then verify_ssl="--verify_ssl $verify_ssl"; fi
+		if [ $interval ]; then interval="--verify_ssl $verify_ssl"; fi
+		if [ $monitored_interfaces ]; then monitored_interfaces="--monitored_interfaces $monitored_interfaces"; fi
+        procd_open_instance
+        prog_set_param command $PROG $uuid $key $base_url $verify_ssl $monitored_interfaces
+        procd_set_param respawn ${respawn_threshold:-3600} ${respawn_timeout:-5} ${respawn_retry:-5}
+        procd_close_instance
+        logger -s "$PROG_NAME started"
+ 
+stop_service() {
+		logger -s "$PROG_NAME stopping"          
+        echo stop
+        # commands to kill application 
+}
