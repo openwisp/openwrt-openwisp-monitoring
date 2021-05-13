@@ -13,47 +13,58 @@ PKG_LICENSE:=GPL-3.0
 
 include $(INCLUDE_DIR)/package.mk
 
-define Package/openwisp-monitoring/default
-	TITLE:=OpenWISP NetJson Monitoring
-	CATEGORY:=Administration
-	SECTION:=admin
+define Package/openwisp-monitoring
+	TITLE:=OpenWISP Monitoring
+	CATEGORY:=Network
+	SECTION:=base
 	SUBMENU:=openwisp
-	DEPENDS:=+libubus-lua +lua-cjson +rpcd-mod-iwinfo +openwisp_config
 	PKGARCH:=all
 	MAINTAINER:=Federico Capoano <f.capoano@openwisp.io>
 	URL:=http://openwisp.org
 endef
 
-Package/openwisp-monitoring=$(call Package/openwisp-openwrt-monitoring/default)
+define Package/netjson-monitoring
+	TITLE:=NetJson Monitoring
+	CATEGORY:=Network
+	SECTION:=base
+	SUBMENU:=openwisp
+	DEPENDS:=+libubus-lua +lua-cjson +rpcd-mod-iwinfo
+	PKGARCH:=all
+	MAINTAINER:=Federico Capoano <f.capoano@openwisp.io>
+	URL:=http://openwisp.org
+endef
 
-define Build/Compile
+define Package/openwisp-monitoring/conffiles
+	/etc/config/monitoring
+endef
+
+define Package/netjson-monitoring/install
+	$(INSTALL_DIR) \
+		$(1)/usr/sbin
+
+	$(INSTALL_BIN) \
+		files/sbin/netjson-monitoring.lua \
+		$(1)/usr/sbin/netjson-monitoring
 endef
 
 define Package/openwisp-monitoring/install
 	$(INSTALL_DIR) \
 		$(1)/usr/sbin \
-		$(1)/etc/crontabs \
-		$(1)/etc/openwisp \
+		$(1)/etc/init.d \
+		$(1)/etc/config
 
 	$(INSTALL_BIN) \
-		files/post-reload-hook \
-		$(1)/etc/openwisp/post-reload-hook
+		files/monitoring.agent \
+		$(1)/usr/sbin/monitoring_config
 
-	$(INSTALL_COONF) \
+	$(INSTALL_BIN) \
+		files/monitoring.init \
+		$(1)/etc/init.d/monitoring_config
+
+	$(INSTALL_CONF) \
 		files/monitoring.config \
 		$(1)/etc/config/monitoring
-
-	$(INSTALL_BIN) \
-		files/cronjob \
-		$(1)/etc/crontabs/root
-
-	$(INSTALL_BIN) \
-		files/sbin/netjson-monitoring.lua \
-		$(1)/usr/sbin/netjson-monitoring
-
-	$(INSTALL_BIN) \
-		files/sbin/openwisp-monitoring.sh \
-		$(1)/usr/sbin/openwisp-monitoring
 endef
 
 $(eval $(call BuildPackage,openwisp-monitoring))
+$(eval $(call BuildPackage,netjson-monitoring))
