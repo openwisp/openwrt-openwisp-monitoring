@@ -19,7 +19,7 @@ done
 
 MONITORED_INTERFACES=${MONITORED_INTERFACES:-*}
 
-data=$(/usr/sbin/netjson-monitoring "$monitored_interfaces")
+data=$(/usr/sbin/netjson_monitoring "$monitored_interfaces")
 if [ "$verify_ssl" = 0 ]; then
     curl_command='curl -k'
 else

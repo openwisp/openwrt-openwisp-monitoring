@@ -13,7 +13,7 @@ PKG_LICENSE:=GPL-3.0
 
 include $(INCLUDE_DIR)/package.mk
 
-define Package/openwisp-openwrt-monitoring/default
+define Package/openwisp-monitoring/default
 	TITLE:=OpenWISP Monitoring
 	CATEGORY:=Network
 	SECTION:=base
@@ -23,9 +23,9 @@ define Package/openwisp-openwrt-monitoring/default
 	URL:=http://openwisp.org
 endef
 
-Package/openwisp-openwrt-monitoring=$(call Package/openwisp-openwrt-monitoring/default)
+Package/openwisp-monitoring=$(call Package/openwisp-monitoring/default)
 
-define Package/openwisp-netjson-monitoring/default
+define Package/netjson-monitoring/default
 	TITLE:=NetJson Monitoring
 	CATEGORY:=Network
 	SECTION:=base
@@ -36,25 +36,25 @@ define Package/openwisp-netjson-monitoring/default
 	URL:=http://openwisp.org
 endef
 
+Package/netjson-monitoring=$(call Package/netjson-monitoring/default)
+
 define Build/Compile
 endef
 
-Package/openwisp-netjson-monitoring=$(call Package/openwisp-netjson-monitoring/default)
-
-define Package/openwisp-openwrt-monitoring/conffiles
+define Package/openwisp-monitoring/conffiles
 /etc/config/monitoring
 endef
 
-define Package/openwisp-netjson-monitoring/install
+define Package/netjson-monitoring/install
 	$(INSTALL_DIR) \
 		$(1)/usr/sbin
 
 	$(INSTALL_BIN) \
 		files/sbin/netjson-monitoring.lua \
-		$(1)/usr/sbin/netjson-monitoring
+		$(1)/usr/sbin/netjson_monitoring
 endef
 
-define Package/openwisp-openwrt-monitoring/install
+define Package/openwisp-monitoring/install
 	$(INSTALL_DIR) \
 		$(1)/usr/sbin \
 		$(1)/etc/init.d \
@@ -62,16 +62,16 @@ define Package/openwisp-openwrt-monitoring/install
 
 	$(INSTALL_BIN) \
 		files/monitoring.agent \
-		$(1)/usr/sbin/monitoring_config
+		$(1)/usr/sbin/openwisp_monitoring
 
 	$(INSTALL_BIN) \
 		files/monitoring.init \
-		$(1)/etc/init.d/monitoring_config
+		$(1)/etc/init.d/openwisp_monitoring
 
 	$(INSTALL_CONF) \
 		files/monitoring.config \
 		$(1)/etc/config/monitoring
 endef
 
-$(eval $(call BuildPackage,openwisp-openwrt-monitoring))
-$(eval $(call BuildPackage,openwisp-netjson-monitoring))
+$(eval $(call BuildPackage,openwisp-monitoring))
+$(eval $(call BuildPackage,netjson-monitoring))
