@@ -13,7 +13,7 @@ PKG_LICENSE:=GPL-3.0
 
 include $(INCLUDE_DIR)/package.mk
 
-define Package/openwisp-monitoring
+define Package/openwisp-openwrt-monitoring/default
 	TITLE:=OpenWISP Monitoring
 	CATEGORY:=Network
 	SECTION:=base
@@ -23,22 +23,29 @@ define Package/openwisp-monitoring
 	URL:=http://openwisp.org
 endef
 
-define Package/netjson-monitoring
+Package/openwisp-openwrt-monitoring=$(call Package/openwisp-openwrt-monitoring/default)
+
+define Package/openwisp-netjson-monitoring/default
 	TITLE:=NetJson Monitoring
 	CATEGORY:=Network
 	SECTION:=base
 	SUBMENU:=openwisp
-	DEPENDS:=+libubus-lua +lua-cjson +rpcd-mod-iwinfo
+	DEPENDS:=+libubus-lua +lua-cjson
 	PKGARCH:=all
 	MAINTAINER:=Federico Capoano <f.capoano@openwisp.io>
 	URL:=http://openwisp.org
 endef
 
-define Package/openwisp-monitoring/conffiles
-	/etc/config/monitoring
+define Build/Compile
 endef
 
-define Package/netjson-monitoring/install
+Package/openwisp-netjson-monitoring=$(call Package/openwisp-netjson-monitoring/default)
+
+define Package/openwisp-openwrt-monitoring/conffiles
+/etc/config/monitoring
+endef
+
+define Package/openwisp-netjson-monitoring/install
 	$(INSTALL_DIR) \
 		$(1)/usr/sbin
 
@@ -47,7 +54,7 @@ define Package/netjson-monitoring/install
 		$(1)/usr/sbin/netjson-monitoring
 endef
 
-define Package/openwisp-monitoring/install
+define Package/openwisp-openwrt-monitoring/install
 	$(INSTALL_DIR) \
 		$(1)/usr/sbin \
 		$(1)/etc/init.d \
@@ -66,5 +73,5 @@ define Package/openwisp-monitoring/install
 		$(1)/etc/config/monitoring
 endef
 
-$(eval $(call BuildPackage,openwisp-monitoring))
-$(eval $(call BuildPackage,netjson-monitoring))
+$(eval $(call BuildPackage,openwisp-openwrt-monitoring))
+$(eval $(call BuildPackage,openwisp-netjson-monitoring))
