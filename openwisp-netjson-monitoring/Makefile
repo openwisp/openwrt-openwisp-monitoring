@@ -30,7 +30,7 @@ define Package/netjson-monitoring/default
 	CATEGORY:=Network
 	SECTION:=base
 	SUBMENU:=openwisp
-	DEPENDS:=+libubus-lua +lua-cjson
+	DEPENDS:=+libubus-lua +lua-cjson +rpcd-mod-iwinfo
 	PKGARCH:=all
 	MAINTAINER:=Federico Capoano <f.capoano@openwisp.io>
 	URL:=http://openwisp.org

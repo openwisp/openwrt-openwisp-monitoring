@@ -49,7 +49,9 @@ The following procedure illustrates how to compile both *openwisp-monitoring* an
     ./scripts/feeds install -a
     # any arch/target is fine because the package is architecture indipendent
     arch="ar71xx"
-    echo "CONFIG_TARGET_$arch=y" > .config;
+    echo "CONFIG_TARGET_$arch=y" > .config
+    echo "CONFIG_PACKAGE_rpcd=y" >> .config
+    echo "CONFIG_PACKAGE_rpcd-mod-iwinfo=y" >> .config
     echo "CONFIG_PACKAGE_openwisp-monitoring=y" >> .config
     echo "CONFIG_PACKAGE_netjson-monitoring=y" >> .config
     make defconfig
@@ -74,6 +76,7 @@ you will need to select the *openwisp-monitoring* and *netjson-monitoring* by go
     ./scripts/feeds update -a
     ./scripts/feeds install -a
     make menuconfig
+    # go to Base system, then select rpcd and rpcd-mod-iwinfo
     # go to Network > openwisp and select the packages you need interactively
     make tools/install
     make toolchain/install
