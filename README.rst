@@ -1,15 +1,21 @@
 ===========================
-openwisp-netjson-monitoring
+openwrt-openwisp-monitoring
 ===========================
 
-.. image:: http://img.shields.io/github/release/openwisp/lua-monitoring.svg
-   :target: https://github.com/openwisp/lua-monitoring/releases
+.. image:: http://img.shields.io/github/release/openwisp/openwrt-openwisp-monitoring.svg
+   :target: https://github.com/openwisp/openwrt-openwisp-monitoring/releases
 
 .. image:: https://img.shields.io/gitter/room/nwjs/nw.js.svg?style=flat-square
    :target: https://gitter.im/openwisp/general
    :alt: support chat
 
 ------------
+
+`OpenWRT <https://openwrt.org/>`_ configuration agent for 
+`OpenWISP Monitoring <https://github.com/openwisp/openwisp-monitoring>`_.
+
+**Want to help OpenWISP?** `Find out how to help us grow here
+<http://openwisp.io/docs/general/help-us.html>`_.
 
 .. image:: http://netjsonconfig.openwisp.org/en/latest/_images/openwisp.org.svg
   :target: http://openwisp.org
@@ -43,7 +49,7 @@ The following procedure illustrates how to compile both *openwisp-monitoring* an
     git checkout openwrt-19.07
 
     # configure feeds
-    echo "src-git monitoring https://github.com/openwisp/lua-monitoring.git" > feeds.conf
+    echo "src-git monitoring https://github.com/openwisp/openwrt-openwisp-monitoring.git" > feeds.conf
     cat feeds.conf.default >> feeds.conf
     ./scripts/feeds update -a
     ./scripts/feeds install -a
@@ -57,7 +63,7 @@ The following procedure illustrates how to compile both *openwisp-monitoring* an
     make defconfig
     make tools/install
     make toolchain/install
-    make package/openwisp-netjson-monitoring/compile
+    make package/openwrt-openwisp-monitoring/compile
 
 The compiled packages will go in ``bin/packages/*/openwisp``.
 
@@ -80,7 +86,7 @@ you will need to select the *openwisp-monitoring* and *netjson-monitoring* by go
     # go to Network > openwisp and select the packages you need interactively
     make tools/install
     make toolchain/install
-    make package/openwisp-netjson-monitoring/compile
+    make package/openwrt-openwisp-monitoring/compile
 
 Once installed *openwisp-monitoring* needs to be configured (see `Configuration options`_)
 and then started with::
@@ -96,12 +102,12 @@ Please read the `OpenWISP contributing guidelines
 Changelog
 ---------
 
-See `CHANGELOG <https://github.com/openwisp/lua-monitoring/blob/master/CHANGELOG.rst>`_.
+See `CHANGELOG <https://github.com/openwisp/openwrt-openwisp-monitoring/blob/master/CHANGELOG.rst>`_.
 
 License
 -------
 
-See `LICENSE <https://github.com/openwisp/lua-monitoring/blob/master/LICENSE>`_.
+See `LICENSE <https://github.com/openwisp/openwrt-openwisp-monitoring/blob/master/LICENSE>`_.
 
 Support
 -------

@@ -1,1 +1,1 @@
-Please refer to the `Contribution Guidelines <https://github.com/openwisp/lua-monitoring#contributing>`_.
+Please refer to the `Contribution Guidelines <https://github.com/openwisp/openwrt-openwisp-monitoring#contributing>`_.

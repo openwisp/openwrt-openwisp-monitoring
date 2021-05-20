@@ -5,7 +5,7 @@
 
 include $(TOPDIR)/rules.mk
 
-PKG_NAME:=openwisp-monitoring
+PKG_NAME:=openwrt-openwisp-monitoring
 PKG_VERSION:=$(shell cat ../VERSION)
 PKG_RELEASE:=1
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)/$(PKG_SOURCE_SUBDIR)
