@@ -6,32 +6,47 @@ USE_PROCD=1
 PROG="/usr/sbin/openwisp_monitoring"
 PROG_NAME="OpenWISP monitoring daemon"
 
+
+config_openwisp() {
+    config_get base_url "$1" url
+    config_get uuid "$1" uuid
+    config_get key "$1" key
+    config_get_bool verify_ssl "$1" verify_ssl "0"
+    config_get respawn_threshold "$1" respawn_threshold "3600"
+    config_get respawn_timeout "$1" respawn_timeout "5"
+    config_get respawn_retry "$1" respawn_retry "5"
+
+    if [ $base_url ]; then base_url="--url $base_url"; fi
+    if [ $uuid ]; then uuid="--uuid $uuid"; fi
+    if [ $key]; then key="--key $key"; fi
+    if [ $verify_ssl ]; then verify_ssl="--verify_ssl $verify_ssl"; fi
+}
+
+config_monitoring() {
+    config_get monitored_interfaces "$1" monitored_interfaces "*"
+    config_get interval "$1" interval "300"
+    interval="--verify_ssl $verify_ssl"
+    monitored_interfaces="--monitored_interfaces $monitored_interfaces"
+
+    procd_open_instance "openwisp_monitoring_${1}"
+    procd_set_param command $PROG $uuid $key $base_url $verify_ssl $monitored_interfaces
+    procd_set_param respawn ${respawn_threshold} ${respawn_timeout} ${respawn_retry}
+    procd_close_instance
+    logger -s "$PROG_NAME started"
+}
+
 start_service() {
-		config_load openwisp
-		base_url=$(config_get http url)
-		uuid=$(config_get http uuid)
-		key=$(config_get http key)
-		verify_ssl=$(config_get http verify_ssl)
-		respawn_threshold=$(config_get http respawn_threshold)
-		respawn_timeout=$(config_get http respawn_timeout)
-		respawn_retry=$(config_get http respawn_retry)
-		config_load monitoring
-		interval=$(config_get monitoring interval)
-		monitored_interfaces=$(config_get monitoring monitored_interfaces)
-		if [ $base_url ]; then base_url="--url $base_url"; fi
-		if [ $uuid ]; then uuid="--uuid $uuid"; fi
-		if [ $key]; then key="--key $key"; fi
-		if [ $verify_ssl ]; then verify_ssl="--verify_ssl $verify_ssl"; fi
-		if [ $interval ]; then interval="--verify_ssl $verify_ssl"; fi
-		if [ $monitored_interfaces ]; then monitored_interfaces="--monitored_interfaces $monitored_interfaces"; fi
-        procd_open_instance
-        procd_set_param command $PROG $uuid $key $base_url $verify_ssl $monitored_interfaces
-        procd_set_param respawn ${respawn_threshold:-3600} ${respawn_timeout:-5} ${respawn_retry:-5}
-        procd_close_instance
-        logger -s "$PROG_NAME started"
+        config_load openwisp
+        config_foreach config_openwisp http
+        config_load monitoring
+        config_foreach config_monitoring monitoring
 }
 
 stop_service() {
-		logger -s "$PROG_NAME stopping"          
-        echo stop
+    logger -s "$PROG_NAME stopping"
+    echo stop
+}
+
+service_triggers() {
+    procd_add_reload_trigger "openwisp" "monitoring"
 }

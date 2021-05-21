@@ -17,7 +17,7 @@ while [ -n "$1" ]; do
 	shift;
 done
 
-MONITORED_INTERFACES=${MONITORED_INTERFACES:-*}
+MONITORED_INTERFACES=${MONITORED_INTERFACES}
 
 data=$(/usr/sbin/netjson_monitoring "$monitored_interfaces")
 if [ "$verify_ssl" = 0 ]; then

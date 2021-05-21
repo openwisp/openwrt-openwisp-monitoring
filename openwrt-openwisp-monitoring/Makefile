@@ -15,8 +15,8 @@ include $(INCLUDE_DIR)/package.mk
 
 define Package/openwisp-monitoring/default
 	TITLE:=OpenWISP Monitoring
-	CATEGORY:=Network
-	SECTION:=base
+	CATEGORY:=Administration
+	SECTION:=admin
 	SUBMENU:=openwisp
 	PKGARCH:=all
 	MAINTAINER:=Federico Capoano <f.capoano@openwisp.io>
@@ -27,8 +27,8 @@ Package/openwisp-monitoring=$(call Package/openwisp-monitoring/default)
 
 define Package/netjson-monitoring/default
 	TITLE:=NetJson Monitoring
-	CATEGORY:=Network
-	SECTION:=base
+	CATEGORY:=Administration
+	SECTION:=admin
 	SUBMENU:=openwisp
 	DEPENDS:=+libubus-lua +lua-cjson +rpcd-mod-iwinfo
 	PKGARCH:=all
