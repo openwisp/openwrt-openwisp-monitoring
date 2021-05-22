@@ -30,7 +30,7 @@ Configuration options
 UCI configuration options must go in ``/etc/config/monitoring``.
 
 - ``monitored_interfaces``: interfaces that needs to be monitored, defaults to ``*`` for all interfaces.
-- ``interval``: time in seconds between checks for changes to the configuration, defaults to ``300``
+- ``interval``: time after which device data should be sent to server, defaults to ``300``
 
 Compiling openwisp-netjson-monitoring
 -------------------------

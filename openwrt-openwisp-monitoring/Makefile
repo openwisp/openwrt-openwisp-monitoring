@@ -13,7 +13,7 @@ PKG_LICENSE:=GPL-3.0
 
 include $(INCLUDE_DIR)/package.mk
 
-define Package/openwisp-monitoring/default
+define Package/openwisp-monitoring
 	TITLE:=OpenWISP Monitoring
 	CATEGORY:=Administration
 	SECTION:=admin
@@ -23,9 +23,7 @@ define Package/openwisp-monitoring/default
 	URL:=http://openwisp.org
 endef
 
-Package/openwisp-monitoring=$(call Package/openwisp-monitoring/default)
-
-define Package/netjson-monitoring/default
+define Package/netjson-monitoring
 	TITLE:=NetJson Monitoring
 	CATEGORY:=Administration
 	SECTION:=admin
@@ -35,8 +33,6 @@ define Package/netjson-monitoring/default
 	MAINTAINER:=Federico Capoano <f.capoano@openwisp.io>
 	URL:=http://openwisp.org
 endef
-
-Package/netjson-monitoring=$(call Package/netjson-monitoring/default)
 
 define Build/Compile
 endef

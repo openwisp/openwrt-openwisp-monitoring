@@ -6,6 +6,19 @@ USE_PROCD=1
 PROG="/usr/sbin/openwisp_monitoring"
 PROG_NAME="OpenWISP monitoring daemon"
 
+time_to_seconds() {
+    time=$1
+
+    { [ "$time" -ge 1 ] 2>/dev/null && seconds="$time"; } ||
+        { [ "${time%s}" -ge 1 ] 2>/dev/null && seconds="${time%s}"; } ||
+        { [ "${time%m}" -ge 1 ] 2>/dev/null && seconds=$((${time%m} * 60)); } ||
+        { [ "${time%h}" -ge 1 ] 2>/dev/null && seconds=$((${time%h} * 3600)); } ||
+        { [ "${time%d}" -ge 1 ] 2>/dev/null && seconds=$((${time%d} * 86400)); }
+
+    echo $seconds
+    unset seconds
+    unset time
+}
 
 config_openwisp() {
     config_get base_url "$1" url
@@ -28,11 +41,21 @@ config_monitoring() {
     interval="--verify_ssl $verify_ssl"
     monitored_interfaces="--monitored_interfaces $monitored_interfaces"
 
+    interval="$(time_to_seconds "$interval")"
+    if [ "$interval" -lt 1]; then
+        logger -s "Interval is invalid. Use time value(eg: '10', '2m', '3h', '1d')" \
+               -t monitoring \
+               -p daemon.err
+        exit 1
+    fi
+
     procd_open_instance "openwisp_monitoring_${1}"
     procd_set_param command $PROG $uuid $key $base_url $verify_ssl $monitored_interfaces
     procd_set_param respawn ${respawn_threshold} ${respawn_timeout} ${respawn_retry}
     procd_close_instance
-    logger -s "$PROG_NAME started"
+    logger -s "$PROG_NAME started" \
+           -t monitoring \
+           -p daemon.info
 }
 
 start_service() {
@@ -43,8 +66,9 @@ start_service() {
 }
 
 stop_service() {
-    logger -s "$PROG_NAME stopping"
-    echo stop
+    logger -s "$PROG_NAME stopping" \
+           -t monitoring \
+           -p daemon.info
 }
 
 service_triggers() {
