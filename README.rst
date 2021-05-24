@@ -83,7 +83,7 @@ you will need to select the *openwisp-monitoring* and *netjson-monitoring* by go
     ./scripts/feeds install -a
     make menuconfig
     # go to Base system, then select rpcd and rpcd-mod-iwinfo
-    # go to Network > openwisp and select the packages you need interactively
+    # go to Administration > admin > openwisp and select the packages you need interactively
     make tools/install
     make toolchain/install
     make package/openwrt-openwisp-monitoring/compile
