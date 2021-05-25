@@ -20,24 +20,26 @@ time_to_seconds() {
     unset time
 }
 
-config_openwisp() {
-    config_get base_url "$1" url
-    config_get uuid "$1" uuid
-    config_get key "$1" key
-    config_get_bool verify_ssl "$1" verify_ssl "1"
-    config_get respawn_threshold "$1" respawn_threshold
-    config_get respawn_timeout "$1" respawn_timeout
-    config_get respawn_retry "$1" respawn_retry
+start_service() {
+    # for openwisp_config
+    config_load openwisp
+    config_get base_url http url
+    config_get uuid http uuid
+    config_get key http key
+    config_get_bool verify_ssl http verify_ssl "1"
+    config_get respawn_threshold http respawn_threshold
+    config_get respawn_timeout http respawn_timeout
+    config_get respawn_retry http respawn_retry
 
     [ -n "$base_url" ] && base_url="--url $base_url"
     [ -n "$uuid" ] && uuid="--uuid $uuid"
     [ -n "$key" ] && key="--key $key"
     [ -n "$verify_ssl" ] && verify_ssl="--verify_ssl $verify_ssl"
-}
 
-config_monitoring() {
-    config_get monitored_interfaces "$1" monitored_interfaces "*"
-    config_get interval "$1" interval "300"
+    # for openwisp_monitoring
+    config_load monitoring
+    config_get monitored_interfaces monitoring monitored_interfaces "*"
+    config_get interval monitoring interval "300"
 
     interval="$(time_to_seconds "$interval")"
     if [ "$interval" -lt 1 ]; then
@@ -46,25 +48,17 @@ config_monitoring() {
                -p daemon.err
         exit 1
     fi
-
     interval="--interval $interval"
     monitored_interfaces="--monitored_interfaces $monitored_interfaces"
 
-    procd_open_instance "openwisp_monitoring_${1}"
-    procd_set_param command $PROG "$uuid" "$key" "$base_url" "$verify_ssl" "$interval" "$monitored_interfaces"
+    procd_open_instance "openwisp_monitoring_monitoring"
+    procd_set_param command $PROG $base_url $uuid $key $verify_ssl $interval $monitored_interfaces
     procd_set_param respawn "${respawn_threshold:-3600}" "${respawn_timeout:-5}" "${respawn_retry:-5}"
     procd_close_instance
     logger -s "$PROG_NAME started" \
            -t monitoring \
            -p daemon.info
-}
 
-start_service() {
-        config_load openwisp
-        config_foreach config_openwisp http
-        config_load monitoring
-        config_foreach config_monitoring monitoring
-}
 
 stop_service() {
     logger -s "$PROG_NAME stopping" \

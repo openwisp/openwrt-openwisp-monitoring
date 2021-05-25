@@ -53,9 +53,15 @@ do
 					-X POST \
 					-d "$data" \
 					-v "$url")
-	logger -s "Sending data successful" \
-	       -t monitoring\
-	       -p daemon.info
+	if [ "$?" -ne 0]; then
+		logger -s "Data not sent successfully. Exit code is $?" \
+		       -t monitoring\
+		       -p daemon.err
+	else
+		logger -s "Data sent successfully." \
+		       -t monitoring\
+		       -p daemon.info
+	fi
 
 	sleep "$INTERVAL" & wait $!
 done
