@@ -2,6 +2,7 @@
 
 while [ -n "$1" ]; do
 	case "$1" in
+		--version|-v) export VERSION=1; break;;
 		--url) export BASE_URL="$2"; shift;;
 		--uuid) export UUID="$2"; shift;;
 		--key) export KEY="$2"; shift;;
@@ -16,6 +17,12 @@ while [ -n "$1" ]; do
 	esac
 	shift;
 done
+
+if [ "$VERSION" -eq "1" ]; then
+	VERSION=$(cat /etc/monitoring/VERSION)
+	echo "openwisp-monitoring $VERSION"
+	exit 0
+fi
 
 if [ "$verify_ssl" = 0 ]; then
     curl_command='curl -k'

@@ -9,7 +9,8 @@ PKG_NAME:=openwrt-openwisp-monitoring
 PKG_VERSION:=$(shell cat ../VERSION)
 PKG_RELEASE:=1
 PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)/$(PKG_SOURCE_SUBDIR)
-PKG_LICENSE:=GPL-3.0
+PKG_MAINTAINER:=Federico Capoano <f.capoano@openwisp.io>
+PKG_LICENSE:=GPL-3.0-or-later
 
 include $(INCLUDE_DIR)/package.mk
 
@@ -19,7 +20,6 @@ define Package/openwisp-monitoring
 	SECTION:=admin
 	SUBMENU:=openwisp
 	PKGARCH:=all
-	MAINTAINER:=Federico Capoano <f.capoano@openwisp.io>
 	URL:=http://openwisp.org
 endef
 
@@ -30,7 +30,6 @@ define Package/netjson-monitoring
 	SUBMENU:=openwisp
 	DEPENDS:=+libubus-lua +lua-cjson +rpcd-mod-iwinfo
 	PKGARCH:=all
-	MAINTAINER:=Federico Capoano <f.capoano@openwisp.io>
 	URL:=http://openwisp.org
 endef
 
@@ -54,7 +53,8 @@ define Package/openwisp-monitoring/install
 	$(INSTALL_DIR) \
 		$(1)/usr/sbin \
 		$(1)/etc/init.d \
-		$(1)/etc/config
+		$(1)/etc/config \
+		$(1)/etc/monitoring
 
 	$(INSTALL_BIN) \
 		files/monitoring.agent \
@@ -67,6 +67,9 @@ define Package/openwisp-monitoring/install
 	$(INSTALL_CONF) \
 		files/monitoring.config \
 		$(1)/etc/config/monitoring
+
+	$(CP) ../VERSION $(1)/etc/monitoring/
+
 endef
 
 $(eval $(call BuildPackage,openwisp-monitoring))

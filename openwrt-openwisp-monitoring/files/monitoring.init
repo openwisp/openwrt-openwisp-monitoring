@@ -58,7 +58,7 @@ start_service() {
     logger -s "$PROG_NAME started" \
            -t monitoring \
            -p daemon.info
-
+}
 
 stop_service() {
     logger -s "$PROG_NAME stopping" \

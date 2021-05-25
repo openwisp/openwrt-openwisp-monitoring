@@ -93,6 +93,34 @@ and then started with::
 
     /etc/init.d/openwisp_monitoring restart
 
+Debugging
+---------
+
+Debugging *openwisp-monitoring package* can be easily done by using the ``logread`` command:
+
+.. code-block:: shell
+
+    logread
+
+Use grep to filter out any other log message:
+
+.. code-block:: shell
+
+    logread | grep monitoring
+
+If you are in doubt openwisp-config is running at all, you can check with::
+
+    ps | grep monitoring
+
+You should see something like::
+
+    2713 root      1224 S    /bin/sh /usr/sbin/openwisp_monitoring --url http://192.168.1.195:8000 ...
+
+You can inspect the version of openwisp-config currently installed with::
+
+    openwisp_monitoring --version
+
+
 Contributing
 ------------
 
