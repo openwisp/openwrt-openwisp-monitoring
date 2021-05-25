@@ -24,7 +24,7 @@ config_openwisp() {
     config_get base_url "$1" url
     config_get uuid "$1" uuid
     config_get key "$1" key
-    config_get_bool verify_ssl "$1" verify_ssl "0"
+    config_get_bool verify_ssl "$1" verify_ssl "1"
     config_get respawn_threshold "$1" respawn_threshold
     config_get respawn_timeout "$1" respawn_timeout
     config_get respawn_retry "$1" respawn_retry
