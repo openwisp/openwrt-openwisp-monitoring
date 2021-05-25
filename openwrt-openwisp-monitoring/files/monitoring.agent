@@ -5,7 +5,7 @@ while [ -n "$1" ]; do
 		--url) export BASE_URL="$2"; shift;;
 		--uuid) export UUID="$2"; shift;;
 		--key) export KEY="$2"; shift;;
-		--verify-ssl) export verify_ssl="$2"; shift;;
+		--verify_ssl) export verify_ssl="$2"; shift;;
 		--interval) export INTERVAL="$2"; shift;;
 		--monitored_interfaces) export MONITORED_INTERFACES=$2; shift;;
 		-*)
@@ -25,13 +25,37 @@ fi
 
 url="$BASE_URL/api/v1/monitoring/device/$UUID/?key=$KEY"
 
+collect_data(){
+	n=0
+	logger -s "Collecting NetJSoN Monitoring data" \
+	       -t monitoring \
+	       -p daemon.info
+
+	until [ "$n" -ge 5 ]
+	do
+		echo "$(/usr/sbin/netjson_monitoring "$MONITORED_INTERFACES")" && break
+		
+		if [ "$n" -ne 5 ]; then
+			logger -s "Collecting data failed! Retrying" \
+			       -t monitoring \
+			       -p daemon.err
+		fi
+		n=$((n+1))
+		sleep 5
+	done
+}
+
 while true
 do
-	data=$(/usr/sbin/netjson_monitoring "$MONITORED_INTERFACES")
+	data="$(collect_data)"
 	#send data
 	$($curl_command -H "Content-Type: application/json" \
 					-X POST \
 					-d "$data" \
 					-v "$url")
+	logger -s "Sending data successful" \
+	       -t monitoring\
+	       -p daemon.info
+
 	sleep "$INTERVAL" & wait $!
 done

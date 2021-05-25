@@ -38,8 +38,6 @@ config_openwisp() {
 config_monitoring() {
     config_get monitored_interfaces "$1" monitored_interfaces "*"
     config_get interval "$1" interval "300"
-    interval="--verify_ssl $verify_ssl"
-    monitored_interfaces="--monitored_interfaces $monitored_interfaces"
 
     interval="$(time_to_seconds "$interval")"
     if [ "$interval" -lt 1 ]; then
@@ -49,8 +47,11 @@ config_monitoring() {
         exit 1
     fi
 
+    interval="--interval $interval"
+    monitored_interfaces="--monitored_interfaces $monitored_interfaces"
+
     procd_open_instance "openwisp_monitoring_${1}"
-    procd_set_param command $PROG "$uuid" "$key" "$base_url" "$verify_ssl" "$monitored_interfaces"
+    procd_set_param command $PROG "$uuid" "$key" "$base_url" "$verify_ssl" "$interval" "$monitored_interfaces"
     procd_set_param respawn "${respawn_threshold:-3600}" "${respawn_timeout:-5}" "${respawn_retry:-5}"
     procd_close_instance
     logger -s "$PROG_NAME started" \
