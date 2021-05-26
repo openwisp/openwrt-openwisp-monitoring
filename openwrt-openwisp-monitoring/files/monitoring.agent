@@ -60,14 +60,14 @@ do
 					-X POST \
 					-d "$data" \
 					-v "$url")
-	if [ "$?" -ne 0]; then
-		logger -s "Data not sent successfully. Exit code is $?" \
-		       -t monitoring\
-		       -p daemon.err
-	else
+	if [ -n "$?" ]; then
 		logger -s "Data sent successfully." \
-		       -t monitoring\
+		       -t monitoring \
 		       -p daemon.info
+	else
+		logger -s "Data not sent successfully. Exit code is $?" \
+		       -t monitoring \
+		       -p daemon.err
 	fi
 
 	sleep "$INTERVAL" & wait $!
