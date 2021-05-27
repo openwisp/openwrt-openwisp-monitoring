@@ -60,12 +60,13 @@ do
 					-X POST \
 					-d "$data" \
 					-v "$url")
-	if [ -n "$?" ]; then
+	exit_code=$?
+	if [ "$exit_code" == "0" ]; then
 		logger -s "Data sent successfully." \
 		       -t monitoring \
 		       -p daemon.info
 	else
-		logger -s "Data not sent successfully. Exit code is $?" \
+		logger -s "Data not sent successfully. Exit code is $exit_code" \
 		       -t monitoring \
 		       -p daemon.err
 	fi
