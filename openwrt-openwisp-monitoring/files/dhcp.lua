@@ -3,9 +3,9 @@ local uci = require('uci')
 local uci_cursor = uci.cursor()
 local utils = require('utils')
 
-local dhcp_functions = {}
+local dhcp = {}
 
-function dhcp_functions.parse_dhcp_lease_file(path, leases)
+function dhcp.parse_dhcp_lease_file(path, leases)
     local f = io.open(path, 'r')
     if not f then
         return leases
@@ -24,7 +24,7 @@ function dhcp_functions.parse_dhcp_lease_file(path, leases)
     return leases
 end
 
-function dhcp_functions.get_dhcp_leases()
+function dhcp.get_dhcp_leases()
     local dhcp_configs = uci_cursor:get_all('dhcp')
     local leases = {}
 
@@ -34,10 +34,10 @@ function dhcp_functions.get_dhcp_leases()
 
     for _, config in pairs(dhcp_configs) do
         if config and config['.type'] == 'dnsmasq' and config.leasefile then
-            leases = dhcp_functions.parse_dhcp_lease_file(config.leasefile, leases)
+            leases = dhcp.parse_dhcp_lease_file(config.leasefile, leases)
         end
     end
     return leases
 end
 
-return dhcp_functions
+return dhcp

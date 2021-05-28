@@ -14,7 +14,7 @@ if not ubus then
 end
 local interface_data = ubus:call('network.interface', 'dump', {})
 
-local interface_functions = {}
+local interfaces = {}
 
 local specialized_interfaces = {
     modemmanager = function(_, interface)
@@ -66,7 +66,7 @@ local specialized_interfaces = {
     end
 }
 
-function interface_functions.find_default_gateway(routes)
+function interfaces.find_default_gateway(routes)
     for i = 1, #routes do
         if routes[i].target == '0.0.0.0' then
             return routes[i].nexthop
@@ -75,7 +75,7 @@ function interface_functions.find_default_gateway(routes)
     return nil
 end
 
-function interface_functions.new_address_array(address, interface, family)
+function interfaces.new_address_array(address, interface, family)
     local proto = interface['proto']
     if proto == 'dhcpv6' then
         proto = 'dhcp'
@@ -85,13 +85,13 @@ function interface_functions.new_address_array(address, interface, family)
         mask = address['mask'],
         proto = proto,
         family = family,
-        gateway = interface_functions.find_default_gateway(interface.route)
+        gateway = interface.find_default_gateway(interface.route)
     }
     return new_address
 end
 
 -- collect interface addresses
-function interface_functions.get_addresses(name)
+function interfaces.get_addresses(name)
     local addresses = {}
     local proto = nil
     local interface_list = interface_data['interface']
@@ -100,12 +100,12 @@ function interface_functions.get_addresses(name)
         if interface['l3_device'] == name then
             for _, address in pairs(interface['ipv4-address']) do
                 table.insert(addresses_list, address['address'])
-                local new_address = interface_functions.new_address_array(address, interface, 'ipv4')
+                local new_address = interfaces.new_address_array(address, interface, 'ipv4')
                 table.insert(addresses, new_address)
             end
             for _, address in pairs(interface['ipv6-address']) do
                 table.insert(addresses_list, address['address'])
-                local new_address = interface_functions.new_address_array(address, interface, 'ipv6')
+                local new_address = interfaces.new_address_array(address, interface, 'ipv6')
                 table.insert(addresses, new_address)
             end
         end
@@ -152,7 +152,7 @@ function interface_functions.get_addresses(name)
     return addresses
 end
 
-function interface_functions.get_interface_info(name, netjson_interface)
+function interfaces.get_interface_info(name, netjson_interface)
     local info = {
         dns_search = nil,
         dns_servers = nil
@@ -178,7 +178,7 @@ function interface_functions.get_interface_info(name, netjson_interface)
     return info
 end
 
-function interface_functions.get_vpn_interfaces()
+function interfaces.get_vpn_interfaces()
     -- only openvpn supported for now
     local items = uci_cursor:get_all('openvpn')
     local vpn_interfaces = {}
@@ -195,4 +195,4 @@ function interface_functions.get_vpn_interfaces()
     return vpn_interfaces
 end
 
-return interface_functions
+return interfaces

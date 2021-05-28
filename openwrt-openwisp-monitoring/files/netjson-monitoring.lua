@@ -10,8 +10,8 @@ if not ubus then
 end
 
 local dhcp = require('dhcp')
-local interface_functions = require('interfaces')
-local neighbors_functions = require('neighbors')
+local interfaces = require('interfaces')
+local neighbors = require('neighbors')
 local resources = require('resources')
 local utils = require('utils')
 local wifi = require('wifi')
@@ -54,9 +54,9 @@ if not utils.is_table_empty(dhcp_leases) then
     netjson.dhcp_leases = dhcp_leases
 end
 
-local neighbors = neighbors_functions.get_neighbors()
-if not utils.is_table_empty(neighbors) then
-    netjson.neighbors = neighbors
+local host_neighbors = neighbors.get_neighbors()
+if not utils.is_table_empty(host_neighbors) then
+    netjson.neighbors = host_neighbors
 end
 
 -- determine the interfaces to monitor
@@ -72,9 +72,9 @@ end
 -- collect device data
 local network_status = ubus:call('network.device', 'status', {})
 local wireless_status = ubus:call('network.wireless', 'status', {})
-local vpn_interfaces = interface_functions.get_vpn_interfaces()
+local vpn_interfaces = interfaces.get_vpn_interfaces()
 local wireless_interfaces = {}
-local interfaces = {}
+local host_interfaces = {}
 local dns_servers = {}
 local dns_search = {}
 
@@ -178,11 +178,11 @@ for name, interface in pairs(network_status) do
             end
             netjson_interface.statistics = interface.statistics
         end
-        local addresses = interface_functions.get_addresses(name)
+        local addresses = interfaces.get_addresses(name)
         if next(addresses) then
             netjson_interface.addresses = addresses
         end
-        local info = interface_functions.get_interface_info(name, netjson_interface)
+        local info = interfaces.get_interface_info(name, netjson_interface)
         if info.stp ~= nil then
             netjson_interface.stp = info.stp
         end
@@ -191,7 +191,7 @@ for name, interface in pairs(network_status) do
                 netjson_interface[key] = value
             end
         end
-        table.insert(interfaces, netjson_interface)
+        table.insert(host_interfaces, netjson_interface)
         -- DNS info is independent from interface
         if info.dns_servers then
             utils.array_concat(info.dns_servers, dns_servers)
@@ -202,8 +202,8 @@ for name, interface in pairs(network_status) do
     end
 end
 
-if next(interfaces) ~= nil then
-    netjson.interfaces = interfaces
+if next(host_interfaces) ~= nil then
+    netjson.interfaces = host_interfaces
 end
 if next(dns_servers) ~= nil then
     netjson.dns_servers = dns_servers

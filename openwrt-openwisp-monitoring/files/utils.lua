@@ -1,6 +1,6 @@
-local functions = {}
+local utils = {}
 -- split function
-function functions.split(str, pat)
+function utils.split(str, pat)
     local t = {}
     local fpat = "(.-)" .. pat
     local last_end = 1
@@ -19,7 +19,7 @@ function functions.split(str, pat)
     return t
 end
 
-function functions.has_value(tab, val)
+function utils.has_value(tab, val)
     for _, value in ipairs(tab) do
         if value == val then
             return true
@@ -28,30 +28,30 @@ function functions.has_value(tab, val)
     return false
 end
 
-function functions.starts_with(str, start)
+function utils.starts_with(str, start)
     return str:sub(1, #start) == start
 end
 
-function functions.is_table_empty(table_)
+function utils.is_table_empty(table_)
     return not table_ or not next(table_)
 end
 
-function functions.array_concat(source, destination)
+function utils.array_concat(source, destination)
     table.foreach(source, function(_, value)
         table.insert(destination, value)
     end)
     return destination
 end
 
-function functions.dict_merge(source, destination)
+function utils.dict_merge(source, destination)
     table.foreach(source, function(key, value)
         destination[key] = value
     end)
     return destination
 end
 
-function functions.is_excluded(name)
+function utils.is_excluded(name)
     return name == 'lo'
 end
 
-return functions
+return utils
