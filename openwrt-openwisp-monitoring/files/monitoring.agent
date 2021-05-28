@@ -42,7 +42,7 @@ collect_data(){
 	do
 		echo "$(/usr/sbin/netjson_monitoring "$MONITORED_INTERFACES")" && break
 		
-		if [ "$n" -ne 5 ]; then
+		if [ "$n" -eq 5 ]; then
 			logger -s "Collecting data failed! Retrying" \
 			       -t monitoring \
 			       -p daemon.err
