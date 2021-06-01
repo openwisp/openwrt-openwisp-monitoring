@@ -32,13 +32,20 @@ UCI configuration options must go in ``/etc/config/monitoring``.
 - ``monitored_interfaces``: interfaces that needs to be monitored, defaults to ``*`` for all interfaces.
 - ``interval``: time after which device data should be sent to server, defaults to ``300``
 
-Compiling openwisp-netjson-monitoring
--------------------------
+Compiling openwrt-openwisp-monitoring
+-------------------------------------
 
 There are 2 packages for *openwisp-netjson-monitoring*:
 
 - **netjson-monitoring**: provides NetJSON Device Monitoring output
 - **openwisp-monitoring**: depends on **netjson-monitoring** and **openwisp-config**
+
+There are four variants of openwisp-monitoring:
+
+- **openwisp-monitoring-openssl**: depends on *openwisp-config-openssl* and *netjson-monitoring*
+- **openwisp-monitoring-mbedtls**: depends on *openwisp-config-mbedtls* and *netjson-monitoring*
+- **openwisp-monitoring-wolfssl**: depends on *openwisp-config-wolfssl* and *netjson-monitoring*
+- **openwisp-monitoring-nossl**: depends on *openwisp-config-nossl* and *netjson-monitoring*
 
 The following procedure illustrates how to compile both *openwisp-monitoring* and *netjson-monitoring*:
 
@@ -57,9 +64,11 @@ The following procedure illustrates how to compile both *openwisp-monitoring* an
     arch="ar71xx"
     echo "CONFIG_TARGET_$arch=y" > .config
     echo "CONFIG_PACKAGE_rpcd=y" >> .config
-    echo "CONFIG_PACKAGE_rpcd-mod-iwinfo=y" >> .config
-    echo "CONFIG_PACKAGE_openwisp-monitoring=y" >> .config
     echo "CONFIG_PACKAGE_netjson-monitoring=y" >> .config
+    echo "CONFIG_PACKAGE_openwisp-monitoring-mbedtls=y" >> .comfig
+    echo "CONFIG_PACKAGE_openwisp-monitoring-nossl=y" >> .comfig
+    echo "CONFIG_PACKAGE_openwisp-monitoring-openssl=y" >> .comfig
+    echo "CONFIG_PACKAGE_openwisp-monitoring-wolfssl=y" >> .comfig    
     make defconfig
     make tools/install
     make toolchain/install
@@ -82,7 +91,7 @@ you will need to select the *openwisp-monitoring* and *netjson-monitoring* by go
     ./scripts/feeds update -a
     ./scripts/feeds install -a
     make menuconfig
-    # go to Base system, then select rpcd and rpcd-mod-iwinfo
+    # go to Base system, then select rpcd
     # go to Administration > admin > openwisp and select the packages you need interactively
     make tools/install
     make toolchain/install

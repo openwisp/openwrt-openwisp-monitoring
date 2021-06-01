@@ -37,9 +37,9 @@ start_service() {
     [ -n "$verify_ssl" ] && verify_ssl="--verify_ssl $verify_ssl"
 
     # for openwisp_monitoring
-    config_load monitoring
-    config_get monitored_interfaces monitoring monitored_interfaces "*"
-    config_get interval monitoring interval "300"
+    config_load openwisp_monitoring
+    config_get monitored_interfaces openwisp_monitoring monitored_interfaces "*"
+    config_get interval openwisp_monitoring interval "300"
 
     interval="$(time_to_seconds "$interval")"
     if [ "$interval" -lt 1 ]; then
