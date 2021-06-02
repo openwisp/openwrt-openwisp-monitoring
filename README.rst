@@ -38,7 +38,7 @@ Compiling openwrt-openwisp-monitoring
 There are 2 packages for *openwisp-netjson-monitoring*:
 
 - **netjson-monitoring**: provides NetJSON Device Monitoring output
-- **openwisp-monitoring**: depends on **netjson-monitoring** and **openwisp-config**
+- **openwisp-monitoring**: depends on **netjson-monitoring** and `openwisp-config <https://github.com/openwisp/openwisp-config>`_
 
 There are four variants of openwisp-monitoring:
 
@@ -47,11 +47,11 @@ There are four variants of openwisp-monitoring:
 - **openwisp-monitoring-wolfssl**: depends on *openwisp-config-wolfssl* and *netjson-monitoring*
 - **openwisp-monitoring-nossl**: depends on *openwisp-config-nossl* and *netjson-monitoring*
 
-The following procedure illustrates how to compile both *openwisp-monitoring* and *netjson-monitoring*:
+The following procedure illustrates how to compile all variants of *openwisp-monitoring*, *netjson-monitoring* and their dependencies:
 
 .. code-block:: shell
 
-    git clone https://github.com/openwrt/openwrt.git openwrt
+    git clone https://git.openwrt.org/openwrt/openwrt.git
     cd openwrt
     git checkout openwrt-19.07
 
@@ -60,15 +60,11 @@ The following procedure illustrates how to compile both *openwisp-monitoring* an
     cat feeds.conf.default >> feeds.conf
     ./scripts/feeds update -a
     ./scripts/feeds install -a
-    # any arch/target is fine because the package is architecture indipendent
-    arch="ar71xx"
-    echo "CONFIG_TARGET_$arch=y" > .config
-    echo "CONFIG_PACKAGE_rpcd=y" >> .config
     echo "CONFIG_PACKAGE_netjson-monitoring=y" >> .config
-    echo "CONFIG_PACKAGE_openwisp-monitoring-mbedtls=y" >> .comfig
-    echo "CONFIG_PACKAGE_openwisp-monitoring-nossl=y" >> .comfig
-    echo "CONFIG_PACKAGE_openwisp-monitoring-openssl=y" >> .comfig
-    echo "CONFIG_PACKAGE_openwisp-monitoring-wolfssl=y" >> .comfig    
+    echo "CONFIG_PACKAGE_openwisp-monitoring-mbedtls=y" >> .config
+    echo "CONFIG_PACKAGE_openwisp-monitoring-nossl=y" >> .config
+    echo "CONFIG_PACKAGE_openwisp-monitoring-openssl=y" >> .config
+    echo "CONFIG_PACKAGE_openwisp-monitoring-wolfssl=y" >> .config    
     make defconfig
     make tools/install
     make toolchain/install
@@ -77,13 +73,13 @@ The following procedure illustrates how to compile both *openwisp-monitoring* an
 The compiled packages will go in ``bin/packages/*/openwisp``.
 
 Alternatively, you can configure your build interactively with ``make menuconfig``, in this case
-you will need to select the *openwisp-monitoring* and *netjson-monitoring* by going to ``Network > openwisp``:
+you will need to select the *openwisp-monitoring* variant and *netjson-monitoring* by going to ``Administration > admin > openwisp``:
 
 .. code-block:: shell
 
-    git clone https://github.com/openwrt/openwrt.git openwrt
+    git clone https://git.openwrt.org/openwrt/openwrt.git
     cd openwrt
-    git checkout openwrt-19.07
+    git checkout openwrt-21.02
 
     # configure feeds
     echo "src-git openwisp https://github.com/openwisp/openwisp-config.git" > feeds.conf
@@ -105,19 +101,15 @@ and then started with::
 Debugging
 ---------
 
-Debugging *openwisp-monitoring package* can be easily done by using the ``logread`` command:
-
-.. code-block:: shell
+Debugging *openwisp-monitoring package* can be easily done by using the ``logread`` command::
 
     logread
 
-Use grep to filter out any other log message:
-
-.. code-block:: shell
+Use grep to filter out any other log message::
 
     logread | grep monitoring
 
-If you are in doubt openwisp-config is running at all, you can check with::
+If you are in that doubt openwisp-monitoring is running at all or not, you can check with::
 
     ps | grep monitoring
 

@@ -30,7 +30,7 @@ define Package/netjson-monitoring
 	CATEGORY:=Administration
 	SECTION:=admin
 	SUBMENU:=openwisp
-	DEPENDS:=+libubus-lua +lua-cjson +rpcd-mod-iwinfo
+	DEPENDS:=+libubus-lua +lua-cjson +rpcd +rpcd-mod-iwinfo
 	PKGARCH:=all
 	URL:=http://openwisp.org
 endef
@@ -62,7 +62,7 @@ define Package/openwisp-monitoring-$(BUILD_VARIANT)/install
 		$(1)/usr/sbin \
 		$(1)/etc/init.d \
 		$(1)/etc/config \
-		$(1)/etc/monitoring
+		$(1)/etc/openwisp/monitoring
 
 	$(INSTALL_BIN) \
 		files/monitoring.agent \
@@ -76,7 +76,7 @@ define Package/openwisp-monitoring-$(BUILD_VARIANT)/install
 		files/monitoring.config \
 		$(1)/etc/config/openwisp_monitoring
 
-	$(CP) ../VERSION $(1)/etc/monitoring/
+	$(CP) ../VERSION $(1)/etc/openwisp/monitoring/
 
 endef
 

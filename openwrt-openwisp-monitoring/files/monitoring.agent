@@ -19,18 +19,17 @@ while [ -n "$1" ]; do
 done
 
 if [ "$VERSION" -eq "1" ]; then
-	VERSION=$(cat /etc/monitoring/VERSION)
+	VERSION=$(cat /etc/openwisp/monitoring/VERSION)
 	echo "openwisp-monitoring $VERSION"
 	exit 0
 fi
 
-if [ "$verify_ssl" = 0 ]; then
-    curl_command='curl -k'
-else
-    curl_command='curl'
+CURL_COMMAND='curl'
+if [ "$verify_ssl" == 0 ]; then
+	CURL_COMMAND='$CURL_COMMAND -k'
 fi
 
-url="$BASE_URL/api/v1/monitoring/device/$UUID/?key=$KEY"
+URL="$BASE_URL/api/v1/monitoring/device/$UUID/?key=$KEY"
 
 collect_data(){
 	n=0
@@ -59,7 +58,7 @@ do
 	$($curl_command -H "Content-Type: application/json" \
 					-X POST \
 					-d "$data" \
-					-v "$url")
+					-v "$URL")
 	exit_code=$?
 	if [ "$exit_code" == "0" ]; then
 		logger -s "Data sent successfully." \
