@@ -1,0 +1,54 @@
+#!/bin/bash
+# ci build script
+# runs tests and then builds the OpenWRT package
+# requires the following env vars:
+# - $BUILD_DIR
+# - $DOWNLOADS_DIR
+# - $CORES (defaults to 1)
+set -e
+
+BUILD_DIR=${BUILD_DIR-./build}
+DOWNLOADS_DIR=${DOWNLOADS_DIR-./downloads}
+START_TIME=$(date +"%Y-%m-%d-%H%M%S")
+VERSIONED_DIR="$DOWNLOADS_DIR/$START_TIME"
+LATEST_LINK="$DOWNLOADS_DIR/latest"
+CORES=${CORES:-1}
+CURRENT_DIR=$(pwd)
+OPENWRT_BRANCH="openwrt-21.02"
+
+mkdir -p $BUILD_DIR
+mkdir -p $VERSIONED_DIR
+cd $BUILD_DIR
+
+if ! [ -d "openwrt" ]; then
+  git clone https://git.openwrt.org/openwrt/openwrt.git
+fi
+cd openwrt
+git reset --hard HEAD
+git fetch origin
+git checkout $OPENWRT_BRANCH
+git reset --hard origin/$OPENWRT_BRANCH
+
+# configure feeds
+echo "src-link openwisp $CURRENT_DIR" > feeds.conf
+cat feeds.conf.default >> feeds.conf
+# remove unneeded feeds
+sed -i '/telephony/d' feeds.conf
+sed -i '/routing/d' feeds.conf
+./scripts/feeds update -a
+./scripts/feeds install -a
+# add required packages
+echo "CONFIG_PACKAGE_netjson-monitoring=y" >> .config
+echo "CONFIG_PACKAGE_openwisp-monitoring-mbedtls=y" >> .config
+echo "CONFIG_PACKAGE_openwisp-monitoring-nossl=y" >> .config
+echo "CONFIG_PACKAGE_openwisp-monitoring-openssl=y" >> .config
+echo "CONFIG_PACKAGE_openwisp-monitoring-wolfssl=y" >> .config
+make defconfig
+make -j$CORES tools/install
+make -j$CORES toolchain/install
+make -j$CORES package/openwrt-openwisp-monitoring/compile || exit 1
+
+mv $BUILD_DIR/openwrt/bin/packages/mips_24kc/openwisp $VERSIONED_DIR
+
+rm $LATEST_LINK || true
+ln -s $VERSIONED_DIR $LATEST_LINK
