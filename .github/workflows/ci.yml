@@ -4,9 +4,11 @@ on:
   push:
     branches:
       - master
+      - gsoc21
   pull_request:
     branches:
       - master
+      - gsoc21
 
 jobs:
 
