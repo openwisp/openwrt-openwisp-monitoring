@@ -1,0 +1,68 @@
+name: OpenWRT OPENWISP MONITORING CI Build
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+jobs:
+
+  tests:
+    name: QA-Checks and Tests
+    runs-on: ubuntu-20.04
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.7
+
+      - name: Install Python dependencies
+        run: pip install openwisp-utils[qa]>=0.7
+
+      - name: QA-Checks
+        run: openwisp-qa-check --skip-checkmigrations --skip-isort --skip-flake8 --skip-black
+
+  build:
+    name: Build and upload package as artifacts
+    needs: tests
+    runs-on: ubuntu-20.04
+    env:
+      BUILD_DIR: '/home/runner/work/build'
+      DOWNLOADS_DIR: '/home/runner/work/downloads'
+      CORES: 2
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      - name: Set Environment
+        run: echo "START_TIME=$(date +"%Y-%m-%d-%H%M%S")" >> $GITHUB_ENV
+
+      - name: Install dependencies
+        run: sudo apt install gawk
+
+      - name: Run Build
+        run: ./runbuild
+
+      - name: Cache OpenWRT dependencies
+        uses: actions/cache@v2
+        env:
+          cache-name: cache-openwrt-dependencies
+        with:
+          path: '/home/runner/work/build'
+          key: ${{ runner.os }}-build-${{ env.cache-name }}
+
+      - name: Upload packages as artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: Packages
+          path: "${{ env.DOWNLOADS_DIR }}/${{ env.START_TIME }}"

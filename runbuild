@@ -9,7 +9,7 @@ set -e
 
 BUILD_DIR=${BUILD_DIR-./build}
 DOWNLOADS_DIR=${DOWNLOADS_DIR-./downloads}
-START_TIME=$(date +"%Y-%m-%d-%H%M%S")
+START_TIME=${START_TIME-$(date +"%Y-%m-%d-%H%M%S")}
 VERSIONED_DIR="$DOWNLOADS_DIR/$START_TIME"
 LATEST_LINK="$DOWNLOADS_DIR/latest"
 CORES=${CORES:-1}
