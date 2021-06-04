@@ -46,6 +46,15 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.head.sha }}
 
+      - name: Cache OpenWRT dependencies
+        id: cache
+        uses: actions/cache@v2
+        env:
+          cache-name: cache-openwrt-dependencies
+        with:
+          path: '/home/runner/work/build'
+          key: ${{ runner.os }}-build-${{ env.cache-name }}
+
       - name: Set Environment
         run: echo "START_TIME=$(date +"%Y-%m-%d-%H%M%S")" >> $GITHUB_ENV
 
@@ -54,14 +63,8 @@ jobs:
 
       - name: Run Build
         run: ./runbuild
-
-      - name: Cache OpenWRT dependencies
-        uses: actions/cache@v2
         env:
-          cache-name: cache-openwrt-dependencies
-        with:
-          path: '/home/runner/work/build'
-          key: ${{ runner.os }}-build-${{ env.cache-name }}
+          CI_CACHE: ${{ steps.cache.outputs.cache-hit }}
 
       - name: Upload packages as artifacts
         uses: actions/upload-artifact@v2
