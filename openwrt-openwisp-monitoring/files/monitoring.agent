@@ -1,0 +1,74 @@
+#!/bin/sh
+
+while [ -n "$1" ]; do
+	case "$1" in
+		--version|-v) export VERSION=1; break;;
+		--url) export BASE_URL="$2"; shift;;
+		--uuid) export UUID="$2"; shift;;
+		--key) export KEY="$2"; shift;;
+		--verify_ssl) export verify_ssl="$2"; shift;;
+		--interval) export INTERVAL="$2"; shift;;
+		--monitored_interfaces) export MONITORED_INTERFACES=$2; shift;;
+		-*)
+			echo "Invalid option: $1"
+			exit 1
+		;;
+		*) break;
+	esac
+	shift;
+done
+
+if [ "$VERSION" -eq "1" ]; then
+	VERSION=$(cat /etc/openwisp/monitoring/VERSION)
+	echo "openwisp-monitoring $VERSION"
+	exit 0
+fi
+
+CURL_COMMAND='curl'
+if [ "$verify_ssl" == 0 ]; then
+	CURL_COMMAND='$CURL_COMMAND -k'
+fi
+
+URL="$BASE_URL/api/v1/monitoring/device/$UUID/?key=$KEY"
+
+collect_data(){
+	n=0
+	logger -s "Collecting NetJSoN Monitoring data" \
+	       -t monitoring \
+	       -p daemon.info
+
+	until [ "$n" -ge 5 ]
+	do
+		echo "$(/usr/sbin/netjson_monitoring "$MONITORED_INTERFACES")" && break
+		
+		if [ "$n" -eq 5 ]; then
+			logger -s "Collecting data failed! Retrying" \
+			       -t monitoring \
+			       -p daemon.err
+		fi
+		n=$((n+1))
+		sleep 5
+	done
+}
+
+while true
+do
+	data="$(collect_data)"
+	#send data
+	$($curl_command -H "Content-Type: application/json" \
+					-X POST \
+					-d "$data" \
+					-v "$URL")
+	exit_code=$?
+	if [ "$exit_code" == "0" ]; then
+		logger -s "Data sent successfully." \
+		       -t monitoring \
+		       -p daemon.info
+	else
+		logger -s "Data not sent successfully. Exit code is $exit_code" \
+		       -t monitoring \
+		       -p daemon.err
+	fi
+
+	sleep "$INTERVAL" & wait $!
+done
