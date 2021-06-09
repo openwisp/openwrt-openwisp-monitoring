@@ -74,6 +74,10 @@ define Package/netjson-monitoring/install
 		$(1)/usr/lib/lua/openwisp/neighbors.lua
 
 	$(INSTALL_BIN) \
+		files/lib/openwisp/resources.lua \
+		$(1)/usr/lib/lua/openwisp/resources.lua
+
+	$(INSTALL_BIN) \
 		files/lib/openwisp/wifi.lua \
 		$(1)/usr/lib/lua/openwisp/wifi.lua
 

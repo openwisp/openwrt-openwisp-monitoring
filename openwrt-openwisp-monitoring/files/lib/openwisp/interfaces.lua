@@ -1,5 +1,6 @@
 -- retrieve interfaces information
-local utils = require('utils')
+local utils = require('monitoring.utils')
+
 local cjson = require('cjson')
 local nixio = require('nixio')
 local nixio_data = nixio.getifaddrs()
