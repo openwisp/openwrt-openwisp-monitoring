@@ -35,6 +35,9 @@ jobs:
       - name: QA-Checks
         run: ./run-qa-checks
 
+      - name: Tests
+        run: ./runtests
+
   build:
     name: Build and upload package as artifacts
     needs: tests
