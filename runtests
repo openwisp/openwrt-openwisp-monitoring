@@ -1,3 +1,0 @@
-#!/bin/bash
-set -e
-luacheck ./openwrt-openwisp-monitoring/ -a

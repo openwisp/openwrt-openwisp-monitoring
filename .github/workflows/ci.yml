@@ -33,10 +33,7 @@ jobs:
         run: sudo ./install-dev.sh
 
       - name: QA-Checks
-        run: openwisp-qa-check --skip-checkmigrations --skip-isort --skip-flake8 --skip-black
-
-      - name: Tests
-        run: ./runtests
+        run: ./run-qa-checks
 
   build:
     name: Build and upload package as artifacts

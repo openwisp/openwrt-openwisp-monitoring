@@ -19,7 +19,6 @@ function neighbors.parse_arp()
     return arp_info
 end
 
-
 function neighbors.get_ip_neigh_json()
     local arp_info = {}
     local output = io.popen('ip -json neigh 2> /dev/null'):read()
@@ -37,7 +36,6 @@ function neighbors.get_ip_neigh_json()
     return arp_info
 end
 
-
 function neighbors.get_ip_neigh()
     local arp_info = {}
     local output = io.popen('ip neigh 2> /dev/null')
@@ -54,7 +52,6 @@ function neighbors.get_ip_neigh()
     end
     return arp_info
 end
-
 
 function neighbors.get_neighbors()
     local arp_table = neighbors.get_ip_neigh_json()
