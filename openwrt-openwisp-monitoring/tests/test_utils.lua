@@ -1,8 +1,8 @@
-package.path = package.path .. ";../?.lua"
+package.path = package.path .. ";../files/lib/?.lua"
 
 local luaunit = require('luaunit')
 
-local utils = require('../utils')
+local utils = require('monitoring_utils')
 
 function testSplitFunction()
 	-- When pattern is present

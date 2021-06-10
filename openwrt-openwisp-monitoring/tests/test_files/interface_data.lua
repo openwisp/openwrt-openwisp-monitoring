@@ -163,13 +163,10 @@ data.random_interface_address = {}
 
 data.eth1_addresses = {
     {address="10.0.2.4", family="ipv4", gateway="10.0.2.1", mask=24, proto="dhcp"},
-    {address="10.0.3.15", family="ipv4", mask=24, proto="dhcp"},
-    {address="fe80::a00:27ff:fe71:2291", family="ipv6", mask=64, proto="static"}
 }
 
 data.br_mng_addresses = {
     {address="192.168.56.2", family="ipv4", mask=24, proto="static"},
-    {address="fe80::a00:27ff:fed1:90b0", family="ipv6", mask=64, proto="static"}
 }
 
 return data

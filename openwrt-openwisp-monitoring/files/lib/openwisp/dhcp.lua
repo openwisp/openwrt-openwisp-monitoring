@@ -1,9 +1,8 @@
 -- retrieve dhcp leases
-local utils = require('openwisp.monitoring_utils')
-
+local utils = require('monitoring_utils')
 local uci = require('uci')
 local uci_cursor = uci.cursor()
-
+local io = require('io')
 local dhcp = {}
 
 function dhcp.parse_dhcp_lease_file(path, leases)
