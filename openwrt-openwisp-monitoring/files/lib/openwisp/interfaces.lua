@@ -1,5 +1,5 @@
 -- retrieve interfaces information
-local utils = require('monitoring.utils')
+local utils = require('openwisp.monitoring_utils')
 
 local cjson = require('cjson')
 local nixio = require('nixio')
@@ -86,7 +86,7 @@ function interfaces.new_address_array(address, interface, family)
         mask = address['mask'],
         proto = proto,
         family = family,
-        gateway = interface.find_default_gateway(interface.route)
+        gateway = interfaces.find_default_gateway(interface.route)
     }
     return new_address
 end

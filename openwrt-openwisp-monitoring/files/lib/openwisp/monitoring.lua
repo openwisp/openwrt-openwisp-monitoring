@@ -1,10 +1,10 @@
 local monitoring = {}
 
-monitoring.dhcp = require('dhcp')
-monitoring.interfaces = require('interfaces')
-monitoring.neighbors = require('neighbors')
-monitoring.resources = require('resources')
-monitoring.utils = require('monitoring_utils')
-monitoring.wifi = require('wifi')
+monitoring.dhcp = require('openwisp.dhcp')
+monitoring.interfaces = require('openwisp.interfaces')
+monitoring.neighbors = require('openwisp.neighbors')
+monitoring.resources = require('openwisp.resources')
+monitoring.utils = require('openwisp.monitoring_utils')
+monitoring.wifi = require('openwisp.wifi')
 
 return monitoring
