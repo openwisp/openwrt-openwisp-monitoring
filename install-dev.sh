@@ -1,3 +1,4 @@
+#!/bin/sh
 set -e
 apt-get update
 # install lua
