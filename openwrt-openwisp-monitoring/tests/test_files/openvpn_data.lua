@@ -1,4 +1,4 @@
-openvpn={
+local openvpn={
   custom_config = {
     [".anonymous"] = false,
     [".index"] = 0,

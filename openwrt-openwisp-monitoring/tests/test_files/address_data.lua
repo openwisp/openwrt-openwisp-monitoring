@@ -1,4 +1,4 @@
-test_data = {}
+local test_data = {}
 
 
 test_data.eth2_interface = {

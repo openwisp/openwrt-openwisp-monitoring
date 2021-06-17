@@ -1,6 +1,6 @@
 -- retrieve neighbors information
 local cjson = require('cjson')
-
+local io = require('io')
 local neighbors = {}
 -- parse /proc/net/arp
 function neighbors.parse_arp()

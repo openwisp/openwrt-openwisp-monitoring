@@ -1,25 +1,20 @@
-package.path = package.path .. ";../files/lib/?.lua"
+package.path = package.path .. ";../files/lib/openwisp/?.lua"
 
 local luaunit = require('luaunit')
 
-local io = require('io')
-
-local neighbor = require('neighbors')
 local neighbor_data = require('test_files/neighbors_data')
 
-local test_file_dir = './test_files/'
+TestNeighbor = {
+    setUp = function()
+	local env = require('env1')
+	package.loaded.io = env.io
+    end,
+    tearDown = function()
+    end
+}
 
-io.popen = function(arg)
-	if arg == 'cat /proc/net/arp 2> /dev/null' then
-		return io.open(test_file_dir .. 'parse_app.txt')
-	elseif arg == 'ip -json neigh 2> /dev/null' then
-		return io.open(test_file_dir .. 'ip_json_neigh.txt')
-	elseif arg == 'ip neigh 2> /dev/null' then
-		return io.open(test_file_dir .. 'ip_neigh.txt')
-	end
-end
-
-function testArpTable()
+function TestNeighbor.testArpTable()
+	local neighbor = require('neighbors')
 
 	luaunit.assertEquals(neighbor.parse_arp(), neighbor_data.sample_parse_arp)
 

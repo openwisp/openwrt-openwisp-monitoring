@@ -1,4 +1,4 @@
-dhcp = {}
+local dhcp = {}
 
 dhcp.config = {
   dnsmasq1 = {

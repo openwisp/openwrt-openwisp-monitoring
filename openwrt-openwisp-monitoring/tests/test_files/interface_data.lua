@@ -1,6 +1,6 @@
-data = {}
+local test_data = {}
 
-data.interface_data = {
+test_data.interface_data = {
   interface = { {
       autostart = true,
       available = true,
@@ -159,14 +159,14 @@ data.interface_data = {
     } }
 }
 
-data.random_interface_address = {}
+test_data.random_interface_address = {}
 
-data.eth1_addresses = {
+test_data.eth1_addresses = {
     {address="10.0.2.4", family="ipv4", gateway="10.0.2.1", mask=24, proto="dhcp"},
 }
 
-data.br_mng_addresses = {
+test_data.br_mng_addresses = {
     {address="192.168.56.2", family="ipv4", mask=24, proto="static"},
 }
 
-return data
+return test_data

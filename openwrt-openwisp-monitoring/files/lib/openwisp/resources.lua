@@ -1,4 +1,6 @@
 -- retrieve resources usage
+local io = require('io')
+
 local resources = {}
 
 function resources.parse_disk_usage()

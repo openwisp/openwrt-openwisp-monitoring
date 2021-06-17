@@ -1,10 +1,12 @@
-package.path = package.path .. ";../files/lib/?.lua"
+package.path = package.path .. ";../files/lib/openwisp/?.lua"
 
 local luaunit = require('luaunit')
 
 local utils = require('monitoring_utils')
 
-function testSplitFunction()
+TestUtils = {}
+
+function TestUtils.testSplitFunction()
 	-- When pattern is present
 	luaunit.assertEquals(utils.split("OpenWISP","n"), {"Ope", "WISP"})
 	luaunit.assertEquals(utils.split("OpenWISP","WISP"), {"Open"})
@@ -13,7 +15,7 @@ function testSplitFunction()
 	luaunit.assertEquals(utils.split("OpenWISP","a"), {"OpenWISP"})
 end
 
-function testHasValue()
+function TestUtils.testHasValue()
 	-- When value is present
 	luaunit.assertEquals(utils.has_value({2,4,5},4), true)
 	luaunit.assertEquals(utils.has_value({1,2,3,7,9},9), true)
@@ -24,7 +26,7 @@ function testHasValue()
 
 end
 
-function testStartsWith()
+function TestUtils.testStartsWith()
 	-- When string starts with the substring given
 	luaunit.assertEquals(utils.starts_with("OpenWISP", "Open"), true)
 	luaunit.assertEquals(utils.starts_with("NetJSON", "Net"), true)
@@ -33,7 +35,7 @@ function testStartsWith()
 	luaunit.assertEquals(utils.starts_with("OpenWISP", "Ov"), false)
 end
 
-function testTableEmpty()
+function TestUtils.testTableEmpty()
 	-- When table is empty
 	luaunit.assertEquals(utils.is_table_empty(nil), true)
 	luaunit.assertEquals(utils.is_table_empty({}), true)
@@ -43,13 +45,13 @@ function testTableEmpty()
 	luaunit.assertEquals(utils.is_table_empty({"wireless", "wired", "system"}), false)
 end
 
-function testArrayConcat()
+function TestUtils.testArrayConcat()
 	luaunit.assertEquals(utils.array_concat({4,5,6},{1,2,3}), {1, 2, 3, 4, 5, 6})
 	luaunit.assertEquals(utils.array_concat({"wireless"},{"wired"}), {"wired", "wireless"})
 	luaunit.assertEquals(utils.array_concat({"system", "network"},{"firewall"}), {"firewall", "system", "network"})
 end
 
-function testDictMerge()
+function TestUtils.testDictMerge()
 	luaunit.assertEquals(utils.dict_merge({['1']='OpenWISP'},{['3']='NetJSON'}),  {["1"]="OpenWISP", ["3"]="NetJSON"})
 	luaunit.assertEquals(utils.dict_merge({['1']='OpenWISP'},{['1']='NetJSON'}),  {["1"]="OpenWISP"})
 end

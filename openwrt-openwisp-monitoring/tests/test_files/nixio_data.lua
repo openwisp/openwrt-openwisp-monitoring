@@ -1,4 +1,4 @@
-nixio_data = { {
+local nixio_data = { {
     addr = "00:00:00:00:00:00",
     broadaddr = "00:00:00:00:00:00",
     data = {

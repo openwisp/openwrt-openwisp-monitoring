@@ -1,4 +1,4 @@
-test_data = {}
+local test_data = {}
 
 test_data.sample_parse_arp = {
     {interface="eth1", ip="10.0.2.1", mac="52:54:00:12:35:00", state=""},
