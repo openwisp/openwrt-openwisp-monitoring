@@ -1,11 +1,8 @@
 package.path = package.path .. ";../files/lib/?.lua"
 
-local inspect = require('inspect')
 local env = {}
 local dhcp_data = require('test_files/dhcp_data')
 local test_file_dir = './test_files/'
-
-env.inspect = inspect
 
 env.uci = {
     cursor = function()

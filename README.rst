@@ -136,6 +136,14 @@ Run quality assurance tests with::
 
     ./run-qa-checks
 
+You can run all unit tests by launching the dedicated script::
+
+    ./runtests
+
+Alternatively, you can run specific tests, e.g.::
+
+    cd openwrt-openwisp-monitoring/tests/
+    lua test_utils.lua -v
 
 Contributing
 ------------
