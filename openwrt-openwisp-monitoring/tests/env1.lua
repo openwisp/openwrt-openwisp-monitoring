@@ -29,29 +29,29 @@ env.uci = {
 }
 
 env.io = {
-	popen = function(arg)
-		if arg == 'df' then
-			return io.open(test_file_dir .. 'disk_usage.txt')
-		elseif arg == 'cat /proc/cpuinfo | grep -c processor' then
-			local f = assert(io.tmpfile())
-			f:write('8')
-			f:seek('set',0)
-			return f
-		elseif arg == 'cat /proc/net/arp 2> /dev/null' then
-			return io.open(test_file_dir .. 'parse_app.txt')
-		elseif arg == 'ip -json neigh 2> /dev/null' then
-			return io.open(test_file_dir .. 'ip_json_neigh.txt')
-		elseif arg == 'ip neigh 2> /dev/null' then
-			return io.open(test_file_dir .. 'ip_neigh.txt')
-		end
-	end,
-	open = function(arg)
-		if arg == '/tmp/dhcp.leases' then
-			return io.open('./test_files/dhcp_leases.txt')
-		else
-			return io.open(arg)
-		end
-	end
+    popen = function(arg)
+        if arg == 'df' then
+            return io.open(test_file_dir .. 'disk_usage.txt')
+        elseif arg == 'cat /proc/cpuinfo | grep -c processor' then
+            local f = assert(io.tmpfile())
+            f:write('8')
+            f:seek('set',0)
+            return f
+        elseif arg == 'cat /proc/net/arp 2> /dev/null' then
+            return io.open(test_file_dir .. 'parse_app.txt')
+        elseif arg == 'ip -json neigh 2> /dev/null' then
+            return io.open(test_file_dir .. 'ip_json_neigh.txt')
+        elseif arg == 'ip neigh 2> /dev/null' then
+            return io.open(test_file_dir .. 'ip_neigh.txt')
+        end
+    end,
+    open = function(arg)
+        if arg == '/tmp/dhcp.leases' then
+            return io.open('./test_files/dhcp_leases.txt')
+        else
+            return io.open(arg)
+        end
+    end
 }
 
 env.ubus = {
