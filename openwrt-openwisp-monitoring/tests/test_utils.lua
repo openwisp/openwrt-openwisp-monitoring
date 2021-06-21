@@ -56,4 +56,9 @@ function TestUtils.testDictMerge()
     luaunit.assertEquals(utils.dict_merge({['1']='OpenWISP'},{['1']='NetJSON'}),  {["1"]="OpenWISP"})
 end
 
+function TestUtils.testIsExcluded()
+    luaunit.assertEquals(utils.is_excluded('lo'), true)
+    luaunit.assertEquals(utils.is_excluded('wlo1'), false)
+end
+
 os.exit(luaunit.LuaUnit.run())

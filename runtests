@@ -7,3 +7,4 @@ lua test_interfaces.lua -v
 lua test_utils.lua -v
 lua test_neighbors.lua -v
 lua test_resources.lua -v
+lua test_wifi.lua -v
