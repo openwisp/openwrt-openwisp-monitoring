@@ -1,6 +1,8 @@
 #!/usr/bin/env lua
 -- retrieve monitoring information
 -- and return it as NetJSON Output
+package.path = package.path .. ";../files/lib/?.lua"
+
 local cjson = require('cjson')
 local io = require('io')
 
@@ -18,7 +20,6 @@ local board = ubus:call('system', 'board', {})
 local loadavg_output = io.popen('cat /proc/loadavg'):read()
 loadavg_output = monitoring.utils.split(loadavg_output, ' ')
 local load_average = {tonumber(loadavg_output[1]), tonumber(loadavg_output[2]), tonumber(loadavg_output[3])}
-
 
 -- init netjson data structure
 local netjson = {
@@ -185,3 +186,4 @@ if next(dns_search) ~= nil then
 end
 
 print(cjson.encode(netjson))
+return cjson.encode(netjson)

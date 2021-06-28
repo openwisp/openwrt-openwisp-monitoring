@@ -1,3 +1,5 @@
+package.path = package.path .. ";../files/lib/?.lua"
+
 local monitoring = {}
 
 monitoring.dhcp = require('openwisp.dhcp')
