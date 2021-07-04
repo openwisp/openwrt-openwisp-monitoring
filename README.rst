@@ -82,7 +82,7 @@ you will need to select the *openwisp-monitoring* variant and *netjson-monitorin
     git checkout openwrt-21.02
 
     # configure feeds
-    echo "src-git openwisp https://github.com/openwisp/openwisp-config.git" > feeds.conf
+    echo "src-git openwisp https://github.com/openwisp/openwisp-monitoring.git" > feeds.conf
     cat feeds.conf.default >> feeds.conf
     ./scripts/feeds update -a
     ./scripts/feeds install -a
@@ -117,7 +117,7 @@ You should see something like::
 
     2713 root      1224 S    /bin/sh /usr/sbin/openwisp_monitoring --url http://192.168.1.195:8000 ...
 
-You can inspect the version of openwisp-config currently installed with::
+You can inspect the version of openwisp-monitoring currently installed with::
 
     openwisp_monitoring --version
 
