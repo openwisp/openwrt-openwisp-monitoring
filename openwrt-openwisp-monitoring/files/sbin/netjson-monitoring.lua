@@ -11,14 +11,6 @@ end
 
 local monitoring = require('openwisp.monitoring')
 
--- helpers
-local iwinfo_modes = {
-    ['Master'] = 'access_point',
-    ['Client'] = 'station',
-    ['Mesh Point'] = '802.11s',
-    ['Ad-Hoc'] = 'adhoc'
-}
-
 -- collect system info
 local system_info = ubus:call('system', 'info', {})
 local board = ubus:call('system', 'board', {})
@@ -90,7 +82,7 @@ for _, radio in pairs(wireless_status) do
                 type = 'wireless',
                 wireless = {
                     ssid = iwinfo.ssid,
-                    mode = iwinfo_modes[iwinfo.mode] or iwinfo.mode,
+                    mode = monitoring.wifi.iwinfo_modes[iwinfo.mode] or iwinfo.mode,
                     channel = iwinfo.channel,
                     frequency = iwinfo.frequency,
                     tx_power = iwinfo.txpower,
@@ -116,22 +108,6 @@ for _, radio in pairs(wireless_status) do
             wireless_interfaces[name] = netjson_interface
         end
     end
-end
-
-local function needs_inversion(interface)
-    return interface.type == 'wireless' and interface.wireless.mode == 'access_point'
-end
-
-local function invert_rx_tx(interface)
-    for k, v in pairs(interface) do
-        if string.sub(k, 0, 3) == "rx_" then
-            local tx_key = "tx_" .. string.sub(k, 4)
-            local tx_val = interface[tx_key]
-            interface[tx_key] = v
-            interface[k] = tx_val
-        end
-    end
-    return interface
 end
 
 -- collect interface stats
@@ -165,11 +141,11 @@ for name, interface in pairs(network_status) do
             end
         end
         if include_stats[name] or traffic_monitored == '*' then
-            if needs_inversion(netjson_interface) then
+            if monitoring.wifi.needs_inversion(netjson_interface) then
                 --- ensure wifi access point interfaces
                 --- show download and upload values from
                 --- the user's perspective and not from the router perspective
-                interface.statistics = invert_rx_tx(interface.statistics)
+                interface.statistics = monitoring.wifi.invert_rx_tx(interface.statistics)
             end
             netjson_interface.statistics = interface.statistics
         end

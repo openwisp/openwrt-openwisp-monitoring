@@ -1,5 +1,29 @@
 local wifi = {}
 
+-- helpers
+wifi.iwinfo_modes = {
+    ['Master'] = 'access_point',
+    ['Client'] = 'station',
+    ['Mesh Point'] = '802.11s',
+    ['Ad-Hoc'] = 'adhoc'
+}
+
+function wifi.needs_inversion(interface)
+    return interface.type == 'wireless' and interface.wireless.mode == 'access_point'
+end
+
+function wifi.invert_rx_tx(interface)
+    for k, v in pairs(interface) do
+        if string.sub(k, 0, 3) == "rx_" then
+            local tx_key = "tx_" .. string.sub(k, 4)
+            local tx_val = interface[tx_key]
+            interface[tx_key] = v
+            interface[k] = tx_val
+        end
+    end
+    return interface
+end
+
 function wifi.parse_hostapd_clients(clients)
   local data = {}
   for mac, properties in pairs(clients) do
