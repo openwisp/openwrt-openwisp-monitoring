@@ -24,7 +24,7 @@ if [ "$VERSION" -eq "1" ]; then
   exit 0
 fi
 
-CURL_COMMAND='curl'
+CURL_COMMAND='curl -w "%{http_code}"'
 if [ "$verify_ssl" == 0 ]; then
   CURL_COMMAND="$CURL_COMMAND -k"
 fi
@@ -33,9 +33,9 @@ URL="$BASE_URL/api/v1/monitoring/device/$UUID/?key=$KEY"
 
 collect_data(){
   n=0
-  logger -s "Collecting NetJSoN Monitoring data" \
-     -t monitoring \
-     -p daemon.info
+  logger -s "Collecting NetJSON Monitoring data" \
+         -t monitoring \
+         -p daemon.info
 
   until [ "$n" -ge 5 ]
   do
@@ -55,19 +55,18 @@ while true
 do
   data="$(collect_data)"
   #send data
-  $($CURL_COMMAND -H "Content-Type: application/json" \
-          -X POST \
+  response=$($CURL_COMMAND -H "Content-Type: application/json" \
           -d "$data" \
           -v "$URL")
   exit_code=$?
   if [ "$exit_code" == "0" ]; then
-    logger -s "Data sent successfully." \
-       -t monitoring \
-       -p daemon.info
+    logger -s "Data sent successfully. $response" \
+           -t monitoring \
+                  -p daemon.info
   else
-    logger -s "Data not sent successfully. Exit code is $exit_code" \
-       -t monitoring \
-       -p daemon.err
+    logger -s "Data not sent successfully. $response Exit code is $exit_code" \
+           -t monitoring \
+                  -p daemon.err
   fi
 
   sleep "$INTERVAL" & wait $!
