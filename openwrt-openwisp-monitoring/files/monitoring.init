@@ -52,7 +52,7 @@ start_service() {
     monitored_interfaces="--monitored_interfaces $monitored_interfaces"
 
     procd_open_instance "openwisp_monitoring_monitoring"
-    procd_set_param command $PROG $base_url $uuid $key $verify_ssl $interval $monitored_interfaces
+    procd_set_param command $PROG "$base_url" "$uuid" "$key" "$verify_ssl" "$interval" "$monitored_interfaces"
     procd_set_param respawn "${respawn_threshold:-3600}" "${respawn_timeout:-5}" "${respawn_retry:-5}"
     procd_close_instance
     logger -s "$PROG_NAME started" \

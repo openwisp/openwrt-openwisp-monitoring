@@ -47,16 +47,14 @@ local specialized_interfaces = {
                 -- omit refresh rate
                 signal.modem.signal.refresh = nil
                 info.signal = {}
-                -- collect section only if not empty
+                -- collect section and values only if not empty
                 for section_key, section_values in pairs(signal.modem.signal) do
                     for key, value in pairs(section_values) do
                         if value ~= '--' then
-                            -- convert to number
-                            section_values[key] = tonumber(value)
-                            -- store in info
-                            if utils.is_table_empty(info[section_key]) then
-                              info.signal[section_key] = section_values
+                            if utils.is_table_empty(info.signal[section_key]) then
+                                info.signal[section_key] = {}
                             end
+                            info.signal[section_key][key] = tonumber(value)
                         end
                     end
                 end
