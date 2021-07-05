@@ -2,6 +2,7 @@
 -- retrieve monitoring information
 -- and return it as NetJSON Output
 local cjson = require('cjson')
+local io = require('io')
 
 local ubus_lib = require('ubus')
 local ubus = ubus_lib.connect()
