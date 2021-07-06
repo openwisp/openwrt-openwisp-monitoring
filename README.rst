@@ -121,6 +121,21 @@ You can inspect the version of openwisp-monitoring currently installed with::
 
     openwisp_monitoring --version
 
+Run tests
+---------
+
+To run the unit tests, you must install the required dependencies first; to do this, you can take
+a look at the `install-dev.sh <https://github.com/openwisp/openwisp-config/blob/master/install-dev.sh>`_ script.
+
+
+Install test requirements::
+
+    ./install-dev.sh
+
+Run quality assurance tests with::
+
+    ./run-qa-checks
+
 
 Contributing
 ------------

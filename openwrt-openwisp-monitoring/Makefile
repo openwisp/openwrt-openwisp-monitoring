@@ -50,11 +50,41 @@ endef
 
 define Package/netjson-monitoring/install
 	$(INSTALL_DIR) \
-		$(1)/usr/sbin
+		$(1)/usr/sbin \
+		$(1)/usr/lib/lua/openwisp
 
 	$(INSTALL_BIN) \
 		files/sbin/netjson-monitoring.lua \
 		$(1)/usr/sbin/netjson_monitoring
+
+	$(INSTALL_BIN) \
+		files/lib/openwisp/dhcp.lua \
+		$(1)/usr/lib/lua/openwisp/dhcp.lua
+
+	$(INSTALL_BIN) \
+		files/lib/openwisp/interfaces.lua \
+		$(1)/usr/lib/lua/openwisp/interfaces.lua
+
+	$(INSTALL_BIN) \
+		files/lib/openwisp/monitoring.lua \
+		$(1)/usr/lib/lua/openwisp/monitoring.lua
+
+	$(INSTALL_BIN) \
+		files/lib/openwisp/monitoring_utils.lua \
+		$(1)/usr/lib/lua/openwisp/monitoring_utils.lua
+
+	$(INSTALL_BIN) \
+		files/lib/openwisp/neighbors.lua \
+		$(1)/usr/lib/lua/openwisp/neighbors.lua
+
+	$(INSTALL_BIN) \
+		files/lib/openwisp/resources.lua \
+		$(1)/usr/lib/lua/openwisp/resources.lua
+
+	$(INSTALL_BIN) \
+		files/lib/openwisp/wifi.lua \
+		$(1)/usr/lib/lua/openwisp/wifi.lua
+
 endef
 
 define Package/openwisp-monitoring-$(BUILD_VARIANT)/install

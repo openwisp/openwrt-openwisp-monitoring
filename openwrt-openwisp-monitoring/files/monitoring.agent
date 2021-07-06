@@ -26,7 +26,7 @@ fi
 
 CURL_COMMAND='curl'
 if [ "$verify_ssl" == 0 ]; then
-	CURL_COMMAND='$CURL_COMMAND -k'
+	CURL_COMMAND="$CURL_COMMAND -k"
 fi
 
 URL="$BASE_URL/api/v1/monitoring/device/$UUID/?key=$KEY"
@@ -55,7 +55,7 @@ while true
 do
 	data="$(collect_data)"
 	#send data
-	$($curl_command -H "Content-Type: application/json" \
+	$($CURL_COMMAND -H "Content-Type: application/json" \
 					-X POST \
 					-d "$data" \
 					-v "$URL")

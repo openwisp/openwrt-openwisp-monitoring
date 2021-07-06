@@ -1,0 +1,10 @@
+#!/bin/bash
+set -e
+
+luacheck ./openwrt-openwisp-monitoring/ -a
+
+openwisp-qa-check \
+	--skip-checkmigrations \
+	--skip-isort \
+	--skip-flake8 \
+	--skip-black
