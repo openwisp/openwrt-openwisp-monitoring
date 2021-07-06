@@ -44,7 +44,7 @@ env.io = {
     end,
     open = function(arg)
         if arg == '/tmp/dhcp.leases' then
-            return io.open('./test_files/dhcp_leases.txt')
+            return io.open(test_file_dir .. 'dhcp_leases.txt')
         else
             return io.open(arg)
         end

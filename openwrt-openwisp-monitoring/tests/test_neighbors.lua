@@ -61,7 +61,7 @@ function TestNetJSON.test_netjson_monitoring_neighbors()
     luaunit.assertNotNil(string.find(netjson, '"mac":"bc:0f:9a:17:5a:5c"'))
     luaunit.assertNotNil(string.find(netjson, '"ip":"fe80::bfca:28ed:f368:6cbc"'))
     luaunit.assertNotNil(string.find(netjson, '"interface":"eth1"'))
-    
+
 end
 
 os.exit( luaunit.LuaUnit.run() )
