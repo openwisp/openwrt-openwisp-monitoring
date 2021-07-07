@@ -1,17 +1,62 @@
 local test_data = {}
 
 test_data.interface_data = {
-  interface = { {
-      autostart = true,
+    interface = { {
+        autostart = true,
+        available = true,
+        data = {
+            hostname = "08-00-27-4F-CB-2E",
+            leasetime = 86400
+        },
+        delegation = true,
+        device = "eth2",
+        ["dns-search"] = {},
+        ["dns-server"] = { "192.168.0.1" },
+        dns_metric = 0,
+        dynamic = false,
+        inactive = {
+            ["dns-search"] = {},
+            ["dns-server"] = {},
+            ["ipv4-address"] = {},
+            ["ipv6-address"] = {},
+            neighbors = {},
+            route = {}
+        },
+        interface = "lan",
+        ["ipv4-address"] = { {
+            address = "192.168.0.144",
+            mask = 24
+        } },
+        ["ipv6-address"] = {},
+        ["ipv6-prefix"] = {},
+        ["ipv6-prefix-assignment"] = {},
+        l3_device = "eth2",
+        metric = 0,
+        neighbors = {},
+        pending = false,
+        proto = "dhcp",
+        route = { {
+            mask = 0,
+            nexthop = "192.168.0.1",
+            source = "192.168.0.144/32",
+            target = "0.0.0.0"
+        } },
+        up = true,
+        updated = { "addresses", "routes", "data" },
+        uptime = 132
+    }, {
+        autostart = true,
       available = true,
       data = {
-        hostname = "08-00-27-4F-CB-2E",
         leasetime = 86400
       },
       delegation = true,
-      device = "eth2",
+      device = "br-lan",
       ["dns-search"] = {},
-      ["dns-server"] = { "192.168.0.1" },
+      ["dns-server"] = {
+        "8.8.8.8",
+        "8.8.4.4"
+      },
       dns_metric = 0,
       dynamic = false,
       inactive = {
@@ -24,27 +69,34 @@ test_data.interface_data = {
       },
       interface = "lan",
       ["ipv4-address"] = { {
-          address = "192.168.0.144",
+          address = "192.168.1.41",
           mask = 24
         } },
       ["ipv6-address"] = {},
       ["ipv6-prefix"] = {},
-      ["ipv6-prefix-assignment"] = {},
-      l3_device = "eth2",
+      ["ipv6-prefix-assignment"] = {
+        {
+          address = "fd78:adb4:afb2::",
+          mask = 60,
+        }
+      },
+      l3_device = "br-lan",
       metric = 0,
       neighbors = {},
       pending = false,
       proto = "dhcp",
-      route = { {
+      route = {
+        {
+          target = "0.0.0.0",
           mask = 0,
-          nexthop = "192.168.0.1",
-          source = "192.168.0.144/32",
-          target = "0.0.0.0"
-        } },
+          nexthop = "192.168.1.1",
+          source = "192.168.1.41/32"
+        }
+      },
       up = true,
-      updated = { "addresses", "routes", "data" },
-      uptime = 132
-    }, {
+      updated = { "addresses" },
+      uptime = 773875
+    },{
       autostart = true,
       available = true,
       data = {},

@@ -37,7 +37,7 @@ test_data.wireless_status={
           ifname = "wlan0",
           encryption = "psk2",
           key = "password",
-          ssid = "ssid",
+          ssid = "OpenWRT",
           ieee80211r = true,
           ft_over_ds = true,
           ft_psk_generate_local = true,
@@ -101,6 +101,8 @@ test_data.wireless_status={
   }
 }
 
+test_data.wlan0_clients = {}
+
 test_data.wlan1_clients = {
     ["20:a6:0c:b2:da:10"] = {
       aid = 2,
@@ -132,13 +134,35 @@ test_data.wlan1_clients = {
     }
 }
 
-test_data.wlan0_clients = {}
+test_data.wlan0_iwinfo = {
+  phy = "phy0",
+  ssid = "OpenWRT",
+  mode = "Client",
+  channel = 13,
+  txpower = 20,
+  country = "00",
+  noise = 0,
+  frequency = 2472,
+  signal = -62
+}
+
+test_data.wlan1_iwinfo = {
+  phy = "phy1",
+  ssid = "ssid",
+  mode = "Master",
+  channel = 13,
+  txpower = 20,
+  country = "00",
+  noise = 0,
+  frequency = 5180,
+  signal = -33
+}
 
 test_data.mesh0_iwinfo = {
   phy = "phy0",
   ssid = "meshID",
   bssid = "00:00:00:00:00:00",
-  country = "India",
+  country = "00",
   mode = "Mesh Point",
   channel = 11,
   frequency = 2462,
