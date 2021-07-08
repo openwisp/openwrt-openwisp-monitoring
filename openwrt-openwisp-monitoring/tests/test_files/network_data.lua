@@ -852,4 +852,30 @@ test_data.devices = {
   }
 }
 
+test_data.wlan1_stats = {
+  collisions = 0,
+  rx_frame_errors = 0,
+  tx_compressed = 0,
+  multicast = 0,
+  rx_length_errors = 0,
+  tx_dropped = 0,
+  rx_bytes = 0,
+  rx_missed_errors = 0,
+  tx_errors = 0,
+  rx_compressed = 0,
+  rx_over_errors = 0,
+  tx_fifo_errors = 0,
+  rx_crc_errors = 0,
+  rx_packets = 0,
+  tx_heartbeat_errors = 0,
+  rx_dropped = 0,
+  tx_aborted_errors = 0,
+  tx_packets = 2367515,
+  rx_errors = 0,
+  tx_bytes = 531596854,
+  tx_window_errors = 0,
+  rx_fifo_errors = 0,
+  tx_carrier_errors = 0
+}
+
 return test_data

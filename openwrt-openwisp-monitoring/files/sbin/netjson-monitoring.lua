@@ -49,6 +49,7 @@ if not monitoring.utils.is_table_empty(host_neighbors) then
 end
 
 -- determine the interfaces to monitor
+local arg = {...}
 local traffic_monitored = arg[1]
 local include_stats = {}
 if traffic_monitored and traffic_monitored ~= '*' then

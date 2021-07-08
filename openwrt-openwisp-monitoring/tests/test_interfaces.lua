@@ -40,4 +40,13 @@ function TestInterface.test_get_addresses()
     luaunit.assertEquals(interface_functions.get_addresses('eth1'), interface_data.eth1_addresses)
     luaunit.assertEquals(interface_functions.get_addresses('br-mng'), interface_data.br_mng_addresses)
 end
+
+function TestInterface.test_get_interface_info()
+    local interface_functions = require('openwisp.interfaces')
+    local interface_info = interface_functions.get_interface_info('br-lan', interface_data.br_lan_interface)
+    luaunit.assertEquals(
+        interface_info, {dns_servers={"8.8.8.8", "8.8.4.4"}, stp=true}
+        )
+
+end
 os.exit( luaunit.LuaUnit.run() )

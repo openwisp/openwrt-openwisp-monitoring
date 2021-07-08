@@ -17,8 +17,10 @@ env.uci = {
             end,
             get = function(...)
                 local arg = {...}
-                if arg[2]=='network' and arg[4]=='ula_prefix' then
+                if arg[1]=='network' and arg[3]=='ula_prefix' then
                     return "fdf7:0c44:27ae::/48"
+                elseif arg[1]=='network' and arg[3]=='stp' then
+                    return '1'
                 end
             end
         }

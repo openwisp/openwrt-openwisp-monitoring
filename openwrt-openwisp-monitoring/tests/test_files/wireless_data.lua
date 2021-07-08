@@ -413,4 +413,44 @@ test_data.mesh1_parsed_clients = {
   }
 }
 
+test_data.wlan0_interface = {
+  mac = "00:00:00:00:00:00",
+  mtu = 1500,
+  multicast = true,
+  name = "wlan0",
+  txqueuelen = 1000,
+  type = "wireless",
+  up = true,
+  wireless = {
+    channel = 13,
+    country = "00",
+    frequency = 2472,
+    mode = "station",
+    noise = 0,
+    signal = -62,
+    ssid = "OpenWRT",
+    tx_power = 20
+  }
+}
+
+test_data.wlan1_interface = {
+  mac = "00:00:00:00:00:00",
+  mtu = 1500,
+  multicast = true,
+  name = "wlan1",
+  txqueuelen = 1000,
+  type = "wireless",
+  up = true,
+  wireless = {
+    channel = 13,
+    country = "00",
+    frequency = 5180,
+    mode = "access_point",
+    noise = 0,
+    signal = -33,
+    ssid = "ssid",
+    tx_power = 20
+  }
+}
+
 return test_data

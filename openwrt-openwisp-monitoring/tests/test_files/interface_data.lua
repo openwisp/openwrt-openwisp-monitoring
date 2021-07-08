@@ -221,4 +221,22 @@ test_data.br_mng_addresses = {
     {address="192.168.56.2", family="ipv4", mask=24, proto="static"},
 }
 
+test_data.br_lan_interface = {
+  addresses = { {
+      address = "192.168.1.41",
+      family = "ipv4",
+      gateway = "192.168.1.1",
+      mask = 24,
+      proto = "dhcp"
+    } },
+  bridge_members = { "lan1", "lan2", "mesh0", "mesh1", "wan", "wlan0", "wlan1" },
+  mac = "00:00:00:00:00:00",
+  mtu = 1500,
+  multicast = true,
+  name = "br-lan",
+  txqueuelen = 1000,
+  type = "bridge",
+  up = true
+}
+
 return test_data

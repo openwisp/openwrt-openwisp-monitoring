@@ -96,7 +96,22 @@ function TestWifi.test_netjson_clients()
         )
 end
 
-function TestNetJSON.test_anything()
+function TestWifi.test_needs_inversion()
+    luaunit.assertEquals(wifi_functions.needs_inversion(wifi_data.wlan0_interface), false)
+    luaunit.assertEquals(wifi_functions.needs_inversion(wifi_data.wlan1_interface), true)
+end
+
+function TestWifi.test_invert_rx_tx()
+    local network_data = require('test_files/network_data')
+    luaunit.assertNotNil(network_data)
+    local interface = wifi_functions.invert_rx_tx(network_data.wlan1_stats)
+    luaunit.assertEquals(interface.rx_bytes, 531596854)
+    luaunit.assertEquals(interface.tx_bytes, 0)
+    luaunit.assertEquals(interface.rx_packets, 2367515)
+    luaunit.assertEquals(interface.tx_packets, 0)
+end
+
+function TestNetJSON.test_wifi_interfaces()
     local netjson = require('netjson-monitoring')
     luaunit.assertNotNil(string.find(netjson, '"signal":-67', 1, true))
     luaunit.assertNotNil(string.find(netjson, '"signal":-76', 1, true))
