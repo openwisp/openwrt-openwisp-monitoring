@@ -62,7 +62,7 @@ CURL_COMMAND="curl -s -w "%{http_code}""
 [ "$VERIFY_SSL" = "0" ] && CURL_COMMAND="$CURL_COMMAND -k"
 [ "$verbose_mode" = "1" ] && CURL_COMMAND="$CURL_COMMAND -v"
 
-tmp_dir="/tmp/monitoring"
+tmp_dir="/tmp/openwisp/monitoring"
 
 check_available_memory(){
   total=$(free | grep Mem | awk '{print $2}')
