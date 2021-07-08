@@ -97,6 +97,38 @@ test_data.interface_data = {
       updated = { "addresses" },
       uptime = 773875
     },{
+        autostart = true,
+      available = true,
+      data = {},
+      delegation = true,
+      device = "lan2",
+      ["dns-search"] = {},
+      ["dns-server"] = {},
+      dns_metric = 0,
+      dynamic = false,
+      inactive = {
+        ["dns-search"] = {},
+        ["dns-server"] = {},
+        ["ipv4-address"] = {},
+        ["ipv6-address"] = {},
+        neighbors = {},
+        route = {}
+      },
+      interface = "modem",
+      ["ipv4-address"] = {},
+      ["ipv6-address"] = {},
+      ["ipv6-prefix"] = {},
+      ["ipv6-prefix-assignment"] = {},
+      l3_device = "lan2",
+      metric = 0,
+      neighbors = {},
+      pending = false,
+      proto = "modemmanager",
+      route = {},
+      up = true,
+      updated = { "addresses" },
+      uptime = 7738
+    },{
       autostart = true,
       available = true,
       data = {},
@@ -236,6 +268,18 @@ test_data.br_lan_interface = {
   name = "br-lan",
   txqueuelen = 1000,
   type = "bridge",
+  up = true
+}
+
+test_data.lan2_interface = {
+  link_supported = { "10baseT-H", "10baseT-F", "100baseT-H", "100baseT-F", "1000baseT-F" },
+  mac = "00:00:00:00:00:00",
+  mtu = 1500,
+  multicast = true,
+  name = "lan2",
+  speed = "-1F",
+  txqueuelen = 1000,
+  type = "ethernet",
   up = true
 }
 

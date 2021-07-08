@@ -97,8 +97,8 @@ function TestWifi.test_netjson_clients()
 end
 
 function TestWifi.test_needs_inversion()
-    luaunit.assertEquals(wifi_functions.needs_inversion(wifi_data.wlan0_interface), false)
-    luaunit.assertEquals(wifi_functions.needs_inversion(wifi_data.wlan1_interface), true)
+    luaunit.assertFalse(wifi_functions.needs_inversion(wifi_data.wlan0_interface))
+    luaunit.assertTrue(wifi_functions.needs_inversion(wifi_data.wlan1_interface))
 end
 
 function TestWifi.test_invert_rx_tx()

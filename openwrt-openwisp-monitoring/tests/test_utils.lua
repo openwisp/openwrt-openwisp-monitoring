@@ -57,8 +57,8 @@ function TestUtils.testDictMerge()
 end
 
 function TestUtils.testIsExcluded()
-    luaunit.assertEquals(utils.is_excluded('lo'), true)
-    luaunit.assertEquals(utils.is_excluded('wlo1'), false)
+    luaunit.assertTrue(utils.is_excluded('lo'))
+    luaunit.assertFalse(utils.is_excluded('wlo1'))
 end
 
 os.exit(luaunit.LuaUnit.run())

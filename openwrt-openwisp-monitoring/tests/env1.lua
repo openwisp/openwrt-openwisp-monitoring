@@ -21,6 +21,8 @@ env.uci = {
                     return "fdf7:0c44:27ae::/48"
                 elseif arg[1]=='network' and arg[3]=='stp' then
                     return '1'
+                elseif arg[1]=='network' and arg[3]=='device' then
+                    return '/sys/devices/platform/soc/8af8800.usb3/8a00000.dwc3/xhci-hcd.0.auto/usb2/2-1'
                 end
             end
         }
@@ -42,6 +44,13 @@ env.io = {
             return io.open(test_file_dir .. 'ip_json_neigh.txt')
         elseif arg == 'ip neigh 2> /dev/null' then
             return io.open(test_file_dir .. 'ip_neigh.txt')
+        else
+            local modem = '/sys/devices/platform/soc/8af8800.usb3/8a00000.dwc3/xhci-hcd.0.auto/usb2/2-1'
+            if arg == 'mmcli --output-json -m '.. modem then
+                return io.open(test_file_dir .. 'modem_data.txt')
+            elseif arg == 'mmcli --output-json -m '..modem..' --signal-get' then
+                return io.open(test_file_dir .. 'umts_sample.txt')
+            end
         end
     end,
     open = function(arg)

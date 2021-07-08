@@ -4,6 +4,7 @@ local utils = require('openwisp.monitoring_utils')
 local cjson = require('cjson')
 local nixio = require('nixio')
 local nixio_data = nixio.getifaddrs()
+local io = require('io')
 
 local uci = require('uci')
 local uci_cursor = uci.cursor()
@@ -21,9 +22,9 @@ local specialized_interfaces = {
     modemmanager = function(_, interface)
         local modem = uci_cursor.get('network', interface['interface'], 'device')
         local info = {}
-
         local general = io.popen('mmcli --output-json -m '..modem):read("*a")
-        if general and pcall(function () general = cjson.decode(general) end) then
+        if general and pcall(cjson.decode, general) then
+            general = cjson.decode(general)
             general = general.modem
 
             if not utils.is_table_empty(general['3gpp']) then
@@ -40,8 +41,9 @@ local specialized_interfaces = {
             end
         end
 
-        local signal = io.popen('mmcli --output-json -m '..modem..' --signal-get'):read()
-        if signal and pcall(function () signal = cjson.decode(signal) end) then
+        local signal = io.popen('mmcli --output-json -m '..modem..' --signal-get'):read("*a")
+        if signal and pcall(cjson.decode, signal) then
+            signal = cjson.decode(signal)
             -- only send data if not empty to avoid generating too much traffic
             if not utils.is_table_empty(signal.modem) and not utils.is_table_empty(signal.modem.signal) then
                 -- omit refresh rate

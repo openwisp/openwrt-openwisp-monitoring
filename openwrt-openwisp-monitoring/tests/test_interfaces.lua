@@ -47,6 +47,26 @@ function TestInterface.test_get_interface_info()
     luaunit.assertEquals(
         interface_info, {dns_servers={"8.8.8.8", "8.8.4.4"}, stp=true}
         )
-
 end
+
+function TestInterface.test_specialized_info()
+    local interface_functions = require('openwisp.interfaces')
+    local interface_info = interface_functions.get_interface_info('lan2', interface_data.lan2_interface)
+    luaunit.assertNotNil(interface_info)
+    luaunit.assertNotNil(interface_info.specialized)
+    local specialized_info = interface_info.specialized.mobile
+    luaunit.assertEquals(specialized_info.connection_status, "connected")
+    luaunit.assertEquals(specialized_info.manufacturer, "Quectel")
+    luaunit.assertEquals(specialized_info.model, "EM12-G")
+    luaunit.assertEquals(specialized_info.power_status, "on")
+    luaunit.assertNil(specialized_info.signal["5g"])
+    luaunit.assertNil(specialized_info.signal["evdo"])
+    luaunit.assertNil(specialized_info.signal["gsm"])
+    luaunit.assertNil(specialized_info.signal["lte"])
+    luaunit.assertNotNil(specialized_info.signal["umts"])
+    luaunit.assertEquals(specialized_info.signal.umts.ecio, -3.5)
+    luaunit.assertEquals(specialized_info.signal.umts.rscp, -96)
+    luaunit.assertEquals(specialized_info.signal.umts.rssi, nil)
+end
+
 os.exit( luaunit.LuaUnit.run() )
