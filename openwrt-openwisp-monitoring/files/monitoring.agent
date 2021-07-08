@@ -11,6 +11,7 @@ while [ -n "$1" ]; do
     --interval) export INTERVAL="$2"; shift;;
     --monitored_interfaces) export MONITORED_INTERFACES="$2"; shift;;
     --verbose_mode) export verbose_mode=$2; shift;;
+    --required_memory) export required_percent=$2; shift;;
     -*)
       echo "Invalid option: $1"
       exit 1
@@ -61,6 +62,25 @@ CURL_COMMAND="curl -s -w "%{http_code}""
 [ "$VERIFY_SSL" = "0" ] && CURL_COMMAND="$CURL_COMMAND -k"
 [ "$verbose_mode" = "1" ] && CURL_COMMAND="$CURL_COMMAND -v"
 
+tmp_dir="/tmp/monitoring"
+
+check_available_memory(){
+  total=$(free | grep Mem | awk '{print $2}')
+  available=$(free | grep Mem | awk '{print $7}')
+  required=$(echo - |awk -v percent=$required_percent -v total=$total '{printf percent*total}')
+
+  if [ "$available" -ge "$required" ]; then
+    echo "1"
+  else
+    logger -s "Not enough memory available" \
+           -t monitoring \
+           -p daemon.err
+
+    echo "0"
+  fi
+
+}
+
 collect_data(){
   n=0
   [ "$verbose_mode" = "1" ] && logger -s "Collecting NetJSON Monitoring data" \
@@ -76,6 +96,17 @@ collect_data(){
     n=$((n+1))
     sleep 5
   done
+}
+
+save_data() {
+  file_name="$(date +'%d-%m-%Y_%H:%M:%S').json"
+  # make directory
+  mkdir -p $tmp_dir
+  #save data with file_name
+  echo "$data" > "$tmp_dir/$file_name)"
+  logger -s "Data saved temporarily" \
+         -t monitoring \
+         -p daemon.info
 }
 
 while true
@@ -96,6 +127,8 @@ do
     [ "$verbose_mode" = "0" ] && logger -s "Run with verbose mode to find more." \
                                         -t openwisp_monitoring \
                                         -p daemon.err
+    memory_available="$(check_available_memory)"
+    [ "$memory_available" != "0" ] && save_data
   fi
   sleep "$INTERVAL" & wait $!
 done
