@@ -124,4 +124,16 @@ function TestNetJSON.test_wifi_interfaces()
     luaunit.assertEquals(string_count(netjson, '"mode":"access_point"'), 1)
 end
 
+function TestNetJSON.test_wifi_interfaces_stats_include()
+    local netjson_file = assert(loadfile('../files/sbin/netjson-monitoring.lua'))
+    local netjson = netjson_file('wlan0 wlan1')
+    luaunit.assertNotNil(string.find(netjson, '"rx_packets":198', 1, true))
+    luaunit.assertNotNil(string.find(netjson, '"rx_packets":2367515', 1, true))
+    luaunit.assertNotNil(string.find(netjson, '"rx_bytes":25967', 1, true))
+    luaunit.assertNotNil(string.find(netjson, '"tx_bytes":531641723', 1, true))
+    luaunit.assertNotNil(string.find(netjson, '"tx_packets":2367747', 1, true))
+    luaunit.assertNotNil(string.find(netjson, '"tx_packets":2367747', 1, true))
+    luaunit.assertEquals(string_count(netjson, '"tx_errors":0'), 2)
+end
+
 os.exit( luaunit.LuaUnit.run() )
