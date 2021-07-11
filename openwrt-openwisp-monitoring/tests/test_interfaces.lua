@@ -7,7 +7,7 @@ local interface_data = require('test_files/interface_data')
 
 TestInterface = {
     setUp = function()
-        local env = require('env1')
+        local env = require('main_env')
         package.loaded.uci = env.uci
         package.loaded.ubus = env.ubus
         package.loaded.io = env.io

@@ -23,5 +23,7 @@ luarocks install luaunit
 luarocks install luacheck
 # install lua-cjson
 luarocks install lua-cjson
+#install luacov-coveralls
+luarocks install luacov-coveralls
 #clean
 rm -rf json-c libubox uci

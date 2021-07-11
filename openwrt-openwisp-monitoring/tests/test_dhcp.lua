@@ -6,7 +6,7 @@ local luaunit = require('luaunit')
 
 TestDhcp = {
     setUp = function()
-    local env = require('env1')
+    local env = require('main_env')
     package.loaded.uci = env.uci
     package.loaded.io = env.io
     end,

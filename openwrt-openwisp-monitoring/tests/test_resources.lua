@@ -6,7 +6,7 @@ local resources_data = require('test_files/resources_data')
 
 TestResources = {
     setUp = function()
-    local env = require('env1')
+    local env = require('main_env')
     package.loaded.io = env.io
     end,
     tearDown = function()

@@ -38,6 +38,13 @@ jobs:
       - name: Tests
         run: ./runtests
 
+      - name: Upload Coverage
+        run: |
+          cd openwrt-openwisp-monitoring/tests
+          luacov-coveralls -v
+        env:
+          COVERALLS_REPO_TOKEN: ${{ github.token }}
+
   build:
     name: Build and upload package as artifacts
     needs: tests

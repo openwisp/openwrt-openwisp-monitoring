@@ -6,7 +6,7 @@ local neighbor_data = require('test_files/neighbors_data')
 
 TestNeighbor = {
     setUp = function()
-        local env = require('env1')
+        local env = require('main_env')
         package.loaded.io = env.io
     end,
     tearDown = function()
