@@ -248,7 +248,7 @@ local nixio_data = { {
     netmask = "ffff:ffff:ffff:ffff::",
     prefix = 64
   }, {
-    addr = "fe80::a00:27ff:fe48:be0a",
+    addr = "fdf7:0c44:27ae:fe48:be0a",
     data = {},
     family = "inet6",
     flags = {
@@ -264,7 +264,7 @@ local nixio_data = { {
     netmask = "ffff:ffff:ffff:ffff::",
     prefix = 64
   }, {
-    addr = "fe80::a00:27ff:fed1:90b0",
+    addr = "fe81::a00:27ff:fed1:90b0",
     data = {},
     family = "inet6",
     flags = {

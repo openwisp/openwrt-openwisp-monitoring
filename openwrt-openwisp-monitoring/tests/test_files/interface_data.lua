@@ -223,7 +223,9 @@ test_data.interface_data = {
           address = "10.0.2.4",
           mask = 24
         } },
-      ["ipv6-address"] = {},
+      ["ipv6-address"] = { {
+          address = "2001:0db8:85a3:0000:0000:8a2e:0370:7334"
+      }},
       ["ipv6-prefix"] = {},
       ["ipv6-prefix-assignment"] = {},
       l3_device = "eth1",
@@ -247,10 +249,20 @@ test_data.random_interface_address = {}
 
 test_data.eth1_addresses = {
     {address="10.0.2.4", family="ipv4", gateway="10.0.2.1", mask=24, proto="dhcp"},
+    {address="2001:0db8:85a3:0000:0000:8a2e:0370:7334", family="ipv6", gateway="10.0.2.1", proto="dhcp"},
+    {address="10.0.3.15", family="ipv4", mask=24, proto="dhcp"},
+    {address="fe80::a00:27ff:fe71:2291", family="ipv6", mask=64, proto="static"},
+}
+
+test_data.eth2_addresses = {
+    {address="192.168.0.144", family="ipv4", gateway="192.168.0.1", mask=24, proto="dhcp"},
+    {address="192.168.0.146", family="ipv4", mask=24, proto="dhcp"},
+    {address="fdf7:0c44:27ae:fe48:be0a", family="ipv6", mask=64, proto="static"}
 }
 
 test_data.br_mng_addresses = {
     {address="192.168.56.2", family="ipv4", mask=24, proto="static"},
+    {address="fe81::a00:27ff:fed1:90b0", family="ipv6", mask=64, proto="dhcp"}
 }
 
 test_data.br_lan_interface = {

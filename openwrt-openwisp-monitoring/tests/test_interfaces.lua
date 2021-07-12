@@ -11,6 +11,11 @@ TestInterface = {
         package.loaded.uci = env.uci
         package.loaded.ubus = env.ubus
         package.loaded.io = env.io
+        package.loaded.nixio = {
+            getifaddrs = function()
+                return require('test_files/nixio_data')
+            end
+        }
     end,
     tearDown = function()
     end
@@ -38,6 +43,7 @@ function TestInterface.test_get_addresses()
     local interface_functions = require('openwisp.interfaces')
     luaunit.assertEquals(interface_functions.get_addresses('random'), interface_data.random_interface_address)
     luaunit.assertEquals(interface_functions.get_addresses('eth1'), interface_data.eth1_addresses)
+    luaunit.assertEquals(interface_functions.get_addresses('eth2'), interface_data.eth2_addresses)
     luaunit.assertEquals(interface_functions.get_addresses('br-mng'), interface_data.br_mng_addresses)
 end
 
