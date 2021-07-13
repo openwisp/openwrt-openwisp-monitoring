@@ -24,7 +24,7 @@ if [ "$VERSION" -eq "1" ]; then
   exit 0
 fi
 
-CURL_COMMAND='curl -w "%{http_code}"'
+CURL_COMMAND='curl -s -w "%{http_code}"'
 if [ "$verify_ssl" == 0 ]; then
   CURL_COMMAND="$CURL_COMMAND -k"
 fi
@@ -55,18 +55,17 @@ while true
 do
   data="$(collect_data)"
   #send data
-  response=$($CURL_COMMAND -H "Content-Type: application/json" \
-          -d "$data" \
-          -v "$URL")
-  exit_code=$?
-  if [ "$exit_code" == "0" ]; then
-    logger -s "Data sent successfully. $response" \
+  response_code=$($CURL_COMMAND -H "Content-Type: application/json" \
+    -d "$data" \
+    -v "$URL")
+  if [ "$response_code" == "200" ]; then
+    logger -s "Data sent successfully." \
            -t monitoring \
-                  -p daemon.info
+           -p daemon.info
   else
-    logger -s "Data not sent successfully. $response Exit code is $exit_code" \
+    logger -s "Data not sent successfully. Response code is $response_code" \
            -t monitoring \
-                  -p daemon.err
+           -p daemon.err
   fi
 
   sleep "$INTERVAL" & wait $!
