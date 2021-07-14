@@ -1,5 +1,6 @@
 #!/bin/sh
 
+VERSION=0 #default value of version
 while [ -n "$1" ]; do
   case "$1" in
     --version|-v) export VERSION=1; break;;
@@ -13,7 +14,7 @@ while [ -n "$1" ]; do
       echo "Invalid option: $1"
       exit 1
     ;;
-    *) break;
+    *) break;;
   esac
   shift;
 done
@@ -24,8 +25,8 @@ if [ "$VERSION" -eq "1" ]; then
   exit 0
 fi
 
-CURL_COMMAND='curl -s -w "%{http_code}"'
-if [ "$verify_ssl" == 0 ]; then
+CURL_COMMAND="curl -s -w "%{http_code}""
+if [ "$verify_ssl" = 0 ]; then
   CURL_COMMAND="$CURL_COMMAND -k"
 fi
 
