@@ -2,6 +2,14 @@
 openwrt-openwisp-monitoring
 ===========================
 
+.. image:: https://github.com/openwisp/openwrt-openwisp-monitoring/workflows/OpenWRT%20OPENWISP%20MONITORING%20CI%20Build/badge.svg?branch=master
+   :target: https://github.com/openwisp/openwrt-openwisp-monitoring/actions?query=OpenWRT+OPENWISP+MONITORING+CI+Build%22
+   :alt: CI build status
+
+.. image:: https://coveralls.io/repos/github/openwisp/openwrt-openwisp-monitoring/badge.svg
+   :target: https://coveralls.io/github/openwisp/openwrt-openwisp-monitoring
+   :alt: Test Coverage
+
 .. image:: http://img.shields.io/github/release/openwisp/openwrt-openwisp-monitoring.svg
    :target: https://github.com/openwisp/openwrt-openwisp-monitoring/releases
 
