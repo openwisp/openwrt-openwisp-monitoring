@@ -10,6 +10,7 @@ while [ -n "$1" ]; do
     --verify_ssl) export verify_ssl="$2"; shift;;
     --interval) export INTERVAL="$2"; shift;;
     --monitored_interfaces) export MONITORED_INTERFACES=$2; shift;;
+    --verbose_mode) export verbose_mode=$2; shift;;
     -*)
       echo "Invalid option: $1"
       exit 1
@@ -25,12 +26,11 @@ if [ "$VERSION" -eq "1" ]; then
   exit 0
 fi
 
-CURL_COMMAND="curl -s -w "%{http_code}""
-if [ "$verify_ssl" = 0 ]; then
-  CURL_COMMAND="$CURL_COMMAND -k"
-fi
-
 URL="$BASE_URL/api/v1/monitoring/device/$UUID/?key=$KEY"
+
+CURL_COMMAND="curl -s -w "%{http_code}""
+[ "$verify_ssl" = "0" ] && CURL_COMMAND="$CURL_COMMAND -k"
+[ "$verbose_mode" = "1" ] && CURL_COMMAND="$CURL_COMMAND -v"
 
 collect_data(){
   n=0
