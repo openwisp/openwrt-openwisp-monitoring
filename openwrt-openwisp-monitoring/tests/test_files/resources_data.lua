@@ -1,4 +1,4 @@
-local test_data = {}
+local test_data={}
 
 test_data.disk_usage={
     {

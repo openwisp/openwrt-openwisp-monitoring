@@ -1,10 +1,10 @@
-package.path = package.path .. ";../files/lib/openwisp/?.lua"
+package.path=package.path .. ";../files/lib/openwisp/?.lua"
 
-local luaunit = require('luaunit')
+local luaunit=require('luaunit')
 
-local utils = require('monitoring_utils')
+local utils=require('monitoring_utils')
 
-TestUtils = {}
+TestUtils={}
 
 function TestUtils.testSplitFunction()
     -- When pattern is present

@@ -1,12 +1,12 @@
-local test_data = {}
+local test_data={}
 
-test_data.sample_parse_arp = {
+test_data.sample_parse_arp={
     {interface="eth1", ip="10.0.2.1", mac="52:54:00:12:35:00", state=""},
     {interface="br-mng", ip="192.168.56.1", mac="0a:00:27:00:00:00", state=""},
     {interface="eth2", ip="192.168.0.1", mac="bc:0f:9a:17:5a:5c", state=""}
 }
 
-test_data.sample_ip_neigh = {
+test_data.sample_ip_neigh={
     {interface="eth1", ip="10.0.2.1", mac="52:54:00:12:35:00", state="REACHABLE"},
     {interface="br-mng", ip="192.168.56.1", mac="0a:00:27:00:00:00", state="REACHABLE"},
     {interface="eth2", ip="192.168.0.1", mac="bc:0f:9a:17:5a:5c", state="STALE"},

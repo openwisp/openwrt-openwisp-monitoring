@@ -1,3 +1,3 @@
-files["openwrt-openwisp-monitoring/tests"] = {
-	ignore = {"Test.*"}
+files["openwrt-openwisp-monitoring/tests"]={
+	ignore={"Test.*"}
 }
