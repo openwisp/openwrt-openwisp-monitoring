@@ -36,6 +36,9 @@ TestNetJSON={
         else
           return nil
         end
+      end,
+      write=function(...)
+        return nil
       end
     }
     package.loaded.uci={

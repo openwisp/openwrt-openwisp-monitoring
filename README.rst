@@ -138,11 +138,13 @@ a look at the `install-dev.sh <https://github.com/openwisp/openwisp-config/blob/
 
 Install test requirements::
 
-    ./install-dev.sh
+    sudo ./install-dev.sh
 
 Run quality assurance tests with::
 
     ./run-qa-checks
+
+**Note:** Quality Assurance checks depends on `openwisp-utils <https://github.com/openwisp/openwisp-utils>`_ and it should be installed before running the tests.
 
 You can run all unit tests by launching the dedicated script::
 

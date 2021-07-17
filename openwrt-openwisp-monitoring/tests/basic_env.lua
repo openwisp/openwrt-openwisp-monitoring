@@ -14,6 +14,9 @@ env.io={
   end,
   open=function(arg)
     return nil
+  end,
+  write=function(...)
+    return nil
   end
 }
 

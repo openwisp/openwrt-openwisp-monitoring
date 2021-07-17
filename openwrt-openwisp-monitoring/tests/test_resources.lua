@@ -58,6 +58,9 @@ function TestNetJSON.test_resources()
     end,
     open=function(arg)
       return nil
+    end,
+    write=function(...)
+      return nil
     end
   }
   local netjson=require('netjson-monitoring')

@@ -186,5 +186,5 @@ if next(dns_search) ~=nil then
   netjson.dns_search=dns_search
 end
 
-print(cjson.encode(netjson))
+io.write(cjson.encode(netjson))
 return cjson.encode(netjson)
