@@ -2,6 +2,14 @@
 openwrt-openwisp-monitoring
 ===========================
 
+.. image:: https://github.com/openwisp/openwrt-openwisp-monitoring/workflows/OpenWRT%20OPENWISP%20MONITORING%20CI%20Build/badge.svg?branch=master
+   :target: https://github.com/openwisp/openwrt-openwisp-monitoring/actions?query=OpenWRT+OPENWISP+MONITORING+CI+Build%22
+   :alt: CI build status
+
+.. image:: https://coveralls.io/repos/github/openwisp/openwrt-openwisp-monitoring/badge.svg
+   :target: https://coveralls.io/github/openwisp/openwrt-openwisp-monitoring
+   :alt: Test Coverage
+
 .. image:: http://img.shields.io/github/release/openwisp/openwrt-openwisp-monitoring.svg
    :target: https://github.com/openwisp/openwrt-openwisp-monitoring/releases
 
@@ -53,7 +61,7 @@ The following procedure illustrates how to compile all variants of *openwisp-mon
 
     git clone https://git.openwrt.org/openwrt/openwrt.git
     cd openwrt
-    git checkout openwrt-19.07
+    git checkout openwrt-21.02
 
     # configure feeds
     echo "src-git monitoring https://github.com/openwisp/openwrt-openwisp-monitoring.git" > feeds.conf
@@ -130,12 +138,24 @@ a look at the `install-dev.sh <https://github.com/openwisp/openwisp-config/blob/
 
 Install test requirements::
 
-    ./install-dev.sh
+    sudo ./install-dev.sh
 
 Run quality assurance tests with::
 
+    #install openwisp-utils QA tools first
+    pip install openwisp-utils[qa]
+
+    #run QA checks before committing code
     ./run-qa-checks
 
+You can run all unit tests by launching the dedicated script::
+
+    ./runtests
+
+Alternatively, you can run specific tests, e.g.::
+
+    cd openwrt-openwisp-monitoring/tests/
+    lua test_utils.lua -v
 
 Contributing
 ------------

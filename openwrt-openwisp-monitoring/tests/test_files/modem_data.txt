@@ -1,0 +1,99 @@
+{
+  "modem": {
+  "3gpp": {
+    "enabled-locks": [
+    "fixed-dialing"
+    ],
+    "eps": {
+    "initial-bearer": {
+      "dbus-path": "--",
+      "settings": {
+      "apn": "APN.WAP",
+      "ip-type": "ipv4v6",
+      "password": "--",
+      "user": "--"
+      }
+    },
+    "ue-mode-operation": "csps-1"
+    },
+    "imei": "000000000000000",
+    "operator-code": "00000",
+    "operator-name": "OperatorName",
+    "pco": "--",
+    "registration-state": "home"
+  },
+  "cdma": {
+    "activation-state": "--",
+    "cdma1x-registration-state": "--",
+    "esn": "--",
+    "evdo-registration-state": "--",
+    "meid": "--",
+    "nid": "--",
+    "sid": "--"
+  },
+  "dbus-path": "/org/freedesktop/ModemManager1/Modem/0",
+  "generic": {
+    "access-technologies": [
+    "hsdpa",
+    "hsupa"
+    ],
+    "bearers": [
+    "/org/freedesktop/ModemManager1/Bearer/5"
+    ],
+    "carrier-configuration": "--",
+    "carrier-configuration-revision": "--",
+    "current-bands": [],
+    "current-capabilities": [
+    "gsm-umts, lte"
+    ],
+    "current-modes": "allowed: 3g, 4g; preferred: none",
+    "device": "/sys/devices/platform/soc/8af8800.usb3/8a00000.dwc3/xhci-hcd.0.auto/usb2/2-1",
+    "device-identifier": "0000000000000000000000000000000000000000",
+    "drivers": [
+    "cdc_mbim",
+    "option1"
+    ],
+    "equipment-identifier": "869710030159564",
+    "hardware-revision": "EM12-G",
+    "manufacturer": "Quectel",
+    "model": "EM12-G",
+    "own-numbers": [],
+    "plugin": "quectel",
+    "ports": [
+    "cdc-wdm0 (mbim)",
+    "ttyUSB0 (qcdm)",
+    "ttyUSB2 (at)",
+    "ttyUSB3 (at)",
+    "wwan0 (net)"
+    ],
+    "power-state": "on",
+    "primary-port": "cdc-wdm0",
+    "primary-sim-slot": "--",
+    "revision": "EM12GPAR01A16M4G",
+    "signal-quality": {
+    "recent": "yes",
+    "value": "29"
+    },
+    "sim": "/org/freedesktop/ModemManager1/SIM/0",
+    "sim-slots": [],
+    "state": "connected",
+    "state-failed-reason": "--",
+    "supported-bands": [],
+    "supported-capabilities": [
+    "gsm-umts, lte"
+    ],
+    "supported-ip-families": [
+    "ipv4",
+    "ipv6",
+    "ipv4v6"
+    ],
+    "supported-modes": [
+    "allowed: 3g, 4g; preferred: none"
+    ],
+    "unlock-required": "--",
+    "unlock-retries": [
+    "sim-pin2 (3)"
+    ]
+  }
+  }
+}

@@ -1,0 +1,11 @@
+#!/bin/bash
+set -e
+
+cd openwrt-openwisp-monitoring/tests/
+# run tests
+lua -lluacov test_dhcp.lua -v
+lua -lluacov test_interfaces.lua -v
+lua -lluacov test_utils.lua -v
+lua -lluacov test_neighbors.lua -v
+lua -lluacov test_resources.lua -v
+lua -lluacov test_wifi.lua -v

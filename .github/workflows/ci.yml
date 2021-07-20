@@ -35,6 +35,16 @@ jobs:
       - name: QA-Checks
         run: ./run-qa-checks
 
+      - name: Tests
+        run: ./runtests
+
+      - name: Upload Coverage
+        run: |
+          cd openwrt-openwisp-monitoring/tests
+          luacov-coveralls -v
+        env:
+          COVERALLS_REPO_TOKEN: ${{ github.token }}
+
   build:
     name: Build and upload package as artifacts
     needs: tests
@@ -85,7 +95,7 @@ jobs:
           export_default_credentials: true
 
       - name: Upload compiled packages to downloads.openwisp.io
-        if: ${{ github.event_name == 'push' }}
+        if: ${{ github.event_name=='push' }}
         run: gsutil -m rsync -r ${{ env.SRC_URL }} ${{ env.DST_URL }}
         env:
           SRC_URL: ${{ env.DOWNLOADS_DIR }}/${{ env.START_TIME }}/openwisp
