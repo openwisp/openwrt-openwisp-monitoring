@@ -61,7 +61,7 @@ The following procedure illustrates how to compile all variants of *openwisp-mon
 
     git clone https://git.openwrt.org/openwrt/openwrt.git
     cd openwrt
-    git checkout openwrt-19.07
+    git checkout openwrt-21.02
 
     # configure feeds
     echo "src-git monitoring https://github.com/openwisp/openwrt-openwisp-monitoring.git" > feeds.conf
@@ -142,9 +142,11 @@ Install test requirements::
 
 Run quality assurance tests with::
 
-    ./run-qa-checks
+    #install openwisp-utils QA tools first
+    pip install openwisp-utils[qa]
 
-**Note:** Quality Assurance checks depends on `openwisp-utils <https://github.com/openwisp/openwisp-utils>`_ and it should be installed before running the tests.
+    #run QA checks before committing code
+    ./run-qa-checks
 
 You can run all unit tests by launching the dedicated script::
 
