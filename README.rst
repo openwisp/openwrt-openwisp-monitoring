@@ -116,11 +116,11 @@ Debugging *openwisp-monitoring package* can be easily done by using the ``logrea
 
 Use grep to filter out any other log message::
 
-    logread | grep monitoring
+    logread | grep openwisp_monitoring
 
 If you are in that doubt openwisp-monitoring is running at all or not, you can check with::
 
-    ps | grep monitoring
+    ps | grep openwisp_monitoring
 
 You should see something like::
 

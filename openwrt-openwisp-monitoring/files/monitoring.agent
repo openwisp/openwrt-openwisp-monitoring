@@ -26,6 +26,7 @@ if [ "$VERSION" -eq "1" ]; then
   exit 0
 fi
 
+MONITORED_INTERFACES=$(echo "$MONITORED_INTERFACES" | tr -d '"')
 URL="$BASE_URL/api/v1/monitoring/device/$UUID/?key=$KEY"
 
 CURL_COMMAND="curl -s -w "%{http_code}""
@@ -34,18 +35,15 @@ CURL_COMMAND="curl -s -w "%{http_code}""
 
 collect_data(){
   n=0
-  logger -s "Collecting NetJSON Monitoring data" \
-         -t monitoring \
-         -p daemon.info
-
+  [ "$verbose_mode" = "1" ] && logger -s "Collecting NetJSON Monitoring data" \
+                                      -p daemon.info
   until [ "$n" -ge 5 ]
   do
     echo "$(/usr/sbin/netjson_monitoring "$MONITORED_INTERFACES")" && break
     
     if [ "$n" -eq 5 ]; then
-      logger -s "Collecting data failed! Retrying" \
-         -t monitoring \
-         -p daemon.err
+      [ "$verbose_mode" = "1" ] && logger -s "Collecting data failed!" \
+                                          -p daemon.err
     fi
     n=$((n+1))
     sleep 5
@@ -59,14 +57,17 @@ do
   response_code=$($CURL_COMMAND -H "Content-Type: application/json" \
     -d "$data" \
     -v "$URL")
-  if [ "$response_code" == "200" ]; then
-    logger -s "Data sent successfully." \
-           -t monitoring \
-           -p daemon.info
+  if [ "$response_code" = "200" ]; then
+    [ "$verbose_mode" = "1" ] && logger -s "Data sent successfully." \
+                                        -p daemon.info
   else
     logger -s "Data not sent successfully. Response code is $response_code" \
-           -t monitoring \
+           -t openwisp_monitoring \
            -p daemon.err
+
+    [ "$verbose_mode" = "0" ] && logger -s "Run with verbose mode to find more." \
+                                        -t openwisp_monitoring \
+                                        -p daemon.err
   fi
 
   sleep "$INTERVAL" & wait $!

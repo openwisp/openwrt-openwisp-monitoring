@@ -45,8 +45,8 @@ start_service() {
   interval="$(time_to_seconds "$interval")"
   if [ "$interval" -lt 1 ]; then
     logger -s "Interval is invalid. Use time value(eg: '10', '2m', '3h', '1d')" \
-         -t monitoring \
-         -p daemon.err
+           -t openwisp_monitoring \
+           -p daemon.err
     exit 1
   fi
   interval="--interval $interval"
@@ -56,17 +56,17 @@ start_service() {
   procd_open_instance "openwisp_monitoring_monitoring"
   procd_set_param command $PROG $base_url $uuid $key $verify_ssl $interval $monitored_interfaces $verbose
   procd_set_param respawn "${respawn_threshold:-3600}" "${respawn_timeout:-5}" "${respawn_retry:-5}"
-  procd_set_param stdout 1
-  procd_set_param stderr 1
+  [ "$verbose_mode" = "1" ] && procd_set_param stdout 1
+  [ "$verbose_mode" = "1" ] && procd_set_param stderr 1
   procd_close_instance
   logger -s "$PROG_NAME started" \
-         -t monitoring \
+         -t openwisp_monitoring \
          -p daemon.info
 }
 
 stop_service() {
   logger -s "$PROG_NAME stopping" \
-         -t monitoring \
+         -t openwisp_monitoring \
          -p daemon.info
 }
 
