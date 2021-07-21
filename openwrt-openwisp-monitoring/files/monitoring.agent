@@ -9,7 +9,7 @@ while [ -n "$1" ]; do
     --key) export KEY="$2"; shift;;
     --verify_ssl) export verify_ssl="$2"; shift;;
     --interval) export INTERVAL="$2"; shift;;
-    --monitored_interfaces) export MONITORED_INTERFACES=$2; shift;;
+    --monitored_interfaces) export MONITORED_INTERFACES="$2"; shift;;
     --verbose_mode) export verbose_mode=$2; shift;;
     -*)
       echo "Invalid option: $1"
