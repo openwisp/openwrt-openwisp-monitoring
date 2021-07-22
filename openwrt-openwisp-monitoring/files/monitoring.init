@@ -40,7 +40,7 @@ start_service() {
   config_load openwisp_monitoring
   config_get monitored_interfaces monitoring monitored_interfaces "*"
   config_get interval monitoring interval "300"
-  config_get_bool verbose_mode monitoring verbose_mode "1"
+  config_get_bool verbose_mode monitoring verbose_mode "0"
 
   interval="$(time_to_seconds "$interval")"
   if [ "$interval" -lt 1 ]; then
@@ -71,5 +71,5 @@ stop_service() {
 }
 
 service_triggers() {
-  procd_add_reload_trigger "openwisp" "monitoring"
+  procd_add_reload_trigger "openwisp" "openwisp_monitoring"
 }

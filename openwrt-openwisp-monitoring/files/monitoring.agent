@@ -26,7 +26,9 @@ if [ "$VERSION" -eq "1" ]; then
   exit 0
 fi
 
+# Remove double quotes from interfaces
 MONITORED_INTERFACES=$(echo "$MONITORED_INTERFACES" | tr -d '"')
+
 URL="$BASE_URL/api/v1/monitoring/device/$UUID/?key=$KEY"
 
 CURL_COMMAND="curl -s -w "%{http_code}""
@@ -69,6 +71,5 @@ do
                                         -t openwisp_monitoring \
                                         -p daemon.err
   fi
-
   sleep "$INTERVAL" & wait $!
 done
