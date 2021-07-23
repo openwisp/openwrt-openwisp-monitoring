@@ -7,7 +7,7 @@ while [ -n "$1" ]; do
     --url) export BASE_URL="$2"; shift;;
     --uuid) export UUID="$2"; shift;;
     --key) export KEY="$2"; shift;;
-    --verify_ssl) export verify_ssl="$2"; shift;;
+    --verify_ssl) export VERIFY_SSL="$2"; shift;;
     --interval) export INTERVAL="$2"; shift;;
     --monitored_interfaces) export MONITORED_INTERFACES="$2"; shift;;
     --verbose_mode) export verbose_mode=$2; shift;;
@@ -26,13 +26,39 @@ if [ "$VERSION" -eq "1" ]; then
   exit 0
 fi
 
+VERIFY_SSL=${VERIFY_SSL:-0}
+INTERVAL=${INTERVAL:-300}
+MONITORED_INTERFACES=${MONITORED_INTERFACES:-*}
+verbose_mode=${verbose_mode:-0}
+
+if [ -z "$BASE_URL" ]; then
+  logger -s "missing required --url option" \
+         -t openwisp_monitoring \
+         -p daemon.err
+  exit 1
+fi
+
+if [ -z "$UUID" ]; then
+  logger -s "missing required --uuid option" \
+          -t openwisp_monitoring \
+          -p daemon.err
+  exit 1
+fi
+
+if [ -z "$KEY" ]; then
+  logger -s "missing required --key option" \
+         -t openwisp_monitoring \
+         -p daemon.err
+  exit 1
+fi
+
 # Remove double quotes from interfaces
 MONITORED_INTERFACES=$(echo "$MONITORED_INTERFACES" | tr -d '"')
 
 URL="$BASE_URL/api/v1/monitoring/device/$UUID/?key=$KEY"
 
 CURL_COMMAND="curl -s -w "%{http_code}""
-[ "$verify_ssl" = "0" ] && CURL_COMMAND="$CURL_COMMAND -k"
+[ "$VERIFY_SSL" = "0" ] && CURL_COMMAND="$CURL_COMMAND -k"
 [ "$verbose_mode" = "1" ] && CURL_COMMAND="$CURL_COMMAND -v"
 
 collect_data(){
