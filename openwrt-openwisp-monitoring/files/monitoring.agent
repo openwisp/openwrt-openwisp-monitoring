@@ -1,19 +1,21 @@
 #!/bin/sh
 
+VERSION=0 #default value of version
 while [ -n "$1" ]; do
   case "$1" in
     --version|-v) export VERSION=1; break;;
     --url) export BASE_URL="$2"; shift;;
     --uuid) export UUID="$2"; shift;;
     --key) export KEY="$2"; shift;;
-    --verify_ssl) export verify_ssl="$2"; shift;;
+    --verify_ssl) export VERIFY_SSL="$2"; shift;;
     --interval) export INTERVAL="$2"; shift;;
-    --monitored_interfaces) export MONITORED_INTERFACES=$2; shift;;
+    --monitored_interfaces) export MONITORED_INTERFACES="$2"; shift;;
+    --verbose_mode) export verbose_mode=$2; shift;;
     -*)
       echo "Invalid option: $1"
       exit 1
     ;;
-    *) break;
+    *) break;;
   esac
   shift;
 done
@@ -24,27 +26,52 @@ if [ "$VERSION" -eq "1" ]; then
   exit 0
 fi
 
-CURL_COMMAND='curl'
-if [ "$verify_ssl" == 0 ]; then
-  CURL_COMMAND="$CURL_COMMAND -k"
+VERIFY_SSL=${VERIFY_SSL:-0}
+INTERVAL=${INTERVAL:-300}
+MONITORED_INTERFACES=${MONITORED_INTERFACES:-*}
+verbose_mode=${verbose_mode:-0}
+
+if [ -z "$BASE_URL" ]; then
+  logger -s "missing required --url option" \
+         -t openwisp_monitoring \
+         -p daemon.err
+  exit 1
 fi
+
+if [ -z "$UUID" ]; then
+  logger -s "missing required --uuid option" \
+          -t openwisp_monitoring \
+          -p daemon.err
+  exit 1
+fi
+
+if [ -z "$KEY" ]; then
+  logger -s "missing required --key option" \
+         -t openwisp_monitoring \
+         -p daemon.err
+  exit 1
+fi
+
+# Remove double quotes from interfaces
+MONITORED_INTERFACES=$(echo "$MONITORED_INTERFACES" | tr -d '"')
 
 URL="$BASE_URL/api/v1/monitoring/device/$UUID/?key=$KEY"
 
+CURL_COMMAND="curl -s -w "%{http_code}""
+[ "$VERIFY_SSL" = "0" ] && CURL_COMMAND="$CURL_COMMAND -k"
+[ "$verbose_mode" = "1" ] && CURL_COMMAND="$CURL_COMMAND -v"
+
 collect_data(){
   n=0
-  logger -s "Collecting NetJSoN Monitoring data" \
-     -t monitoring \
-     -p daemon.info
-
+  [ "$verbose_mode" = "1" ] && logger -s "Collecting NetJSON Monitoring data" \
+                                      -p daemon.info
   until [ "$n" -ge 5 ]
   do
     echo "$(/usr/sbin/netjson_monitoring "$MONITORED_INTERFACES")" && break
     
     if [ "$n" -eq 5 ]; then
-      logger -s "Collecting data failed! Retrying" \
-         -t monitoring \
-         -p daemon.err
+      [ "$verbose_mode" = "1" ] && logger -s "Collecting data failed!" \
+                                          -p daemon.err
     fi
     n=$((n+1))
     sleep 5
@@ -55,20 +82,20 @@ while true
 do
   data="$(collect_data)"
   #send data
-  $($CURL_COMMAND -H "Content-Type: application/json" \
-          -X POST \
-          -d "$data" \
-          -v "$URL")
-  exit_code=$?
-  if [ "$exit_code" == "0" ]; then
-    logger -s "Data sent successfully." \
-       -t monitoring \
-       -p daemon.info
+  response_code=$($CURL_COMMAND -H "Content-Type: application/json" \
+    -d "$data" \
+    -v "$URL")
+  if [ "$response_code" = "200" ]; then
+    [ "$verbose_mode" = "1" ] && logger -s "Data sent successfully." \
+                                        -p daemon.info
   else
-    logger -s "Data not sent successfully. Exit code is $exit_code" \
-       -t monitoring \
-       -p daemon.err
-  fi
+    logger -s "Data not sent successfully. Response code is $response_code" \
+           -t openwisp_monitoring \
+           -p daemon.err
 
+    [ "$verbose_mode" = "0" ] && logger -s "Run with verbose mode to find more." \
+                                        -t openwisp_monitoring \
+                                        -p daemon.err
+  fi
   sleep "$INTERVAL" & wait $!
 done

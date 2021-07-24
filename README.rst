@@ -38,7 +38,8 @@ Configuration options
 UCI configuration options must go in ``/etc/config/monitoring``.
 
 - ``monitored_interfaces``: interfaces that needs to be monitored, defaults to ``*`` for all interfaces.
-- ``interval``: time after which device data should be sent to server, defaults to ``300``
+- ``interval``: time after which device data should be sent to server, defaults to ``300``.
+- ``verbose_mode``: can be enabled (set to ``1``) to ease `debugging <#debugging>`__ in case of issues, defaults to ``0`` (disabled).
 
 Compiling openwrt-openwisp-monitoring
 -------------------------------------
@@ -115,11 +116,11 @@ Debugging *openwisp-monitoring package* can be easily done by using the ``logrea
 
 Use grep to filter out any other log message::
 
-    logread | grep monitoring
+    logread | grep openwisp_monitoring
 
 If you are in that doubt openwisp-monitoring is running at all or not, you can check with::
 
-    ps | grep monitoring
+    ps | grep openwisp_monitoring
 
 You should see something like::
 
