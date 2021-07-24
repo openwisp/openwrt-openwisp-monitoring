@@ -37,14 +37,14 @@ start_service() {
   [ -n "$verify_ssl" ] && verify_ssl="--verify_ssl $verify_ssl"
 
   if [ -z "$base_url" ]; then
-    logger -s "url is not set, please add it in /etc/config/openwisp" \
+    logger -s "url is not set, please add it to /etc/config/openwisp" \
            -t openwisp_monitoring \
            -p daemon.err
     exit 1
   fi
 
   if [ -z "$uuid" ] || [ -z "$key" ]; then
-    logger -s "uuid or key is not set. please ensure openwisp_config is working fine." \
+    logger -s "uuid or key are not set, please add these to /etc/config/openwisp" \
            -t openwisp_monitoring \
            -p daemon.err
     exit 1
