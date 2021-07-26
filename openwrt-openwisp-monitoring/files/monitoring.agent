@@ -74,10 +74,8 @@ check_available_memory(){
   else
     [ "$verbose_mode" = "1" ] && logger -s "Not enough memory available" \
                                         -p daemon.err
-
     echo "0"
   fi
-
 }
 
 collect_data(){
@@ -107,6 +105,35 @@ save_data() {
                                       -p daemon.info
 }
 
+send_saved_data() {
+  for file in "$TMP_DIR"/*.json
+  do
+    basefilename=${file##*/}
+    filename=${basefilename%.*}
+    url="$URL?date=$filename"
+    data=$(cat "$basefilename")
+    #send data
+    response_code=$($CURL_COMMAND -H "Content-Type: application/json" \
+      -d "$data" \
+      -v "$url")
+    if [ "$response_code" = "200" ]; then
+      [ "$verbose_mode" = "1" ] && logger -s "Saved data sent successfully." \
+                                          -p daemon.info
+      #Removed saved data
+      rm "$basefilename"
+    else
+      logger -s "Data not sent successfully. Response code is $response_code" \
+             -t openwisp_monitoring \
+             -p daemon.err
+
+      [ "$verbose_mode" = "0" ] && logger -s "Run with verbose mode to find more." \
+                                          -t openwisp_monitoring \
+                                          -p daemon.err
+      exit 1
+    fi
+  done
+}
+
 while true
 do
   data="$(collect_data)"
@@ -117,6 +144,7 @@ do
   if [ "$response_code" = "200" ]; then
     [ "$verbose_mode" = "1" ] && logger -s "Data sent successfully." \
                                         -p daemon.info
+    send_saved_data
   else
     logger -s "Data not sent successfully. Response code is $response_code" \
            -t openwisp_monitoring \
