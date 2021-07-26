@@ -110,7 +110,7 @@ send_saved_data() {
   do
     basefilename=${file##*/}
     filename=${basefilename%.*}
-    url="$URL?date=$filename"
+    url="$URL&date=$filename"
     data=$(cat "$basefilename")
     #send data
     response_code=$($CURL_COMMAND -H "Content-Type: application/json" \
@@ -120,7 +120,7 @@ send_saved_data() {
       [ "$verbose_mode" = "1" ] && logger -s "Saved data sent successfully." \
                                           -p daemon.info
       #Removed saved data
-      rm "$basefilename"
+      rm "$file"
     else
       logger -s "Data not sent successfully. Response code is $response_code" \
              -t openwisp_monitoring \
