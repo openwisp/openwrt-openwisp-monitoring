@@ -111,12 +111,14 @@ save_data() {
         [ "$verbose_mode" = "1" ] && logger -s "Data saved temporarily" \
                                             -p daemon.info
     fi
+    # get process id of container sending data
+    pid=$(ps | grep openwisp_monitoring | grep uuid | awk '{print $1}')
+    kill -SIGUSR1 "$pid"
     sleep "$INTERVAL"
   done
 }
 
 send_data() {
-  set_url_and_curl
   while true
   do
     for file in "$TMP_DIR"/*.json
@@ -180,8 +182,9 @@ if [ "$COLLECT" -eq "1" ]; then
   MONITORED_INTERFACES=${MONITORED_INTERFACES:-*}
   save_data
 else
+  trap send_data USR1
   VERIFY_SSL=${VERIFY_SSL:-0}
-  send_data
+  set_url_and_curl && send_data
 fi
 
 exit 0
