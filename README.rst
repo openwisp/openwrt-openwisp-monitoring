@@ -40,7 +40,8 @@ UCI configuration options must go in ``/etc/config/monitoring``.
 - ``monitored_interfaces``: interfaces that needs to be monitored, defaults to ``*`` for all interfaces.
 - ``interval``: time after which device data should be sent to server, defaults to ``300``.
 - ``verbose_mode``: can be enabled (set to ``1``) to ease `debugging <#debugging>`__ in case of issues, defaults to ``0`` (disabled).
-- ``required_memory``: available memory required to save data temporarily, defaults to ``0.05``
+- ``required_memory``: available memory required to save data temporarily, defaults to ``0.05``.
+- ``max_retries``: number of time the service should try to send data to server in case of failure, defaults to ``0``.
 
 Compiling openwrt-openwisp-monitoring
 -------------------------------------

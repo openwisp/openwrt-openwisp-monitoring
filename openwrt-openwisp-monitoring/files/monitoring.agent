@@ -14,6 +14,7 @@ while [ -n "$1" ]; do
     --verbose_mode) export verbose_mode="$2"; shift;;
     --required_memory) export REQUIRED_PERCENT="$2"; shift;;
     --collect) export COLLECT=1; shift;;
+    --max_retries) export MAX_RETRY="$2"; shift;;
     -*)
       echo "Invalid option: $1"
       exit 1
@@ -112,7 +113,6 @@ save_data() {
     fi
     sleep "$INTERVAL"
   done
-
 }
 
 send_data() {
@@ -131,24 +131,45 @@ send_data() {
       filename=${basefilename%.*}
       url="$URL&date=$filename"
       data=$(cat "$file")
-      #send data
-      response_code=$($CURL_COMMAND -H "Content-Type: application/json" \
-        -d "$data" \
-        -v "$url")
-      if [ "$response_code" = "200" ]; then
-        [ "$verbose_mode" = "1" ] && logger -s "Data sent successfully." \
-                                            -p daemon.info
-        #Removed saved data
-        rm "$file"
-      else
-        logger -s "Data not sent successfully. Response code is $response_code" \
-               -t openwisp_monitoring \
-               -p daemon.err
+      # retry sending data in case of failure
+      MAX_RETRY=${MAX_RETRY:-5}
+      FAILURES=0
+      BASE_SECONDS=1
+      while true
+      do
+        FAILURES=$((FAILURES+1))
+        if [ "$FAILURES" -gt "$MAX_RETRY" ]; then
+          if [ "$verbose_mode" = "1" ]; then
+            logger -s "Data not sent successfully. Response code is $response_code" \
+                   -p daemon.err
+          else
+            logger -s "Data not sent successfully. Response code is $response_code" \
+                   -t openwisp_monitoring \
+                   -p daemon.err
+          fi
 
-        [ "$verbose_mode" = "0" ] && logger -s "Run with verbose mode to find more." \
-                                            -t openwisp_monitoring \
-                                            -p daemon.err
-      fi
+          [ "$verbose_mode" = "0" ] && logger -s "Run with verbose mode to find more." \
+                                              -t openwisp_monitoring \
+                                              -p daemon.err
+          break
+        fi
+        #send data
+        response_code=$($CURL_COMMAND -H "Content-Type: application/json" \
+          -d "$data" \
+          -v "$url")
+        if [ "$response_code" = "200" ]; then
+          [ "$verbose_mode" = "1" ] && logger -s "Data sent successfully." \
+                                              -p daemon.info
+          #Removed saved data
+          rm "$file"
+          break
+        else
+          TIME=$((BASE_SECONDS * 2 **(FAILURES-1)))
+          [ "$verbose_mode" = "1" ] && logger -s "Data not sent successfully. Retrying after $TIME seconds" \
+                                              -p daemon.err
+          sleep "$TIME"
+        fi
+      done
     done
   done
 }
