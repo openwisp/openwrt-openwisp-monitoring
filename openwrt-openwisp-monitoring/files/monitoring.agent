@@ -135,6 +135,8 @@ send_data() {
       MAX_RETRY=${MAX_RETRY:-5}
       FAILURES=0
       BASE_SECONDS=1
+      # check if the data is latest or old one
+      [ $(echo "$TMP_DIR"/*.json | awk '{print $2}') ] && url="$URL&current=true"
       while true
       do
         FAILURES=$((FAILURES+1))
