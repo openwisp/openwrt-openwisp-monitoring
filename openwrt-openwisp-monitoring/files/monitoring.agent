@@ -1,6 +1,7 @@
 #!/bin/sh
 
 VERSION=0 #default value of version
+COLLECT=0
 while [ -n "$1" ]; do
   case "$1" in
     --version|-v) export VERSION=1; break;;
@@ -12,6 +13,7 @@ while [ -n "$1" ]; do
     --monitored_interfaces) export MONITORED_INTERFACES="$2"; shift;;
     --verbose_mode) export verbose_mode="$2"; shift;;
     --required_memory) export REQUIRED_PERCENT="$2"; shift;;
+    --collect) export COLLECT=1; shift;;
     -*)
       echo "Invalid option: $1"
       exit 1
@@ -27,41 +29,8 @@ if [ "$VERSION" -eq "1" ]; then
   exit 0
 fi
 
-VERIFY_SSL=${VERIFY_SSL:-0}
 INTERVAL=${INTERVAL:-300}
-MONITORED_INTERFACES=${MONITORED_INTERFACES:-*}
 verbose_mode=${verbose_mode:-0}
-
-if [ -z "$BASE_URL" ]; then
-  logger -s "missing required --url option" \
-         -t openwisp_monitoring \
-         -p daemon.err
-  exit 1
-fi
-
-if [ -z "$UUID" ]; then
-  logger -s "missing required --uuid option" \
-          -t openwisp_monitoring \
-          -p daemon.err
-  exit 1
-fi
-
-if [ -z "$KEY" ]; then
-  logger -s "missing required --key option" \
-         -t openwisp_monitoring \
-         -p daemon.err
-  exit 1
-fi
-
-# Remove double quotes from interfaces
-MONITORED_INTERFACES=$(echo "$MONITORED_INTERFACES" | tr -d '"')
-
-URL="$BASE_URL/api/v1/monitoring/device/$UUID/?key=$KEY"
-
-CURL_COMMAND="curl -s -w "%{http_code}""
-[ "$VERIFY_SSL" = "0" ] && CURL_COMMAND="$CURL_COMMAND -k"
-[ "$verbose_mode" = "1" ] && CURL_COMMAND="$CURL_COMMAND -v"
-
 TMP_DIR="/tmp/openwisp/monitoring"
 
 check_available_memory(){
@@ -95,66 +64,101 @@ collect_data(){
   done
 }
 
-save_data() {
-  file_name="$(date +'%d-%m-%Y_%H:%M:%S').json"
-  # make directory
-  mkdir -p "$TMP_DIR"
-  #save data with file_name
-  echo "$data" > "$TMP_DIR/$file_name"
-  [ "$verbose_mode" = "1" ] && logger -s "Data saved temporarily" \
-                                      -p daemon.info
+set_url_and_curl(){
+  if [ -z "$BASE_URL" ]; then
+    logger -s "missing required --url option" \
+           -t openwisp_monitoring \
+           -p daemon.err
+    exit 1
+  fi
+
+  if [ -z "$UUID" ]; then
+    logger -s "missing required --uuid option" \
+            -t openwisp_monitoring \
+            -p daemon.err
+    exit 1
+  fi
+
+  if [ -z "$KEY" ]; then
+    logger -s "missing required --key option" \
+           -t openwisp_monitoring \
+           -p daemon.err
+    exit 1
+  fi
+
+  URL="$BASE_URL/api/v1/monitoring/device/$UUID/?key=$KEY"
+
+  CURL_COMMAND="curl -s -w "%{http_code}""
+  [ "$VERIFY_SSL" = "0" ] && CURL_COMMAND="$CURL_COMMAND -k"
+  [ "$verbose_mode" = "1" ] && CURL_COMMAND="$CURL_COMMAND -v"
 }
 
-send_saved_data() {
-  for file in "$TMP_DIR"/*.json
-  do
-    basefilename=${file##*/}
-    filename=${basefilename%.*}
-    url="$URL&date=$filename"
-    data=$(cat "$basefilename")
-    #send data
-    response_code=$($CURL_COMMAND -H "Content-Type: application/json" \
-      -d "$data" \
-      -v "$url")
-    if [ "$response_code" = "200" ]; then
-      [ "$verbose_mode" = "1" ] && logger -s "Saved data sent successfully." \
-                                          -p daemon.info
-      #Removed saved data
-      rm "$file"
-    else
-      logger -s "Data not sent successfully. Response code is $response_code" \
-             -t openwisp_monitoring \
-             -p daemon.err
+save_data() {
+  # Remove double quotes from interfaces
+  MONITORED_INTERFACES=$(echo "$MONITORED_INTERFACES" | tr -d '"')
 
-      [ "$verbose_mode" = "0" ] && logger -s "Run with verbose mode to find more." \
-                                          -t openwisp_monitoring \
-                                          -p daemon.err
-      exit 1
+  while true
+  do
+    data="$(collect_data)"
+    memory_available="$(check_available_memory)"
+    if [ "$memory_available" != "0" ]; then
+        file_name="$(date +'%d-%m-%Y_%H:%M:%S').json"
+        # make directory
+        mkdir -p "$TMP_DIR"
+        #save data with file_namecd
+        echo "$data" > "$TMP_DIR/$file_name"
+        [ "$verbose_mode" = "1" ] && logger -s "Data saved temporarily" \
+                                            -p daemon.info
     fi
+    sleep "$INTERVAL"
+  done
+
+}
+
+send_data() {
+  set_url_and_curl
+  while true
+  do
+    for file in "$TMP_DIR"/*.json
+    do
+      if [ ! -f "$file" ]; then
+        [ "$verbose_mode" = "1" ] && logger -s "No data file found to send." \
+                                            -p daemon.info
+        sleep "$INTERVAL"
+        continue
+      fi
+      basefilename=${file##*/}
+      filename=${basefilename%.*}
+      url="$URL&date=$filename"
+      data=$(cat "$file")
+      #send data
+      response_code=$($CURL_COMMAND -H "Content-Type: application/json" \
+        -d "$data" \
+        -v "$url")
+      if [ "$response_code" = "200" ]; then
+        [ "$verbose_mode" = "1" ] && logger -s "Data sent successfully." \
+                                            -p daemon.info
+        #Removed saved data
+        rm "$file"
+      else
+        logger -s "Data not sent successfully. Response code is $response_code" \
+               -t openwisp_monitoring \
+               -p daemon.err
+
+        [ "$verbose_mode" = "0" ] && logger -s "Run with verbose mode to find more." \
+                                            -t openwisp_monitoring \
+                                            -p daemon.err
+      fi
+    done
   done
 }
 
-while true
-do
-  data="$(collect_data)"
-  #send data
-  response_code=$($CURL_COMMAND -H "Content-Type: application/json" \
-    -d "$data" \
-    -v "$URL")
-  if [ "$response_code" = "200" ]; then
-    [ "$verbose_mode" = "1" ] && logger -s "Data sent successfully." \
-                                        -p daemon.info
-    send_saved_data
-  else
-    logger -s "Data not sent successfully. Response code is $response_code" \
-           -t openwisp_monitoring \
-           -p daemon.err
+if [ "$COLLECT" -eq "1" ]; then
+  MONITORED_INTERFACES=${MONITORED_INTERFACES:-*}
+  save_data
+else
+  VERIFY_SSL=${VERIFY_SSL:-0}
+  send_data
+fi
 
-    [ "$verbose_mode" = "0" ] && logger -s "Run with verbose mode to find more." \
-                                        -t openwisp_monitoring \
-                                        -p daemon.err
-    memory_available="$(check_available_memory)"
-    [ "$memory_available" != "0" ] && save_data
-  fi
-  sleep "$INTERVAL" & wait $!
-done
+exit 0
