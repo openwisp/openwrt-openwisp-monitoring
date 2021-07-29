@@ -43,6 +43,16 @@ UCI configuration options must go in ``/etc/config/monitoring``.
 - ``required_memory``: available memory required to save data temporarily, defaults to ``0.05``.
 - ``max_retries``: number of time the service should try to send data to server in case of failure, defaults to ``5``.
 
+OpenWISP Monitoring Agent
+-------------------------
+
+We use two procd services in `monitoring agent <https://github.com/openwisp/openwrt-openwisp-monitoring/blob/master/openwrt-openwisp-monitoring/files/monitoring.agent>`_, one for collecting the data and other for sending the data.
+
+**SIGUSR1** signals are used to instantly send the data when collected. However, the service will keep trying
+to send data periodically.
+
+**Note:-** It may be possible that the server is down for a long time, then sending data may take time then the interval after which data is collected creating a gap in data points. To avoid this, two services are used.
+
 Compiling openwrt-openwisp-monitoring
 -------------------------------------
 
