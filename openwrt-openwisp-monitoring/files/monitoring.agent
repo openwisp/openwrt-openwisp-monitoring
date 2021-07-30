@@ -106,16 +106,27 @@ save_data() {
         file_name="$(date +'%d-%m-%Y_%H:%M:%S').json"
         # make directory
         mkdir -p "$TMP_DIR"
-        #save data with file_namecd
+        #save data with file_name
         echo "$data" > "$TMP_DIR/$file_name"
         [ "$verbose_mode" = "1" ] && logger -s "Data saved temporarily" \
                                             -p daemon.info
     fi
     # get process id of container sending data
-    pid=$(ps | grep openwisp_monitoring | grep uuid | awk '{print $1}')
+    pid=$(pgrep -f "openwisp_monitoring.*uuid")
     kill -SIGUSR1 "$pid"
     sleep "$INTERVAL"
   done
+}
+
+handle_sigusr1() {
+  if [ "$verbose_mode" = "0" ]; then
+    logger -s "SIGUSR1 received! Sending data" \
+           -t openwisp_monitoring \
+           -p daemon.info
+  else
+    logger -s "SIGUSR1 received! Sending data" \
+           -p daemon.info
+  fi
 }
 
 send_data() {
@@ -126,7 +137,10 @@ send_data() {
       if [ ! -f "$file" ]; then
         [ "$verbose_mode" = "1" ] && logger -s "No data file found to send." \
                                             -p daemon.info
-        sleep "$INTERVAL"
+        trap handle_sigusr1 USR1
+        # SIGUSR1 signal received interrupt sleep and continue sending data
+        sleep "$INTERVAL" & wait $!
+        trap "" USR1
         continue
       fi
       basefilename=${file##*/}
@@ -138,7 +152,7 @@ send_data() {
       FAILURES=0
       BASE_SECONDS=1
       # check if the data is latest or old one
-      [ $(echo "$TMP_DIR"/*.json | awk '{print $2}') ] && url="$URL&current=true"
+      [ "$(echo "$TMP_DIR"/*.json | awk '{print $2}')" ] && url="$url&current=true"
       while true
       do
         FAILURES=$((FAILURES+1))
@@ -182,7 +196,6 @@ if [ "$COLLECT" -eq "1" ]; then
   MONITORED_INTERFACES=${MONITORED_INTERFACES:-*}
   save_data
 else
-  trap send_data USR1
   VERIFY_SSL=${VERIFY_SSL:-0}
   set_url_and_curl && send_data
 fi

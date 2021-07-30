@@ -41,7 +41,7 @@ UCI configuration options must go in ``/etc/config/monitoring``.
 - ``interval``: time after which device data should be sent to server, defaults to ``300``.
 - ``verbose_mode``: can be enabled (set to ``1``) to ease `debugging <#debugging>`__ in case of issues, defaults to ``0`` (disabled).
 - ``required_memory``: available memory required to save data temporarily, defaults to ``0.05``.
-- ``max_retries``: number of time the service should try to send data to server in case of failure, defaults to ``0``.
+- ``max_retries``: number of time the service should try to send data to server in case of failure, defaults to ``5``.
 
 Compiling openwrt-openwisp-monitoring
 -------------------------------------
@@ -98,7 +98,6 @@ you will need to select the *openwisp-monitoring* variant and *netjson-monitorin
     ./scripts/feeds update -a
     ./scripts/feeds install -a
     make menuconfig
-    # go to Base system, then select rpcd
     # go to Administration > admin > openwisp and select the packages you need interactively
     make tools/install
     make toolchain/install
@@ -126,6 +125,7 @@ If you are in that doubt openwisp-monitoring is running at all or not, you can c
 
 You should see something like::
 
+    2712 root      1224 S    /bin/sh /usr/sbin/openwisp_monitoring --interval 300 --monitored_interfaces ...
     2713 root      1224 S    /bin/sh /usr/sbin/openwisp_monitoring --url http://192.168.1.195:8000 ...
 
 You can inspect the version of openwisp-monitoring currently installed with::
