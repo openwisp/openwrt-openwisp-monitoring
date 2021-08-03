@@ -103,7 +103,7 @@ save_data() {
     data="$(collect_data)"
     memory_available="$(check_available_memory)"
     if [ "$memory_available" != "0" ]; then
-        file_name="$(date +'%d-%m-%Y_%H:%M:%S').json"
+        file_name="$(date +'%d-%m-%Y_%H:%M:%S').000000.json" # extra zeroes are added for nanoseconds precision
         # make directory
         mkdir -p "$TMP_DIR"
         #save data with file_name
@@ -145,7 +145,7 @@ send_data() {
       fi
       basefilename=${file##*/}
       filename=${basefilename%.*}
-      url="$URL&date=$filename"
+      url="$URL&time=$filename"
       data=$(cat "$file")
       # retry sending data in case of failure
       MAX_RETRY=${MAX_RETRY:-5}
