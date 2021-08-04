@@ -92,6 +92,7 @@ set_url_and_curl(){
   CURL_COMMAND="curl -s -w "%{http_code}""
   [ "$VERIFY_SSL" = "0" ] && CURL_COMMAND="$CURL_COMMAND -k"
   [ "$verbose_mode" = "1" ] && CURL_COMMAND="$CURL_COMMAND -v"
+  echo "0"
 }
 
 save_data() {
