@@ -104,7 +104,7 @@ save_data() {
     data="$(collect_data)"
     memory_available="$(check_available_memory)"
     if [ "$memory_available" != "0" ]; then
-        file_name="$(date +'%d-%m-%Y_%H:%M:%S').000000.json" # extra zeroes are added for nanoseconds precision
+        file_name="$(date -u +'%d-%m-%Y_%H:%M:%S').000000.json" # extra zeroes are added for nanoseconds precision
         # make directory
         mkdir -p "$TMP_DIR"
         #save data with file_name
