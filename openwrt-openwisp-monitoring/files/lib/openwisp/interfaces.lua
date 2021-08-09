@@ -22,7 +22,7 @@ local specialized_interfaces={
   modemmanager=function(_, interface)
     local modem=uci_cursor.get('network', interface['interface'], 'device')
     local info={}
-    local general=io.popen('mmcli --output-json -m '..modem):read("*a")
+    local general=utils.popen('mmcli --output-json -m '..modem):read("*a")
     if general and pcall(cjson.decode, general) then
       general=cjson.decode(general)
       general=general.modem

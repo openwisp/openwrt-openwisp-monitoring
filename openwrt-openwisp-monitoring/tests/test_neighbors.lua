@@ -57,6 +57,9 @@ function TestNetJSON.test_netjson_monitoring_neighbors()
     end,
     write=function(...)
       return nil
+    end,
+    tmpfile=function(...)
+      return io.tmpfile(...)
     end
   }
   local netjson=require('netjson-monitoring')
