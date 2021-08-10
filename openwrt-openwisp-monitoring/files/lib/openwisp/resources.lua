@@ -1,16 +1,15 @@
 -- retrieve resources usage
 local io=require('io')
+local utils=require('openwisp.monitoring_utils')
 
 local resources={}
 
 function resources.parse_disk_usage()
   local disk_usage_info={}
-  local disk_usage=io.popen('df')
-  local file=assert(io.tmpfile())
-  file:write(disk_usage:read("*a"))
-  disk_usage:close()
-  file:seek('set',0)
-  for line in file:lines() do
+  local disk_usage_file=io.popen('df')
+  local disk_usage = disk_usage_file:read("*a")
+  disk_usage_file:close()
+  for _,line in ipairs(utils.split(disk_usage, "\n")) do
     if line:sub(1, 10) ~='Filesystem' then
       local filesystem, size, used, available, percent, location=
         line:match('(%S+)%s+(%S+)%s+(%S+)%s+(%S+)%s+(%S+)%s+(%S+)')

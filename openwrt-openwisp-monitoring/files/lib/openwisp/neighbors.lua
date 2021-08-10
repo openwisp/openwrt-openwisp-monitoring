@@ -1,24 +1,17 @@
 -- retrieve neighbors information
 local cjson=require('cjson')
 local io=require('io')
+local utils=require('openwisp.monitoring_utils')
 
 local neighbors={}
-
--- defined popen function here to avoid
--- interrupted system calls in for loop
-function neighbors.popen(command)
-  local command_file=io.popen(command)
-  local output_file=assert(io.tmpfile())
-  output_file:write(command_file:read("*a"))
-  command_file:close()
-  output_file:seek('set',0)
-  return output_file
-end
 
 -- parse /proc/net/arp
 function neighbors.parse_arp()
   local arp_info={}
-  for line in neighbors.popen('cat /proc/net/arp 2> /dev/null'):lines() do
+  local arp_data_file=io.popen('cat /proc/net/arp 2> /dev/null')
+  local arp_data=arp_data_file:read("*a")
+  arp_data_file:close()
+  for _,line in ipairs(utils.split(arp_data, "\n")) do
     if line:sub(1, 10) ~='IP address' then
       local ip, _, _, mac, _, dev=line:match("(%S+)%s+(%S+)%s+(%S+)%s+(%S+)%s+(%S+)%s+(%S+)")
       table.insert(arp_info, {
@@ -34,7 +27,9 @@ end
 
 function neighbors.get_ip_neigh_json()
   local arp_info={}
-  local output=neighbors.popen('ip -json neigh 2> /dev/null'):read('*a')
+  local output_file=io.popen('ip -json neigh 2> /dev/null')
+  local output=output_file:read('*a')
+  output_file:close()
   if output ~=nil and pcall(cjson.decode, output) then
     local json_output=cjson.decode(output)
     for _, arp_entry in pairs(json_output) do
@@ -51,7 +46,10 @@ end
 
 function neighbors.get_ip_neigh()
   local arp_info={}
-  for line in neighbors.popen('ip neigh 2> /dev/null'):lines() do
+  local neigh_data_file=io.popen('ip neigh 2> /dev/null')
+  local neigh_data=neigh_data_file:read("*a")
+  neigh_data_file:close()
+  for _,line in ipairs(utils.split(neigh_data, "\n")) do
     local ip, dev, mac, state=line:match("(%S+)%s+dev%s+(%S+)%s+lladdr%s+(%S+).*%s(%S+)")
     if mac ~=nil then
       table.insert(arp_info, {

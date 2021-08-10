@@ -59,9 +59,6 @@ env.io={
     else
       return io.open(arg)
     end
-  end,
-  tmpfile=function(...)
-    return io.tmpfile(...)
   end
 }
 

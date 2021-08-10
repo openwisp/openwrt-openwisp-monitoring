@@ -17,9 +17,6 @@ env.io={
   end,
   write=function(...)
     return nil
-  end,
-  tmpfile=function(...)
-    return io.tmpfile(...)
   end
 }
 

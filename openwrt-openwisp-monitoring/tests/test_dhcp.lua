@@ -39,9 +39,6 @@ TestNetJSON={
       end,
       write=function(...)
         return nil
-      end,
-      tmpfile=function(...)
-        return io.tmpfile(...)
       end
     }
     package.loaded.uci={

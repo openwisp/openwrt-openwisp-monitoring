@@ -61,9 +61,6 @@ function TestNetJSON.test_resources()
     end,
     write=function(...)
       return nil
-    end,
-    tmpfile=function(...)
-      return io.tmpfile(...)
     end
   }
   local netjson=require('netjson-monitoring')
