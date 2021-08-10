@@ -1,5 +1,3 @@
-local io=require('io')
-
 local utils={}
 -- split function
 function utils.split(str, pat)
@@ -54,15 +52,6 @@ end
 
 function utils.is_excluded(name)
   return name=='lo'
-end
-
-function utils.popen(command)
-  local command_file=io.popen(command)
-  local output_file=assert(io.tmpfile())
-  output_file:write(command_file:read("*a"))
-  command_file:close()
-  output_file:seek('set',0)
-  return output_file
 end
 
 return utils

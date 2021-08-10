@@ -17,7 +17,9 @@ local monitoring=require('openwisp.monitoring')
 -- collect system info
 local system_info=ubus:call('system', 'info', {})
 local board=ubus:call('system', 'board', {})
-local loadavg_output=io.popen('cat /proc/loadavg'):read()
+local loadavg_file=io.popen('cat /proc/loadavg')
+local loadavg_output=loadavg_file:read()
+loadavg_file:close()
 loadavg_output=monitoring.utils.split(loadavg_output, ' ')
 local load_average={tonumber(loadavg_output[1]), tonumber(loadavg_output[2]), tonumber(loadavg_output[3])}
 
