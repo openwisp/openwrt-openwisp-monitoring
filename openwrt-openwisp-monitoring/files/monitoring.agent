@@ -1,7 +1,6 @@
 #!/bin/sh
 
-VERSION=0 #default value of version
-COLLECT=0
+VERSION=0 # default value of version 
 while [ -n "$1" ]; do
   case "$1" in
     --version|-v) export VERSION=1; break;;
@@ -13,7 +12,7 @@ while [ -n "$1" ]; do
     --monitored_interfaces) export MONITORED_INTERFACES="$2"; shift;;
     --verbose_mode) export verbose_mode="$2"; shift;;
     --required_memory) export REQUIRED_PERCENT="$2"; shift;;
-    --collect) export COLLECT=1; shift;;
+    --mode) export MODE="$2"; shift;;
     --max_retries) export MAX_RETRY="$2"; shift;;
     -*)
       echo "Invalid option: $1"
@@ -35,30 +34,30 @@ verbose_mode=${verbose_mode:-0}
 TMP_DIR="/tmp/openwisp/monitoring"
 
 check_available_memory(){
-  total=$(ubus call system info | grep -m1 total | tr -cd 0-9)
-  available=$(ubus call system info | grep available | tr -cd 0-9)
+  total=$(ubus call system info | jsonfilter -e '@.memory.total')
+  available=$(ubus call system info | jsonfilter -e '@.memory.available')
   required=$(echo - |awk -v percent="$REQUIRED_PERCENT" -v total="$total" '{printf("%.f",percent*total)}')
 
   if [ "$available" -ge "$required" ]; then
     echo "1"
   else
-    [ "$verbose_mode" = "1" ] && logger -s "Not enough memory available" \
-                                        -p daemon.err
+    [ "$verbose_mode" -eq "1" ] && logger -s "Not enough memory available" \
+                                          -p daemon.err
     echo "0"
   fi
 }
 
 collect_data(){
   n=0
-  [ "$verbose_mode" = "1" ] && logger -s "Collecting NetJSON Monitoring data" \
-                                      -p daemon.info
+  [ "$verbose_mode" -eq "1" ] && logger -s "Collecting NetJSON Monitoring data" \
+                                        -p daemon.info
   until [ "$n" -ge 5 ]
   do
     echo "$(/usr/sbin/netjson_monitoring "$MONITORED_INTERFACES")" && break
     
     if [ "$n" -eq 5 ]; then
-      [ "$verbose_mode" = "1" ] && logger -s "Collecting data failed!" \
-                                          -p daemon.err
+      [ "$verbose_mode" -eq "1" ] && logger -s "Collecting data failed!" \
+                                            -p daemon.err
     fi
     n=$((n+1))
     sleep 5
@@ -90,29 +89,27 @@ set_url_and_curl(){
   URL="$BASE_URL/api/v1/monitoring/device/$UUID/?key=$KEY"
 
   CURL_COMMAND="curl -s -w "%{http_code}""
-  [ "$VERIFY_SSL" = "0" ] && CURL_COMMAND="$CURL_COMMAND -k"
-  [ "$verbose_mode" = "1" ] && CURL_COMMAND="$CURL_COMMAND -v"
-  echo "0"
+  [ "$VERIFY_SSL" -eq "0" ] && CURL_COMMAND="$CURL_COMMAND -k"
+  [ "$verbose_mode" -eq "1" ] && CURL_COMMAND="$CURL_COMMAND -v"
+  MAX_RETRIES=${MAX_RETRIES:-5}
 }
 
 save_data() {
-  # Remove double quotes from interfaces
-  MONITORED_INTERFACES=$(echo "$MONITORED_INTERFACES" | tr -d '"')
-
   while true
   do
-    data="$(collect_data)"
     memory_available="$(check_available_memory)"
-    if [ "$memory_available" != "0" ]; then
-        file_name="$(date -u +'%d-%m-%Y_%H:%M:%S').000000.json" # extra zeroes are added for nanoseconds precision
-        # make directory
-        mkdir -p "$TMP_DIR"
-        #save data with file_name
-        echo "$data" > "$TMP_DIR/$file_name"
-        [ "$verbose_mode" = "1" ] && logger -s "Data saved temporarily" \
+    if [ "$memory_available" -ne "0" ]; then
+      data="$(collect_data)"
+      # extra zeroes are added for nanoseconds precision
+      file_name="$(date -u +'%d-%m-%Y_%H:%M:%S').000000.json"
+      # make directory 
+      mkdir -p "$TMP_DIR"
+      # save data with file_name 
+      echo "$data" > "$TMP_DIR/$file_name"
+      [ "$verbose_mode" -eq "1" ] && logger -s "Data saved temporarily" \
                                             -p daemon.info
     fi
-    # get process id of container sending data
+    # get process id of the process sending data 
     pid=$(pgrep -f "openwisp_monitoring.*uuid")
     kill -SIGUSR1 "$pid"
     sleep "$INTERVAL"
@@ -120,7 +117,7 @@ save_data() {
 }
 
 handle_sigusr1() {
-  if [ "$verbose_mode" = "0" ]; then
+  if [ "$verbose_mode" -eq "0" ]; then
     logger -s "SIGUSR1 received! Sending data" \
            -t openwisp_monitoring \
            -p daemon.info
@@ -136,8 +133,8 @@ send_data() {
     for file in "$TMP_DIR"/*.json
     do
       if [ ! -f "$file" ]; then
-        [ "$verbose_mode" = "1" ] && logger -s "No data file found to send." \
-                                            -p daemon.info
+        [ "$verbose_mode" -eq "1" ] && logger -s "No data file found to send." \
+                                              -p daemon.info
         trap handle_sigusr1 USR1
         # SIGUSR1 signal received interrupt sleep and continue sending data
         sleep "$INTERVAL" & wait $!
@@ -147,17 +144,14 @@ send_data() {
       basefilename=${file##*/}
       filename=${basefilename%.*}
       url="$URL&time=$filename"
-      data=$(cat "$file")
       # retry sending data in case of failure
-      MAX_RETRY=${MAX_RETRY:-5}
-      FAILURES=0
+      failures=0
       BASE_SECONDS=1
       # check if the data is latest or old one
       [ "$(echo "$TMP_DIR"/*.json | awk '{print $2}')" ] || url="$url&current=true"
       while true
       do
-        FAILURES=$((FAILURES+1))
-        if [ "$FAILURES" -gt "$MAX_RETRY" ]; then
+        if [ "$failures" -eq "$MAX_RETRIES" ]; then
           if [ "$verbose_mode" = "1" ]; then
             logger -s "Data not sent successfully. Response code is $response_code" \
                    -p daemon.err
@@ -167,25 +161,27 @@ send_data() {
                    -p daemon.err
           fi
 
-          [ "$verbose_mode" = "0" ] && logger -s "Run with verbose mode to find more." \
-                                              -t openwisp_monitoring \
-                                              -p daemon.err
+          [ "$verbose_mode" -eq "0" ] && logger -s "Run with verbose mode to find more." \
+                                                -t openwisp_monitoring \
+                                                -p daemon.err
           break
         fi
-        #send data
+        # send data
+        data=$(cat "$file")
         response_code=$($CURL_COMMAND -H "Content-Type: application/json" \
           -d "$data" \
           -v "$url")
         if [ "$response_code" = "200" ]; then
-          [ "$verbose_mode" = "1" ] && logger -s "Data sent successfully." \
-                                              -p daemon.info
-          #Removed saved data
+          [ "$verbose_mode" -eq "1" ] && logger -s "Data sent successfully." \
+                                                -p daemon.info
+          #remove saved data 
           rm "$file"
           break
         else
-          TIME=$((BASE_SECONDS * 2 **(FAILURES-1)))
-          [ "$verbose_mode" = "1" ] && logger -s "Data not sent successfully. Retrying after $TIME seconds" \
-                                              -p daemon.err
+          TIME=$((BASE_SECONDS * 2 **(failures)))
+          [ "$verbose_mode" -eq "1" ] && logger -s "Data not sent successfully. Retrying in $TIME seconds" \
+                                                -p daemon.err
+          failures=$((failures+1))
           sleep "$TIME"
         fi
       done
@@ -193,12 +189,24 @@ send_data() {
   done
 }
 
-if [ "$COLLECT" -eq "1" ]; then
-  MONITORED_INTERFACES=${MONITORED_INTERFACES:-*}
-  save_data
-else
-  VERIFY_SSL=${VERIFY_SSL:-0}
-  set_url_and_curl && send_data
+if [ -z "$MODE" ]; then
+  logger -s "missing required --mode option" \
+         -t openwisp_monitoring \
+         -p daemon.err
+  exit 1
 fi
 
-exit 0
+if [ "$MODE" = "collect" ]; then
+  MONITORED_INTERFACES=${MONITORED_INTERFACES:-*}
+  # remove double quotes from interfaces 
+  MONITORED_INTERFACES=$(echo "$MONITORED_INTERFACES" | tr -d '"')
+  save_data
+elif [ "$MODE" = "send" ]; then
+  VERIFY_SSL=${VERIFY_SSL:-0}
+  set_url_and_curl && send_data
+else
+  logger -s "Please specify correct mode" \
+         -t openwisp_monitoring \
+         -p daemon.err
+  exit 1
+fi
