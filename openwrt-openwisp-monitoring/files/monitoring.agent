@@ -185,6 +185,8 @@ send_data() {
           sleep "$TIME"
         fi
       done
+      # retry sending same data again in next cycle
+      [ "$failures" -eq "$MAX_RETRIES" ] && break
     done
   done
 }
