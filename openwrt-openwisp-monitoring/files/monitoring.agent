@@ -33,6 +33,8 @@ INTERVAL=${INTERVAL:-300}
 verbose_mode=${verbose_mode:-0}
 TMP_DIR="/tmp/openwisp/monitoring"
 
+echoerr() { echo "$@" 1>&2; }
+
 check_available_memory(){
   total=$(ubus call system info | jsonfilter -e '@.memory.total')
   available=$(ubus call system info | jsonfilter -e '@.memory.available')
@@ -66,23 +68,17 @@ collect_data(){
 
 set_url_and_curl(){
   if [ -z "$BASE_URL" ]; then
-    logger -s "missing required --url option" \
-           -t openwisp_monitoring \
-           -p daemon.err
+    echoerr "missing required --url option"
     exit 1
   fi
 
   if [ -z "$UUID" ]; then
-    logger -s "missing required --uuid option" \
-            -t openwisp_monitoring \
-            -p daemon.err
+    echoerr "missing required --uuid option"
     exit 1
   fi
 
   if [ -z "$KEY" ]; then
-    logger -s "missing required --key option" \
-           -t openwisp_monitoring \
-           -p daemon.err
+    echoerr "missing required --key option"
     exit 1
   fi
 
@@ -192,9 +188,7 @@ send_data() {
 }
 
 if [ -z "$MODE" ]; then
-  logger -s "missing required --mode option" \
-         -t openwisp_monitoring \
-         -p daemon.err
+  echoerr "missing required --mode option"
   exit 1
 fi
 
@@ -207,8 +201,6 @@ elif [ "$MODE" = "send" ]; then
   VERIFY_SSL=${VERIFY_SSL:-0}
   set_url_and_curl && send_data
 else
-  logger -s "Please specify correct mode" \
-         -t openwisp_monitoring \
-         -p daemon.err
+  echoerr "The supplied mode is invaid. Only send and collect are allowed"
   exit 1
 fi
