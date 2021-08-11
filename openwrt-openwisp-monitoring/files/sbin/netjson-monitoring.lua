@@ -134,7 +134,10 @@ for name, interface in pairs(network_status) do
       local bridge_members = {}
       for _, bridge_member in ipairs(interface['bridge-members']) do
         if network_status[bridge_member] then
-          table.insert(bridge_members, bridge_member)
+          local network_interface=network_status[bridge_member]
+          if network_interface['up'] and network_interface['present'] then
+            table.insert(bridge_members, bridge_member)
+          end
         end
       end
       netjson_interface['bridge_members']=bridge_members
