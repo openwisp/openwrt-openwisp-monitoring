@@ -128,6 +128,20 @@ for name, interface in pairs(network_status) do
       bridge_members=interface['bridge-members'],
       multicast=interface.multicast
     }
+
+    -- add existing bridge members only
+    if interface['bridge-members'] ~=nil then
+      local bridge_members = {}
+      for _, bridge_member in ipairs(interface['bridge-members']) do
+        if network_status[bridge_member] then
+          local network_interface=network_status[bridge_member]
+          if network_interface.up and network_interface.present then
+            table.insert(bridge_members, bridge_member)
+          end
+        end
+      end
+      netjson_interface['bridge_members']=bridge_members
+    end
     if wireless_interfaces[name] then
       monitoring.utils.dict_merge(wireless_interfaces[name], netjson_interface)
       interface.type=netjson_interface.type

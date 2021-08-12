@@ -395,7 +395,7 @@ test_data.devices={
   },
   lan1={
   external=false,
-  present=true,
+  present=false,
   type="Network device",
   up=true,
   carrier=false,

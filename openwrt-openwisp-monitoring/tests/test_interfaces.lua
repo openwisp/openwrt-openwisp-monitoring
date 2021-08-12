@@ -170,4 +170,10 @@ function TestNetJSON.test_netjson_monitoring()
   luaunit.assertNotNil(string.find(netjson, 'dns_servers":["8.8.8.8","8.8.4.4"]', 1, true))
 end
 
+function TestNetJSON.test_only_existing_bridge_members_add()
+  local netjson_file=assert(loadfile('../files/sbin/netjson-monitoring.lua'))
+  local netjson=netjson_file('*')
+  luaunit.assertNotNil(string.find(netjson, '"bridge_members":["lan2"]', 1, true))
+end
+
 os.exit( luaunit.LuaUnit.run() )
