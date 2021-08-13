@@ -96,8 +96,7 @@ save_data() {
     memory_available="$(check_available_memory)"
     if [ "$memory_available" -ne "0" ]; then
       data="$(collect_data)"
-      # extra zeroes are added for nanoseconds precision
-      file_name="$(date -u +'%d-%m-%Y_%H:%M:%S').000000.json"
+      file_name="$(date -u +'%d-%m-%Y_%H:%M:%S')"
       # make directory 
       mkdir -p "$TMP_DIR"
       # save data with file_name 
@@ -106,27 +105,21 @@ save_data() {
                                             -p daemon.info
     fi
     # get process id of the process sending data 
-    pid=$(pgrep -f "openwisp_monitoring.*uuid")
+    pid=$(pgrep -f "openwisp_monitoring.*--mode send")
     kill -SIGUSR1 "$pid"
     sleep "$INTERVAL"
   done
 }
 
 handle_sigusr1() {
-  if [ "$verbose_mode" -eq "0" ]; then
-    logger -s "SIGUSR1 received! Sending data" \
-           -t openwisp_monitoring \
-           -p daemon.info
-  else
-    logger -s "SIGUSR1 received! Sending data" \
-           -p daemon.info
-  fi
+  [ "$verbose_mode" -eq "1" ] && logger -s "SIGUSR1 received! Sending data" \
+                                        -p daemon.info
 }
 
 send_data() {
   while true
   do
-    for file in "$TMP_DIR"/*.json
+    for file in "$TMP_DIR"/*
     do
       if [ ! -f "$file" ]; then
         [ "$verbose_mode" -eq "1" ] && logger -s "No data file found to send." \
@@ -139,7 +132,8 @@ send_data() {
       fi
       basefilename=${file##*/}
       filename=${basefilename%.*}
-      url="$URL&time=$filename"
+      # extra zeroes are added for nanoseconds precision
+      url="$URL&time=$filename.000000"
       # retry sending data in case of failure
       failures=0
       BASE_SECONDS=1
