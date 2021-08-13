@@ -116,6 +116,7 @@ save_data() {
 handle_sigusr1() {
   [ "$verbose_mode" -eq "1" ] && logger -s "SIGUSR1 received! Sending data" \
                                         -p daemon.info
+  echo "0"
 }
 
 send_data() {
@@ -139,7 +140,7 @@ send_data() {
       # retry sending data in case of failure
       failures=0
       # check if the data is latest or old one
-      [ "$(echo "$TMP_DIR"/*.json | awk '{print $2}')" ] || url="$url&current=true"
+      [ "$(echo "$TMP_DIR"/* | awk '{print $2}')" ] || url="$url&current=true"
       while true
       do
         if [ "$failures" -eq "$MAX_RETRIES" ]; then
@@ -201,6 +202,6 @@ elif [ "$MODE" = "send" ]; then
   VERIFY_SSL=${VERIFY_SSL:-0}
   set_url_and_curl && send_data
 else
-  echoerr "The supplied mode is invaid. Only send and collect are allowed"
+  echoerr "The supplied mode is invalid. Only send and collect are allowed"
   exit 1
 fi
