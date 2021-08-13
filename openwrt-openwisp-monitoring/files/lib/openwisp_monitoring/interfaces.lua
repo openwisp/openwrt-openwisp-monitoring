@@ -1,5 +1,5 @@
 -- retrieve interfaces information
-local utils = require('openwisp.monitoring_utils')
+local utils = require('openwisp_monitoring.utils')
 
 local cjson = require('cjson')
 local nixio = require('nixio')

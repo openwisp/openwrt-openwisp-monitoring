@@ -1,7 +1,5 @@
-package.path = package.path .. ";../files/lib/?.lua"
-
 -- retrieve dhcp leases
-local utils = require('openwisp.monitoring_utils')
+local utils = require('openwisp_monitoring.utils')
 local uci = require('uci')
 local uci_cursor = uci.cursor()
 local io = require('io')

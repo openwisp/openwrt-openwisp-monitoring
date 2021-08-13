@@ -1,6 +1,6 @@
 -- retrieve resources usage
 local io = require('io')
-local utils = require('openwisp.monitoring_utils')
+local utils = require('openwisp_monitoring.utils')
 
 local resources = {}
 
