@@ -41,11 +41,11 @@ check_available_memory(){
   required=$(echo - |awk -v percent="$REQUIRED_PERCENT" -v total="$total" '{printf("%.f",percent*total)}')
 
   if [ "$available" -ge "$required" ]; then
-    echo "1"
+    echo "0"
   else
     [ "$verbose_mode" -eq "1" ] && logger -s "Not enough memory available" \
                                           -p daemon.err
-    echo "0"
+    echo "1"
   fi
 }
 
@@ -90,13 +90,14 @@ set_url_and_curl(){
   MAX_RETRIES=${MAX_RETRIES:-5}
   BASE_SECONDS=1
   FAILING=0
+  return 0
 }
 
 save_data() {
   while true
   do
     memory_available="$(check_available_memory)"
-    if [ "$memory_available" -ne "0" ]; then
+    if [ "$memory_available" -eq "0" ]; then
       data="$(collect_data)"
       file_name="$(date -u +'%d-%m-%Y_%H:%M:%S')"
       # make directory 
@@ -116,7 +117,7 @@ save_data() {
 handle_sigusr1() {
   [ "$verbose_mode" -eq "1" ] && logger -s "SIGUSR1 received! Sending data" \
                                         -p daemon.info
-  echo "0"
+  return 0
 }
 
 send_data() {
