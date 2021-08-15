@@ -1,12 +1,15 @@
 -- retrieve resources usage
 local io=require('io')
+local utils=require('openwisp.monitoring_utils')
 
 local resources={}
 
 function resources.parse_disk_usage()
-  local file=io.popen('df')
   local disk_usage_info={}
-  for line in file:lines() do
+  local disk_usage_file=io.popen('df')
+  local disk_usage = disk_usage_file:read("*a")
+  disk_usage_file:close()
+  for _,line in ipairs(utils.split(disk_usage, "\n")) do
     if line:sub(1, 10) ~='Filesystem' then
       local filesystem, size, used, available, percent, location=
         line:match('(%S+)%s+(%S+)%s+(%S+)%s+(%S+)%s+(%S+)%s+(%S+)')
@@ -24,14 +27,14 @@ function resources.parse_disk_usage()
       end
     end
   end
-  file:close()
   return disk_usage_info
 end
 
 function resources.get_cpus()
-  local processors=io.popen('cat /proc/cpuinfo | grep -c processor')
-  local cpus=tonumber(processors:read('*a'))
-  processors:close()
+  local processors_file=io.popen('cat /proc/cpuinfo | grep -c processor')
+  local processors=processors_file:read('*a')
+  processors_file:close()
+  local cpus=tonumber(processors)
   return cpus
 end
 
