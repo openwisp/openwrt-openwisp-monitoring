@@ -15,6 +15,9 @@ git clone https://git.openwrt.org/project/uci.git --depth=1
 cd uci && cmake . && make install && cd .. || { echo 'Installing uci failed!' ; exit 1; }
 #install nixio
 luarocks install https://raw.githubusercontent.com/Neopallium/nixio/master/nixio-scm-0.rockspec
+# install luaformatter
+git clone --recurse-submodules https://github.com/Koihik/LuaFormatter.git
+cd LuaFormatter && cmake . && make install && cd .. || { echo 'Installing LuaFormatter failed'; exit 1; }
 # update links to shared libraries
 ldconfig -v
 # install luaunit
@@ -26,4 +29,4 @@ luarocks install lua-cjson
 #install luacov-coveralls
 luarocks install luacov-coveralls
 #clean
-rm -rf json-c libubox uci
+rm -rf json-c libubox uci LuaFormatter
