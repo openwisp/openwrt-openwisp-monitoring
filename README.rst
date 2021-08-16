@@ -180,10 +180,6 @@ Once it is installed, you can format all files by::
 
     ./qa-format
 
-Alternatively, you can format specific file, e.g.::
-
-    lua-format -i --config=luaformat.config openwrt-openwisp-monitoring/files/sbin/netjson-monitoring.lua
-
 Run tests
 ---------
 
