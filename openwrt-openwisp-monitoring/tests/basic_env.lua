@@ -33,6 +33,13 @@ env.ubus = {
   end
 }
 
-env.uci = {cursor = function() return {get_all = function(...) return nil end, get = function(...) return nil end} end}
+env.uci = {
+  cursor = function()
+    return {
+      get_all = function(...) return nil end,
+      get = function(...) return nil end
+    }
+  end
+}
 
 return env

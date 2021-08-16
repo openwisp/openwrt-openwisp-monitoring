@@ -12,7 +12,7 @@ function resources.parse_disk_usage()
   for _, line in ipairs(utils.split(disk_usage, "\n")) do
     if line:sub(1, 10) ~= 'Filesystem' then
       local filesystem, size, used, available, percent, location = line:match(
-                                                                     '(%S+)%s+(%S+)%s+(%S+)%s+(%S+)%s+(%S+)%s+(%S+)')
+        '(%S+)%s+(%S+)%s+(%S+)%s+(%S+)%s+(%S+)%s+(%S+)')
       if filesystem ~= 'tmpfs' and not string.match(filesystem, 'overlayfs') then
         percent = percent:gsub('%W', '')
         -- available, size and used are in KiB

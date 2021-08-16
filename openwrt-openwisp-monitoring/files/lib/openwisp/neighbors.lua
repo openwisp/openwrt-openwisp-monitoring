@@ -13,7 +13,8 @@ function neighbors.parse_arp()
   arp_data_file:close()
   for _, line in ipairs(utils.split(arp_data, "\n")) do
     if line:sub(1, 10) ~= 'IP address' then
-      local ip, _, _, mac, _, dev = line:match("(%S+)%s+(%S+)%s+(%S+)%s+(%S+)%s+(%S+)%s+(%S+)")
+      local ip, _, _, mac, _, dev = line:match(
+        "(%S+)%s+(%S+)%s+(%S+)%s+(%S+)%s+(%S+)%s+(%S+)")
       table.insert(arp_info, {ip = ip, mac = mac, interface = dev, state = ''})
     end
   end
@@ -45,8 +46,11 @@ function neighbors.get_ip_neigh()
   local neigh_data = neigh_data_file:read("*a")
   neigh_data_file:close()
   for _, line in ipairs(utils.split(neigh_data, "\n")) do
-    local ip, dev, mac, state = line:match("(%S+)%s+dev%s+(%S+)%s+lladdr%s+(%S+).*%s(%S+)")
-    if mac ~= nil then table.insert(arp_info, {ip = ip, mac = mac, interface = dev, state = state}) end
+    local ip, dev, mac, state = line:match(
+      "(%S+)%s+dev%s+(%S+)%s+lladdr%s+(%S+).*%s(%S+)")
+    if mac ~= nil then
+      table.insert(arp_info, {ip = ip, mac = mac, interface = dev, state = state})
+    end
   end
   return arp_info
 end

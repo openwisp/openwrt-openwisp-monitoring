@@ -41,13 +41,15 @@ local specialized_interfaces = {
       end
     end
 
-    local signal_file = io.popen('mmcli --output-json -m ' .. modem .. ' --signal-get')
+    local signal_file =
+      io.popen('mmcli --output-json -m ' .. modem .. ' --signal-get')
     local signal = signal_file:read("*a")
     signal_file:close()
     if signal and pcall(cjson.decode, signal) then
       signal = cjson.decode(signal)
       -- only send data if not empty to avoid generating too much traffic
-      if not utils.is_table_empty(signal.modem) and not utils.is_table_empty(signal.modem.signal) then
+      if not utils.is_table_empty(signal.modem) and
+        not utils.is_table_empty(signal.modem.signal) then
         -- omit refresh rate
         signal.modem.signal.refresh = nil
         info.signal = {}
@@ -55,7 +57,9 @@ local specialized_interfaces = {
         for section_key, section_values in pairs(signal.modem.signal) do
           for key, value in pairs(section_values) do
             if value ~= '--' then
-              if utils.is_table_empty(info.signal[section_key]) then info.signal[section_key] = {} end
+              if utils.is_table_empty(info.signal[section_key]) then
+                info.signal[section_key] = {}
+              end
               info.signal[section_key][key] = tonumber(value)
             end
           end
@@ -68,7 +72,9 @@ local specialized_interfaces = {
 }
 
 function interfaces.find_default_gateway(routes)
-  for i = 1, #routes do if routes[i].target == '0.0.0.0' then return routes[i].nexthop end end
+  for i = 1, #routes do
+    if routes[i].target == '0.0.0.0' then return routes[i].nexthop end
+  end
   return nil
 end
 
@@ -133,7 +139,12 @@ function interfaces.get_addresses(name)
         end
         if family == 'ipv4' or family == 'ipv6' then
           if not utils.has_value(addresses_list, addr) then
-            table.insert(addresses, {address = addr, mask = nixio_data[i].prefix, proto = proto, family = family})
+            table.insert(addresses, {
+              address = addr,
+              mask = nixio_data[i].prefix,
+              proto = proto,
+              family = family
+            })
           end
         end
       end
@@ -146,14 +157,20 @@ function interfaces.get_interface_info(name, netjson_interface)
   local info = {dns_search = nil, dns_servers = nil}
   for _, interface in pairs(interface_data['interface']) do
     if interface['l3_device'] == name then
-      if next(interface['dns-search']) then info.dns_search = interface['dns-search'] end
-      if next(interface['dns-server']) then info.dns_servers = interface['dns-server'] end
+      if next(interface['dns-search']) then
+        info.dns_search = interface['dns-search']
+      end
+      if next(interface['dns-server']) then
+        info.dns_servers = interface['dns-server']
+      end
       if netjson_interface.type == 'bridge' then
         info.stp = uci_cursor.get('network', interface['interface'], 'stp') == '1'
       end
       -- collect specialized info if available
       local specialized_info = specialized_interfaces[interface.proto]
-      if specialized_info then info.specialized = specialized_info(name, interface) end
+      if specialized_info then
+        info.specialized = specialized_info(name, interface)
+      end
     end
   end
   return info
@@ -166,7 +183,9 @@ function interfaces.get_vpn_interfaces()
 
   if utils.is_table_empty(items) then return {} end
 
-  for _, config in pairs(items) do if config and config.dev then vpn_interfaces[config.dev] = true end end
+  for _, config in pairs(items) do
+    if config and config.dev then vpn_interfaces[config.dev] = true end
+  end
   return vpn_interfaces
 end
 

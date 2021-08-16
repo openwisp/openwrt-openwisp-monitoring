@@ -44,7 +44,14 @@ dhcp.config = {
     loglevel = "4",
     maindhcp = "0"
   },
-  wan = {[".anonymous"] = false, [".index"] = 2, [".name"] = "wan", [".type"] = "dhcp", ignore = "1", interface = "wan"}
+  wan = {
+    [".anonymous"] = false,
+    [".index"] = 2,
+    [".name"] = "wan",
+    [".type"] = "dhcp",
+    ignore = "1",
+    interface = "wan"
+  }
 }
 
 dhcp.leases = {

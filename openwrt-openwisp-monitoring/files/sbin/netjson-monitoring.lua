@@ -20,12 +20,19 @@ local loadavg_file = io.popen('cat /proc/loadavg')
 local loadavg_output = loadavg_file:read()
 loadavg_file:close()
 loadavg_output = monitoring.utils.split(loadavg_output, ' ')
-local load_average = {tonumber(loadavg_output[1]), tonumber(loadavg_output[2]), tonumber(loadavg_output[3])}
+local load_average = {
+  tonumber(loadavg_output[1]), tonumber(loadavg_output[2]),
+  tonumber(loadavg_output[3])
+}
 
 -- init netjson data structure
 local netjson = {
   type = 'DeviceMonitoring',
-  general = {hostname = board.hostname, local_time = system_info.localtime, uptime = system_info.uptime},
+  general = {
+    hostname = board.hostname,
+    local_time = system_info.localtime,
+    uptime = system_info.uptime
+  },
   resources = {
     load = load_average,
     memory = system_info.memory,
@@ -36,10 +43,14 @@ local netjson = {
 }
 
 local dhcp_leases = monitoring.dhcp.get_dhcp_leases()
-if not monitoring.utils.is_table_empty(dhcp_leases) then netjson.dhcp_leases = dhcp_leases end
+if not monitoring.utils.is_table_empty(dhcp_leases) then
+  netjson.dhcp_leases = dhcp_leases
+end
 
 local host_neighbors = monitoring.neighbors.get_neighbors()
-if not monitoring.utils.is_table_empty(host_neighbors) then netjson.neighbors = host_neighbors end
+if not monitoring.utils.is_table_empty(host_neighbors) then
+  netjson.neighbors = host_neighbors
+end
 
 -- determine the interfaces to monitor
 local arg = {...}
@@ -90,7 +101,8 @@ for _, radio in pairs(wireless_status) do
         if hostapd_output then clients = hostapd_output.clients end
       end
       if not monitoring.utils.is_table_empty(clients) then
-        netjson_interface.wireless.clients = monitoring.wifi.netjson_clients(clients, is_mesh)
+        netjson_interface.wireless.clients =
+          monitoring.wifi.netjson_clients(clients, is_mesh)
       end
       wireless_interfaces[name] = netjson_interface
     end
@@ -154,11 +166,17 @@ for name, interface in pairs(network_status) do
     if next(addresses) then netjson_interface.addresses = addresses end
     local info = monitoring.interfaces.get_interface_info(name, netjson_interface)
     if info.stp ~= nil then netjson_interface.stp = info.stp end
-    if info.specialized then for key, value in pairs(info.specialized) do netjson_interface[key] = value end end
+    if info.specialized then
+      for key, value in pairs(info.specialized) do netjson_interface[key] = value end
+    end
     table.insert(host_interfaces, netjson_interface)
     -- DNS info is independent from interface
-    if info.dns_servers then monitoring.utils.array_concat(info.dns_servers, dns_servers) end
-    if info.dns_search then monitoring.utils.array_concat(info.dns_search, dns_search) end
+    if info.dns_servers then
+      monitoring.utils.array_concat(info.dns_servers, dns_servers)
+    end
+    if info.dns_search then
+      monitoring.utils.array_concat(info.dns_search, dns_search)
+    end
   end
 end
 
