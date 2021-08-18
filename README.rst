@@ -63,6 +63,8 @@ Agent will periodically check if enough memory is available. If true, data will 
 
 Once the data is saved, a signal will be sent to the other agent to ensure data is sent as soon as it is collected.
 
+**Note:** Date and time on device should be set correctly. Otherwise, data will be saved with wrong timestamp in timeseries database.
+
 Send Mode
 ~~~~~~~~~
 
