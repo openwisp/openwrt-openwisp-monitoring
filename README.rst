@@ -19,8 +19,8 @@ openwrt-openwisp-monitoring
 
 ------------
 
-`OpenWRT <https://openwrt.org/>`_ configuration agent for 
-`OpenWISP Monitoring <https://github.com/openwisp/openwisp-monitoring>`_.
+The `OpenWISP Monitoring <https://github.com/openwisp/openwisp-monitoring>`_ agent
+for `OpenWRT <https://openwrt.org/>`_.
 
 **Want to help OpenWISP?** `Find out how to help us grow here
 <http://openwisp.io/docs/general/help-us.html>`_.
