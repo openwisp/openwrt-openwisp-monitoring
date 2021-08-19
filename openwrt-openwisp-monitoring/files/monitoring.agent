@@ -131,9 +131,9 @@ send_data() {
         trap handle_sigusr1 USR1
         # SIGUSR1 signal received, interrupt sleep and continue sending data
         sleep "$INTERVAL" & wait $!
-        trap "" USR1
         continue
       fi
+      trap "" USR1
       basefilename=${file##*/}
       filename=${basefilename%.*}
       # extra zeroes are added for nanoseconds precision
@@ -159,9 +159,7 @@ send_data() {
         fi
         # send data
         data=$(cat "$file")
-        response_code=$($CURL_COMMAND -H "Content-Type: application/json" \
-          -d "$data" \
-          -v "$url")
+        response_code=$($CURL_COMMAND -H "Content-Type: application/json" -d "$data" "$url")
         if [ "$response_code" = "200" ]; then
           if [ "$verbose_mode" -eq "1" ]; then
             logger -s "Data sent successfully." \
@@ -172,7 +170,7 @@ send_data() {
                    -p daemon.info
             FAILING=0
           fi
-          #remove saved data 
+          # remove saved data
           rm "$file"
           break
         else
