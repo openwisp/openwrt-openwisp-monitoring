@@ -72,11 +72,11 @@ If openwisp_monitoring agent is called with this mode, then the agent will keep 
 
 Agent will check if any data file is available in temporary storage.
 
-If there is no data file, the agent will sleep for the time interval and check for data file again. This will be continued until a data file is found.
-If a signal is received from other agent, then the sleep will be interrupted and agent will start sending data.
+If there is no data file, the agent will sleep for the time interval and check for the data file again. This will be continued until a data file is found.
+If a signal is received from the other agent, then the sleep will be interrupted and agent will start sending data.
 
-If agent fails to send data to the server, exponential backoff will be used to retry until max retries are reached.
-If all attempts of sending data failed, the agent will try to send data in next cycle.
+If agent fails to send data to the server, an exponential backoff will be used to retry until `max_retries` is reached.
+If all attempts of sending data failed, the agent will try to send data in the next cycle.
 
 If data is sent successfully, then the data file will be deleted and agent will look for another file.
 

@@ -88,7 +88,6 @@ set_url_and_curl(){
   [ "$VERIFY_SSL" -eq "0" ] && CURL_COMMAND="$CURL_COMMAND -k"
   [ "$VERBOSE_MODE" -eq "1" ] && CURL_COMMAND="$CURL_COMMAND -v"
   MAX_RETRIES=${MAX_RETRIES:-5}
-  BASE_SECONDS=1
   FAILING=0
   return 0
 }
@@ -140,6 +139,7 @@ send_data() {
       url="$URL&time=$filename.000000"
       # retry sending data in case of failure
       failures=0
+      timeout=1
       # check if the data is latest or old one
       [ "$(echo "$TMP_DIR"/* | awk '{print $2}')" ] || url="$url&current=true"
       while true
@@ -174,11 +174,11 @@ send_data() {
           rm "$file"
           break
         else
-          TIME=$((BASE_SECONDS * 2 **(failures)))
-          [ "$VERBOSE_MODE" -eq "1" ] && logger -s "Data not sent successfully. Retrying in $TIME seconds" \
-                                                -p daemon.err
+          timeout=$((timeout*2))
+          [ "$VERBOSE_MODE" -eq "1" ] && logger -s "Data not sent successfully. Retrying in $timeout seconds" \
+                                                -p daemon.warn
           failures=$((failures+1))
-          sleep "$TIME"
+          sleep "$timeout"
         fi
       done
       # retry sending same data again in next cycle
