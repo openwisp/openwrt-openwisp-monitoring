@@ -10,7 +10,7 @@ while [ -n "$1" ]; do
     --verify_ssl) export VERIFY_SSL="$2"; shift;;
     --interval) export INTERVAL="$2"; shift;;
     --monitored_interfaces) export MONITORED_INTERFACES="$2"; shift;;
-    --verbose_mode) export verbose_mode="$2"; shift;;
+    --verbose_mode) export VERBOSE_MODE="$2"; shift;;
     --required_memory) export REQUIRED_PERCENT="$2"; shift;;
     --mode) export MODE="$2"; shift;;
     --max_retries) export MAX_RETRY="$2"; shift;;
@@ -30,7 +30,7 @@ if [ "$VERSION" -eq "1" ]; then
 fi
 
 INTERVAL=${INTERVAL:-300}
-verbose_mode=${verbose_mode:-0}
+VERBOSE_MODE=${VERBOSE_MODE:-0}
 TMP_DIR="/tmp/openwisp/monitoring"
 
 echoerr() { echo "$@" 1>&2; }
@@ -43,7 +43,7 @@ check_available_memory(){
   if [ "$available" -ge "$required" ]; then
     echo "0"
   else
-    [ "$verbose_mode" -eq "1" ] && logger -s "Not enough memory available" \
+    [ "$VERBOSE_MODE" -eq "1" ] && logger -s "Not enough memory available" \
                                           -p daemon.err
     echo "1"
   fi
@@ -51,14 +51,14 @@ check_available_memory(){
 
 collect_data(){
   n=0
-  [ "$verbose_mode" -eq "1" ] && logger -s "Collecting NetJSON Monitoring data" \
+  [ "$VERBOSE_MODE" -eq "1" ] && logger -s "Collecting NetJSON Monitoring data" \
                                         -p daemon.info
   until [ "$n" -ge 5 ]
   do
     echo "$(/usr/sbin/netjson_monitoring "$MONITORED_INTERFACES")" && break
     
     if [ "$n" -eq 5 ]; then
-      [ "$verbose_mode" -eq "1" ] && logger -s "Collecting data failed!" \
+      [ "$VERBOSE_MODE" -eq "1" ] && logger -s "Collecting data failed!" \
                                             -p daemon.err
     fi
     n=$((n+1))
@@ -86,7 +86,7 @@ set_url_and_curl(){
 
   CURL_COMMAND="curl -s -w "%{http_code}""
   [ "$VERIFY_SSL" -eq "0" ] && CURL_COMMAND="$CURL_COMMAND -k"
-  [ "$verbose_mode" -eq "1" ] && CURL_COMMAND="$CURL_COMMAND -v"
+  [ "$VERBOSE_MODE" -eq "1" ] && CURL_COMMAND="$CURL_COMMAND -v"
   MAX_RETRIES=${MAX_RETRIES:-5}
   BASE_SECONDS=1
   FAILING=0
@@ -104,7 +104,7 @@ save_data() {
       mkdir -p "$TMP_DIR"
       # save data with file_name 
       echo "$data" > "$TMP_DIR/$file_name"
-      [ "$verbose_mode" -eq "1" ] && logger -s "Data saved temporarily" \
+      [ "$VERBOSE_MODE" -eq "1" ] && logger -s "Data saved temporarily" \
                                             -p daemon.info
     fi
     # get process id of the process sending data 
@@ -115,7 +115,7 @@ save_data() {
 }
 
 handle_sigusr1() {
-  [ "$verbose_mode" -eq "1" ] && logger -s "SIGUSR1 received! Sending data" \
+  [ "$VERBOSE_MODE" -eq "1" ] && logger -s "SIGUSR1 received! Sending data" \
                                         -p daemon.info
   return 0
 }
@@ -126,7 +126,7 @@ send_data() {
     for file in "$TMP_DIR"/*
     do
       if [ ! -f "$file" ]; then
-        [ "$verbose_mode" -eq "1" ] && logger -s "No data file found to send." \
+        [ "$VERBOSE_MODE" -eq "1" ] && logger -s "No data file found to send." \
                                               -p daemon.info
         trap handle_sigusr1 USR1
         # SIGUSR1 signal received, interrupt sleep and continue sending data
@@ -145,7 +145,7 @@ send_data() {
       while true
       do
         if [ "$failures" -eq "$MAX_RETRIES" ]; then
-          if [ "$verbose_mode" -eq "1" ]; then
+          if [ "$VERBOSE_MODE" -eq "1" ]; then
             logger -s "Data not sent successfully. Response received is $response_code" \
                    -p daemon.err
           elif [ "$FAILING" -eq "0" ]; then
@@ -161,7 +161,7 @@ send_data() {
         data=$(cat "$file")
         response_code=$($CURL_COMMAND -H "Content-Type: application/json" -d "$data" "$url")
         if [ "$response_code" = "200" ]; then
-          if [ "$verbose_mode" -eq "1" ]; then
+          if [ "$VERBOSE_MODE" -eq "1" ]; then
             logger -s "Data sent successfully." \
                    -p daemon.info
           elif [ "$FAILING" -eq "1" ]; then
@@ -175,7 +175,7 @@ send_data() {
           break
         else
           TIME=$((BASE_SECONDS * 2 **(failures)))
-          [ "$verbose_mode" -eq "1" ] && logger -s "Data not sent successfully. Retrying in $TIME seconds" \
+          [ "$VERBOSE_MODE" -eq "1" ] && logger -s "Data not sent successfully. Retrying in $TIME seconds" \
                                                 -p daemon.err
           failures=$((failures+1))
           sleep "$TIME"
