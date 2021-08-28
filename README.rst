@@ -172,6 +172,14 @@ You can inspect the version of openwisp-monitoring currently installed with::
 
     openwisp_monitoring --version
 
+Quality Assurance Checks
+------------------------
+
+We use `LuaFormatter <https://luarocks.org/modules/tammela/luaformatter>`_ to format lua files.
+Once it is installed, you can format all files by::
+
+    ./qa-format
+
 Run tests
 ---------
 
