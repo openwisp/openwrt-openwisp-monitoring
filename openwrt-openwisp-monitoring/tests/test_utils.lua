@@ -2,7 +2,7 @@ package.path = package.path .. ";../files/lib/openwisp_monitoring/?.lua"
 
 local luaunit = require('luaunit')
 
-local utils=require('utils')
+local utils = require('utils')
 
 TestUtils = {}
 
