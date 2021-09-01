@@ -1,7 +1,7 @@
 -- retrieve neighbors information
 local cjson = require('cjson')
 local io = require('io')
-local utils = require('openwisp.monitoring_utils')
+local utils = require('openwisp_monitoring.utils')
 
 local neighbors = {}
 

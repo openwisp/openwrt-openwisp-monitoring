@@ -6,6 +6,6 @@ cd openwrt-openwisp-monitoring/
 # format lua files
 lua-format -i --config=luaformat.config \
 	files/sbin/*.lua \
-	files/lib/openwisp/*.lua \
+	files/lib/openwisp_monitoring/*.lua \
 	tests/*.lua \
 	tests/test_files/*.lua
