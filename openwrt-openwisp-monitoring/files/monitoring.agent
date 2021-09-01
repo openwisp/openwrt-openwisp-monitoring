@@ -137,7 +137,7 @@ send_data() {
       filename=${basefilename%.*}
       # remove previous saved response if exist
       if [ "$filename" = "response" ]; then
-        rm "$TMP_DIR"/response.txt 2>/dev/null && continue
+        rm "$RESPONSE_FILE" 2>/dev/null && continue
       fi
       # extra zeroes are added for nanoseconds precision
       url="$URL&time=$filename.000000"
@@ -149,7 +149,7 @@ send_data() {
       while true
       do
         if [ "$failures" -eq "$MAX_RETRIES" ]; then
-          [ -f "$TMP_DIR"/response.txt ] && error_message="$(cat "$TMP_DIR"/response.txt)" || error_message='"".'
+          [ -f "$RESPONSE_FILE" ] && error_message="\"$(cat "$RESPONSE_FILE")\"" || error_message='"".'
           if [ "$VERBOSE_MODE" -eq "1" ]; then
             logger -s "Data not sent successfully. Response code is \"$response_code\"." \
                       "Error message is $error_message" \
@@ -176,7 +176,7 @@ send_data() {
                    -t openwisp_monitoring \
                    -p daemon.info
             FAILING=0
-            [ -f "$TMP_DIR"/response.txt ] && rm "$TMP_DIR"/response.txt
+            [ -f "$RESPONSE_FILE" ] && rm "$RESPONSE_FILE"
           fi
           # remove saved data
           [ -f "$file" ] && rm "$file"
@@ -207,6 +207,7 @@ if [ "$MODE" = "collect" ]; then
   save_data
 elif [ "$MODE" = "send" ]; then
   VERIFY_SSL=${VERIFY_SSL:-0}
+  RESPONSE_FILE="$TMP_DIR"/response.txt
   set_url_and_curl && send_data
 else
   echoerr "The supplied mode is invalid. Only send and collect are allowed"
