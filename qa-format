@@ -1,9 +1,13 @@
 #!/bin/bash
 set -e
 
-cd openwrt-openwisp-monitoring/
+# format shell scripts
+shfmt -w -l .
+shfmt -w -l openwrt-openwisp-monitoring/files/monitoring.agent
+shfmt -w -l openwrt-openwisp-monitoring/files/monitoring.init
 
 # format lua files
+cd openwrt-openwisp-monitoring/
 lua-format -i --config=luaformat.config \
 	files/sbin/*.lua \
 	files/lib/openwisp_monitoring/*.lua \

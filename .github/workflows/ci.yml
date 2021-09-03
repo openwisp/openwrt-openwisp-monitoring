@@ -34,6 +34,15 @@ jobs:
 
       - name: QA-Checks
         run: ./run-qa-checks
+        env:
+          CI: 1
+
+      - name: Run sh-checker
+        uses: luizm/action-sh-checker@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          sh_checker_comment: true
 
       - name: Tests
         run: ./runtests
@@ -43,7 +52,7 @@ jobs:
           cd openwrt-openwisp-monitoring/tests
           luacov-coveralls -v
         env:
-          COVERALLS_REPO_TOKEN: ${{ github.token }}
+          COVERALLS_REPO_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   build:
     name: Build and upload package as artifacts
