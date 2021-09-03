@@ -43,8 +43,8 @@ check_available_memory(){
   if [ "$available" -ge "$required" ]; then
     echo "0"
   else
-    [ "$VERBOSE_MODE" -eq "1" ] && logger -s "Not enough memory available" \
-                                          -p daemon.err
+    [ "$VERBOSE_MODE" -eq "1" ] && logger -s "Not enough memory available, skipping collect data." \
+                                          -p daemon.warn
     echo "1"
   fi
 }
@@ -84,7 +84,7 @@ set_url_and_curl(){
 
   URL="$BASE_URL/api/v1/monitoring/device/$UUID/?key=$KEY"
 
-  CURL_COMMAND="curl -s -w "%{http_code}""
+  CURL_COMMAND="curl -s -w "%{http_code}" --output "$TMP_DIR"/response.txt"
   [ "$VERIFY_SSL" -eq "0" ] && CURL_COMMAND="$CURL_COMMAND -k"
   [ "$VERBOSE_MODE" -eq "1" ] && CURL_COMMAND="$CURL_COMMAND -v"
   MAX_RETRIES=${MAX_RETRIES:-5}
@@ -135,6 +135,10 @@ send_data() {
       trap "" USR1
       basefilename=${file##*/}
       filename=${basefilename%.*}
+      # remove previous saved response if exist
+      if [ "$filename" = "response" ]; then
+        rm "$RESPONSE_FILE" 2>/dev/null && continue
+      fi
       # extra zeroes are added for nanoseconds precision
       url="$URL&time=$filename.000000"
       # retry sending data in case of failure
@@ -145,12 +149,15 @@ send_data() {
       while true
       do
         if [ "$failures" -eq "$MAX_RETRIES" ]; then
+          [ -f "$RESPONSE_FILE" ] && error_message="\"$(cat "$RESPONSE_FILE")\"" || error_message='"".'
           if [ "$VERBOSE_MODE" -eq "1" ]; then
-            logger -s "Data not sent successfully. Response received is $response_code" \
+            logger -s "Data not sent successfully. Response code is \"$response_code\"." \
+                      "Error message is $error_message" \
                    -p daemon.err
           elif [ "$FAILING" -eq "0" ]; then
             FAILING=1
-            logger -s "Data not sent successfully. Response received is $response_code" \
+            logger -s "Data not sent successfully. Response code is \"$response_code\"." \
+                      "Error message is $error_message" \
                       "Run with verbose mode to find more." \
                    -t openwisp_monitoring \
                    -p daemon.err
@@ -169,9 +176,10 @@ send_data() {
                    -t openwisp_monitoring \
                    -p daemon.info
             FAILING=0
+            [ -f "$RESPONSE_FILE" ] && rm "$RESPONSE_FILE"
           fi
           # remove saved data
-          rm "$file"
+          [ -f "$file" ] && rm "$file"
           break
         else
           timeout=$((timeout*2))
@@ -199,6 +207,7 @@ if [ "$MODE" = "collect" ]; then
   save_data
 elif [ "$MODE" = "send" ]; then
   VERIFY_SSL=${VERIFY_SSL:-0}
+  RESPONSE_FILE="$TMP_DIR"/response.txt
   set_url_and_curl && send_data
 else
   echoerr "The supplied mode is invalid. Only send and collect are allowed"
