@@ -1,6 +1,9 @@
 #!/bin/sh
+#
+# OpenWISP Monitoring Daemon
 
-VERSION=0 # default value of version 
+VERSION=0 # default value of version
+# parse options
 while [ -n "$1" ]; do
   case "$1" in
     --version|-v) export VERSION=1; break;;
@@ -55,8 +58,8 @@ collect_data(){
                                         -p daemon.info
   until [ "$n" -ge 5 ]
   do
-    echo "$(/usr/sbin/netjson_monitoring "$MONITORED_INTERFACES")" && break
-    
+    /usr/sbin/netjson_monitoring "$MONITORED_INTERFACES" && break
+
     if [ "$n" -eq 5 ]; then
       [ "$VERBOSE_MODE" -eq "1" ] && logger -s "Collecting data failed!" \
                                             -p daemon.err
@@ -84,7 +87,8 @@ set_url_and_curl(){
 
   URL="$BASE_URL/api/v1/monitoring/device/$UUID/?key=$KEY"
 
-  CURL_COMMAND="curl -s -w "%{http_code}" --output "$TMP_DIR"/response.txt"
+  # shellcheck disable=SC1083
+  CURL_COMMAND="curl -s -w "%{http_code}" --output $RESPONSE_FILE"
   [ "$VERIFY_SSL" -eq "0" ] && CURL_COMMAND="$CURL_COMMAND -k"
   [ "$VERBOSE_MODE" -eq "1" ] && CURL_COMMAND="$CURL_COMMAND -v"
   MAX_RETRIES=${MAX_RETRIES:-5}
