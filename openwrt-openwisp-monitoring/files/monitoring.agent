@@ -12,12 +12,12 @@ show_help() {
 	printf "  --help\t\t\t\t: Show this help text\n"
 	printf "  -v, --version\t\t\t\t: Shows version of the agent.\n"
 	printf "  --mode <send, collect>\t\t: Mode for running Monitoring Agent.\n"
-	printf "Openwisp config options:\n"
+	printf "OpenWISP Config options:\n"
 	printf "  --url <server-url>\t\t\t: URL of the OpenWISP server.\n"
 	printf "  --uuid <uuid>\t\t\t\t: UUID of the device.\n"
 	printf "  --key <key>\t\t\t\t: Key for the device.\n"
 	printf "  --verify_ssl <0, 1>\t\t\t: Whether SSL Authentication should be enabled or not.\n"
-	printf "Openwisp Monitoring config options:\n"
+	printf "OpenWISP Monitoring config options:\n"
 	printf "  --interval <time>\t\t\t: Time in seconds after which data should be sent/collected.\n"
 	printf "  --monitored-interfaces <interfaces>\t: Interfaces that needs to be monitored.\n"
 	printf "  --verbose-mode <0, 1>\t\t\t: Run agent in verbose mode.\n"
@@ -183,7 +183,6 @@ send_data() {
 }
 
 main() {
-	VERSION=0 # default value of version
 	# parse options
 	while [ -n "$1" ]; do
 		case "$1" in
