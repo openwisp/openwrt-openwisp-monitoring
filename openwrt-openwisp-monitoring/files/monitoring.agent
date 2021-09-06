@@ -2,72 +2,35 @@
 #
 # OpenWISP Monitoring Daemon
 
-VERSION=0 # default value of version
-# parse options
-while [ -n "$1" ]; do
-	case "$1" in
-		--version | -v)
-			export VERSION=1
-			break
-			;;
-		--url)
-			export BASE_URL="$2"
-			shift
-			;;
-		--uuid)
-			export UUID="$2"
-			shift
-			;;
-		--key)
-			export KEY="$2"
-			shift
-			;;
-		--verify_ssl)
-			export VERIFY_SSL="$2"
-			shift
-			;;
-		--interval)
-			export INTERVAL="$2"
-			shift
-			;;
-		--monitored_interfaces)
-			export MONITORED_INTERFACES="$2"
-			shift
-			;;
-		--verbose_mode)
-			export VERBOSE_MODE="$2"
-			shift
-			;;
-		--required_memory)
-			export REQUIRED_PERCENT="$2"
-			shift
-			;;
-		--mode)
-			export MODE="$2"
-			shift
-			;;
-		--max_retries)
-			export MAX_RETRY="$2"
-			shift
-			;;
-		-*)
-			echo "Invalid option: $1"
-			exit 1
-			;;
-		*) break ;;
-	esac
-	shift
-done
+show_help() {
+	printf "Usage:\n"
+	printf "  openwisp_monitoring [OPTIONS...]\n"
+	printf "\n"
+	printf "Runs OpenWISP Monitoring Agent for collecting and sending data.\n"
+	printf "\n"
+	printf "General options:\n"
+	printf "  --help\t\t\t\t: Show this help text\n"
+	printf "  -v, --version\t\t\t\t: Shows version of the agent.\n"
+	printf "  --mode <send, collect>\t\t: Mode for running Monitoring Agent.\n"
+	printf "Openwisp config options:\n"
+	printf "  --url <server-url>\t\t\t: URL of the OpenWISP server.\n"
+	printf "  --uuid <uuid>\t\t\t\t: UUID of the device.\n"
+	printf "  --key <key>\t\t\t\t: Key for the device.\n"
+	printf "  --verify_ssl <0, 1>\t\t\t: Whether SSL Authentication should be enabled or not.\n"
+	printf "Openwisp Monitoring config options:\n"
+	printf "  --interval <time>\t\t\t: Time in seconds after which data should be sent/collected.\n"
+	printf "  --monitored-interfaces <interfaces>\t: Interfaces that needs to be monitored.\n"
+	printf "  --verbose-mode <0, 1>\t\t\t: Run agent in verbose mode.\n"
+	printf "  --required-memory <0-1>\t\t: Fraction of total memory that should be available to collect data.\n"
+	printf "  --max-retries <max-retries-count>\t: No. of time agent should retry to send data.\n"
+	exit 0
+}
 
-if [ "$VERSION" -eq "1" ]; then
+show_version() {
 	VERSION=$(cat /etc/openwisp/monitoring/VERSION)
 	echo "openwisp-monitoring $VERSION"
 	exit 0
-fi
-
-INTERVAL=${INTERVAL:-300}
-VERBOSE_MODE=${VERBOSE_MODE:-0}
-TMP_DIR="/tmp/openwisp/monitoring"
+}
 
 echoerr() { echo "$@" 1>&2 && exit 1; }
 
@@ -219,17 +182,84 @@ send_data() {
 	done
 }
 
-[ -z "$MODE" ] && echoerr "missing required --mode option"
+main() {
+	VERSION=0 # default value of version
+	# parse options
+	while [ -n "$1" ]; do
+		case "$1" in
+			--version | -v)
+				show_version
+				;;
+			--help | -h)
+				show_help
+				;;
+			--url)
+				export BASE_URL="$2"
+				shift
+				;;
+			--uuid)
+				export UUID="$2"
+				shift
+				;;
+			--key)
+				export KEY="$2"
+				shift
+				;;
+			--verify_ssl)
+				export VERIFY_SSL="$2"
+				shift
+				;;
+			--interval)
+				export INTERVAL="$2"
+				shift
+				;;
+			--monitored_interfaces)
+				export MONITORED_INTERFACES="$2"
+				shift
+				;;
+			--verbose_mode)
+				export VERBOSE_MODE="$2"
+				shift
+				;;
+			--required_memory)
+				export REQUIRED_PERCENT="$2"
+				shift
+				;;
+			--mode)
+				export MODE="$2"
+				shift
+				;;
+			--max_retries)
+				export MAX_RETRY="$2"
+				shift
+				;;
+			-*)
+				echo "Invalid option: $1"
+				exit 1
+				;;
+			*) break ;;
+		esac
+		shift
+	done
 
-if [ "$MODE" = "collect" ]; then
-	MONITORED_INTERFACES=${MONITORED_INTERFACES:-*}
-	# remove double quotes from interfaces
-	MONITORED_INTERFACES=$(echo "$MONITORED_INTERFACES" | tr -d '"')
-	save_data
-elif [ "$MODE" = "send" ]; then
-	VERIFY_SSL=${VERIFY_SSL:-0}
-	RESPONSE_FILE="$TMP_DIR"/response.txt
-	set_url_and_curl && send_data
-else
-	echoerr "The supplied mode is invalid. Only send and collect are allowed"
-fi
+	INTERVAL=${INTERVAL:-300}
+	VERBOSE_MODE=${VERBOSE_MODE:-0}
+	TMP_DIR="/tmp/openwisp/monitoring"
+
+	[ -z "$MODE" ] && echoerr "missing required --mode option"
+
+	if [ "$MODE" = "collect" ]; then
+		MONITORED_INTERFACES=${MONITORED_INTERFACES:-*}
+		# remove double quotes from interfaces
+		MONITORED_INTERFACES=$(echo "$MONITORED_INTERFACES" | tr -d '"')
+		save_data
+	elif [ "$MODE" = "send" ]; then
+		VERIFY_SSL=${VERIFY_SSL:-0}
+		RESPONSE_FILE="$TMP_DIR"/response.txt
+		set_url_and_curl && send_data
+	else
+		echoerr "The supplied mode is invalid. Only send and collect are allowed"
+	fi
+}
+
+main "$@"
