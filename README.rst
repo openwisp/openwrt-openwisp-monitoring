@@ -175,21 +175,11 @@ You can inspect the version of openwisp-monitoring currently installed with::
 Quality Assurance Checks
 ------------------------
 
-We use `LuaFormatter <https://luarocks.org/modules/tammela/luaformatter>`_ to format lua files.
-Once it is installed, you can format all files by::
+We use `LuaFormatter <https://luarocks.org/modules/tammela/luaformatter>`_ and `shfmt <https://github.com/mvdan/sh#shfmt>`_ to format lua files and shell scripts respectively.
+
+Once they are installed, you can format all files by::
 
     ./qa-format
-
-Run tests
----------
-
-To run the unit tests, you must install the required dependencies first; to do this, you can take
-a look at the `install-dev.sh <https://github.com/openwisp/openwisp-config/blob/master/install-dev.sh>`_ script.
-
-
-Install test requirements::
-
-    sudo ./install-dev.sh
 
 Run quality assurance tests with::
 
@@ -198,6 +188,16 @@ Run quality assurance tests with::
 
     #run QA checks before committing code
     ./run-qa-checks
+
+Run tests
+---------
+
+To run the unit tests, you must install the required dependencies first; to do this, you can take
+a look at the `install-dev.sh <https://github.com/openwisp/openwisp-config/blob/master/install-dev.sh>`_ script.
+
+Install test requirements::
+
+    sudo ./install-dev.sh
 
 You can run all unit tests by launching the dedicated script::
 

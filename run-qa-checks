@@ -3,6 +3,29 @@ set -e
 
 luacheck ./openwrt-openwisp-monitoring/ -a
 
+# will be 1 by default when run through github actions
+CI=${CI:-0}
+
+if [ "$CI" -eq "1" ]; then
+	# copy files in github actions so that shell formatter can check for them
+	cp openwrt-openwisp-monitoring/files/monitoring.agent monitoring_agent
+	cp openwrt-openwisp-monitoring/files/monitoring.init monitoring_init
+else
+	# check scripts formaating
+	shellcheck \
+		install-dev.sh \
+		qa-format \
+		run-qa-checks \
+		runbuild \
+		runtests \
+		./openwrt-openwisp-monitoring/files/monitoring.init \
+		./openwrt-openwisp-monitoring/files/monitoring.agent
+
+	shfmt -d .
+	shfmt -d openwrt-openwisp-monitoring/files/monitoring.agent
+	shfmt -d openwrt-openwisp-monitoring/files/monitoring.init
+fi
+
 openwisp-qa-check \
 	--skip-checkmigrations \
 	--skip-isort \
