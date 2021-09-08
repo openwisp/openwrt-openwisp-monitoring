@@ -9,7 +9,7 @@ show_help() {
 	printf "Runs OpenWISP Monitoring Agent for collecting and sending data.\n"
 	printf "\n"
 	printf "General options:\n"
-	printf "  --help\t\t\t\t: Show this help text\n"
+	printf "  -h, --help\t\t\t\t: Show this help text\n"
 	printf "  -v, --version\t\t\t\t: Shows version of the agent.\n"
 	printf "  --mode <send, collect>\t\t: Mode for running Monitoring Agent.\n"
 	printf "OpenWISP Config options:\n"
@@ -53,7 +53,7 @@ collect_data() {
 	[ "$VERBOSE_MODE" -eq "1" ] && logger -s "Collecting NetJSON Monitoring data" \
 		-p daemon.info
 	until [ "$n" -ge 5 ]; do
-		/usr/sbin/netjson_monitoring "$MONITORED_INTERFACES" && break
+		/usr/sbin/netjson_monitoring --dump "$MONITORED_INTERFACES" && break
 
 		if [ "$n" -eq 5 ]; then
 			[ "$VERBOSE_MODE" -eq "1" ] && logger -s "Collecting data failed!" \

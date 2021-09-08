@@ -1,0 +1,51 @@
+#!/bin/sh
+#
+# NetJSON Monitoring
+
+show_help() {
+	printf "Usage:\n"
+	printf "  netjson_monitoring [OPTIONS...]\n"
+	printf "\n"
+	printf "Use Netjson Monitoring to get current device metrics data.\n"
+	printf "\n"
+	printf "Options:\n"
+	printf "  -h, --help\t\t\t\t: Show this help text\n"
+	printf "  -v, --version\t\t\t\t: Shows version of the agent.\n"
+	printf "  --dump <interfaces to be monitored>\t: Dump device metrics data.\n"
+	exit 0
+}
+
+show_version() {
+	VERSION=$(cat /etc/openwisp_monitoring/VERSION)
+	echo "netjson-monitoring $VERSION"
+	exit 0
+}
+
+main() {
+	# parse options
+	while [ -n "$1" ]; do
+		case "$1" in
+			--version | -v)
+				show_version
+				;;
+			--help | -h)
+				show_help
+				;;
+			--dump)
+				shift
+				/usr/libexec/netjson_monitoring "$@"
+				exit 0
+				;;
+			-*)
+				echo "Invalid option: $1"
+				;;
+			*) break ;;
+		esac
+		shift
+	done
+
+	show_help
+	exit 0
+}
+
+main "$@"

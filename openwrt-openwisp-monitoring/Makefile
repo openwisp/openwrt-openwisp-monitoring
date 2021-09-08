@@ -51,10 +51,16 @@ endef
 define Package/netjson-monitoring/install
 	$(INSTALL_DIR) \
 		$(1)/usr/sbin \
-		$(1)/usr/lib/lua/openwisp_monitoring
+		$(1)/usr/libexec \
+		$(1)/usr/lib/lua/openwisp_monitoring \
+		$(1)/etc/openwisp_monitoring
 
 	$(INSTALL_BIN) \
 		files/sbin/netjson-monitoring.lua \
+		$(1)/usr/libexec/netjson_monitoring
+
+	$(INSTALL_BIN) \
+		files/netjson-monitoring \
 		$(1)/usr/sbin/netjson_monitoring
 
 	$(INSTALL_DATA) \
@@ -85,6 +91,8 @@ define Package/netjson-monitoring/install
 		files/lib/openwisp_monitoring/wifi.lua \
 		$(1)/usr/lib/lua/openwisp_monitoring/wifi.lua
 
+	$(CP) ../VERSION $(1)/etc/openwisp_monitoring/
+
 endef
 
 define Package/openwisp-monitoring-$(BUILD_VARIANT)/install
@@ -92,7 +100,7 @@ define Package/openwisp-monitoring-$(BUILD_VARIANT)/install
 		$(1)/usr/sbin \
 		$(1)/etc/init.d \
 		$(1)/etc/config \
-		$(1)/etc/openwisp/monitoring
+		$(1)/etc/openwisp_monitoring
 
 	$(INSTALL_BIN) \
 		files/monitoring.agent \
@@ -105,8 +113,6 @@ define Package/openwisp-monitoring-$(BUILD_VARIANT)/install
 	$(INSTALL_CONF) \
 		files/monitoring.config \
 		$(1)/etc/config/openwisp_monitoring
-
-	$(CP) ../VERSION $(1)/etc/openwisp/monitoring/
 
 endef
 
