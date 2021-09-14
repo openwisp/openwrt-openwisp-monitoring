@@ -87,11 +87,13 @@ save_data() {
 		memory_available="$(check_available_memory)"
 		if [ "$memory_available" -eq "0" ]; then
 			data="$(collect_data)"
-			file_name="$(date -u +'%d-%m-%Y_%H:%M:%S')"
+			filename="$(date -u +'%d-%m-%Y_%H:%M:%S')"
 			# make directory
 			mkdir -p "$TMP_DIR"
 			# save data with file_name
-			echo "$data" >"$TMP_DIR/$file_name"
+			echo "$data" >"$TMP_DIR/$filename"
+			# compress data
+			gzip "$TMP_DIR/$filename"
 			[ "$VERBOSE_MODE" -eq "1" ] && logger -s "Data saved temporarily" \
 				-p daemon.info
 		fi
@@ -110,7 +112,7 @@ handle_sigusr1() {
 
 send_data() {
 	while true; do
-		for file in "$TMP_DIR"/*; do
+		for file in "$TMP_DIR"/*.gz; do
 			if [ ! -f "$file" ]; then
 				[ "$VERBOSE_MODE" -eq "1" ] && logger -s "No data file found to send." \
 					-p daemon.info
@@ -123,17 +125,13 @@ send_data() {
 			trap "" USR1
 			basefilename=${file##*/}
 			filename=${basefilename%.*}
-			# remove previous saved response if exist
-			if [ "$filename" = "response" ]; then
-				rm "$RESPONSE_FILE" 2>/dev/null && continue
-			fi
 			# extra zeroes are added for nanoseconds precision
 			url="$URL&time=$filename.000000"
 			# retry sending data in case of failure
 			failures=0
 			timeout=1
 			# check if the data is latest or old one
-			[ "$(echo "$TMP_DIR"/* | awk '{print $2}')" ] || url="$url&current=true"
+			[ "$(echo "$TMP_DIR"/*.gz | awk '{print $2}')" ] || url="$url&current=true"
 			while true; do
 				if [ "$failures" -eq "$MAX_RETRIES" ]; then
 					[ -f "$RESPONSE_FILE" ] && error_message="\"$(cat "$RESPONSE_FILE")\"" || error_message='"".'
@@ -151,8 +149,11 @@ send_data() {
 					fi
 					break
 				fi
+				# decompress file
+				gzip -d "$file"
+				filename="$TMP_DIR/$filename"
 				# send data
-				data=$(cat "$file")
+				data=$(cat "$filename")
 				response_code=$($CURL_COMMAND -H "Content-Type: application/json" -d "$data" "$url")
 				if [ "$response_code" = "200" ]; then
 					if [ "$VERBOSE_MODE" -eq "1" ]; then
@@ -166,7 +167,7 @@ send_data() {
 						[ -f "$RESPONSE_FILE" ] && rm "$RESPONSE_FILE"
 					fi
 					# remove saved data
-					[ -f "$file" ] && rm "$file"
+					[ -f "$filename" ] && rm "$filename"
 					break
 				else
 					timeout=$((timeout * 2))
