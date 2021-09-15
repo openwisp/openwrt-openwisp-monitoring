@@ -35,7 +35,7 @@ for `OpenWRT <https://openwrt.org/>`_.
 Configuration options
 ---------------------
 
-UCI configuration options must go in ``/etc/config/monitoring``.
+UCI configuration options must go in ``/etc/config/openwisp_monitoring``.
 
 - ``monitored_interfaces``: interfaces that needs to be monitored, defaults to ``*`` for all interfaces.
 - ``interval``: time after which device data should be sent to server, defaults to ``300``.
@@ -153,11 +153,9 @@ Debugging
 
 Debugging *openwisp-monitoring package* can be easily done by using the ``logread`` command::
 
-    logread
-
-Use grep to filter out any other log message::
-
     logread | grep openwisp_monitoring
+
+In case of any issue, you can enable `verbose_mode <#configuration-options>`__.
 
 If you are in that doubt openwisp-monitoring is running at all or not, you can check with::
 
