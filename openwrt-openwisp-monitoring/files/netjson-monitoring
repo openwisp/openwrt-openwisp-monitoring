@@ -4,7 +4,7 @@
 
 show_help() {
 	printf "Usage:\n"
-	printf "  netjson_monitoring [OPTIONS...]\n"
+	printf "  netjson-monitoring [OPTIONS...]\n"
 	printf "\n"
 	printf "Use Netjson Monitoring to get current device metrics data.\n"
 	printf "\n"
@@ -16,8 +16,8 @@ show_help() {
 }
 
 show_version() {
-	VERSION=$(cat /etc/openwisp_monitoring/VERSION)
-	echo "netjson-monitoring $VERSION"
+	VERSION=$(cat /etc/openwisp-monitoring/VERSION)
+	echo "$(basename "$0") $VERSION"
 	exit 0
 }
 
@@ -33,7 +33,7 @@ main() {
 				;;
 			--dump)
 				shift
-				/usr/libexec/netjson_monitoring "$@"
+				/usr/libexec/netjson-monitoring "$@"
 				exit 0
 				;;
 			-*)

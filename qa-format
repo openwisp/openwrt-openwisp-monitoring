@@ -10,6 +10,6 @@ shfmt -w -l openwrt-openwisp-monitoring/files/monitoring.init
 cd openwrt-openwisp-monitoring/
 lua-format -i --config=luaformat.config \
 	files/sbin/*.lua \
-	files/lib/openwisp_monitoring/*.lua \
+	files/lib/openwisp-monitoring/*.lua \
 	tests/*.lua \
 	tests/test_files/*.lua

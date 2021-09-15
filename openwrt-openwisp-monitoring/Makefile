@@ -45,53 +45,53 @@ define Build/Compile
 endef
 
 define Package/openwisp-monitoring-$(BUILD_VARIANT)/conffiles
-/etc/config/monitoring
+/etc/config/openwisp-monitoring
 endef
 
 define Package/netjson-monitoring/install
 	$(INSTALL_DIR) \
 		$(1)/usr/sbin \
 		$(1)/usr/libexec \
-		$(1)/usr/lib/lua/openwisp_monitoring \
-		$(1)/etc/openwisp_monitoring
+		$(1)/usr/lib/lua/openwisp-monitoring \
+		$(1)/etc/openwisp-monitoring
 
 	$(INSTALL_BIN) \
 		files/sbin/netjson-monitoring.lua \
-		$(1)/usr/libexec/netjson_monitoring
+		$(1)/usr/libexec/netjson-monitoring
 
 	$(INSTALL_BIN) \
 		files/netjson-monitoring \
-		$(1)/usr/sbin/netjson_monitoring
+		$(1)/usr/sbin/netjson-monitoring
 
 	$(INSTALL_DATA) \
-		files/lib/openwisp_monitoring/dhcp.lua \
-		$(1)/usr/lib/lua/openwisp_monitoring/dhcp.lua
+		files/lib/openwisp-monitoring/dhcp.lua \
+		$(1)/usr/lib/lua/openwisp-monitoring/dhcp.lua
 
 	$(INSTALL_DATA) \
-		files/lib/openwisp_monitoring/interfaces.lua \
-		$(1)/usr/lib/lua/openwisp_monitoring/interfaces.lua
+		files/lib/openwisp-monitoring/interfaces.lua \
+		$(1)/usr/lib/lua/openwisp-monitoring/interfaces.lua
 
 	$(INSTALL_DATA) \
-		files/lib/openwisp_monitoring/monitoring.lua \
-		$(1)/usr/lib/lua/openwisp_monitoring/monitoring.lua
+		files/lib/openwisp-monitoring/monitoring.lua \
+		$(1)/usr/lib/lua/openwisp-monitoring/monitoring.lua
 
 	$(INSTALL_DATA) \
-		files/lib/openwisp_monitoring/utils.lua \
-		$(1)/usr/lib/lua/openwisp_monitoring/utils.lua
+		files/lib/openwisp-monitoring/utils.lua \
+		$(1)/usr/lib/lua/openwisp-monitoring/utils.lua
 
 	$(INSTALL_DATA) \
-		files/lib/openwisp_monitoring/neighbors.lua \
-		$(1)/usr/lib/lua/openwisp_monitoring/neighbors.lua
+		files/lib/openwisp-monitoring/neighbors.lua \
+		$(1)/usr/lib/lua/openwisp-monitoring/neighbors.lua
 
 	$(INSTALL_DATA) \
-		files/lib/openwisp_monitoring/resources.lua \
-		$(1)/usr/lib/lua/openwisp_monitoring/resources.lua
+		files/lib/openwisp-monitoring/resources.lua \
+		$(1)/usr/lib/lua/openwisp-monitoring/resources.lua
 
 	$(INSTALL_DATA) \
-		files/lib/openwisp_monitoring/wifi.lua \
-		$(1)/usr/lib/lua/openwisp_monitoring/wifi.lua
+		files/lib/openwisp-monitoring/wifi.lua \
+		$(1)/usr/lib/lua/openwisp-monitoring/wifi.lua
 
-	$(CP) ../VERSION $(1)/etc/openwisp_monitoring/
+	$(CP) ../VERSION $(1)/etc/openwisp-monitoring/
 
 endef
 
@@ -100,19 +100,19 @@ define Package/openwisp-monitoring-$(BUILD_VARIANT)/install
 		$(1)/usr/sbin \
 		$(1)/etc/init.d \
 		$(1)/etc/config \
-		$(1)/etc/openwisp_monitoring
+		$(1)/etc/openwisp-monitoring
 
 	$(INSTALL_BIN) \
 		files/monitoring.agent \
-		$(1)/usr/sbin/openwisp_monitoring
+		$(1)/usr/sbin/openwisp-monitoring
 
 	$(INSTALL_BIN) \
 		files/monitoring.init \
-		$(1)/etc/init.d/openwisp_monitoring
+		$(1)/etc/init.d/openwisp-monitoring
 
 	$(INSTALL_CONF) \
 		files/monitoring.config \
-		$(1)/etc/config/openwisp_monitoring
+		$(1)/etc/config/openwisp-monitoring
 
 endef
 

@@ -35,7 +35,7 @@ for `OpenWRT <https://openwrt.org/>`_.
 Configuration options
 ---------------------
 
-UCI configuration options must go in ``/etc/config/openwisp_monitoring``.
+UCI configuration options must go in ``/etc/config/openwisp-monitoring``.
 
 - ``monitored_interfaces``: interfaces that needs to be monitored, defaults to ``*`` for all interfaces.
 - ``interval``: time after which device data should be sent to server, defaults to ``300``.
@@ -57,7 +57,7 @@ Monitoring agent uses two different modes to handle this, ``send`` and ``collect
 Collect Mode
 ~~~~~~~~~~~~
 
-If openwisp_monitoring agent is called with this mode, then the agent will keep charge of collecting and saving data.
+If openwisp-monitoring agent is called with this mode, then the agent will keep charge of collecting and saving data.
 
 Agent will periodically check if enough memory is available. If true, data will be collected and saved in temporary storage with the timestamp (in UTC timezone).
 
@@ -68,7 +68,7 @@ Once the data is saved, a signal will be sent to the other agent to ensure data 
 Send Mode
 ~~~~~~~~~
 
-If openwisp_monitoring agent is called with this mode, then the agent will keep charge of sending data.
+If openwisp-monitoring agent is called with this mode, then the agent will keep charge of sending data.
 
 Agent will check if any data file is available in temporary storage.
 
@@ -146,29 +146,29 @@ you will need to select the *openwisp-monitoring* variant and *netjson-monitorin
 Once installed *openwisp-monitoring* needs to be configured (see `Configuration options`_)
 and then started with::
 
-    /etc/init.d/openwisp_monitoring restart
+    /etc/init.d/openwisp-monitoring restart
 
 Debugging
 ---------
 
 Debugging *openwisp-monitoring package* can be easily done by using the ``logread`` command::
 
-    logread | grep openwisp_monitoring
+    logread | grep openwisp-monitoring
 
 In case of any issue, you can enable `verbose_mode <#configuration-options>`__.
 
 If you are in that doubt openwisp-monitoring is running at all or not, you can check with::
 
-    ps | grep openwisp_monitoring
+    ps | grep openwisp-monitoring
 
 You should see something like::
 
-    2712 root      1224 S    /bin/sh /usr/sbin/openwisp_monitoring --interval 300 --monitored_interfaces ...
-    2713 root      1224 S    /bin/sh /usr/sbin/openwisp_monitoring --url http://192.168.1.195:8000 ...
+    2712 root      1224 S    /bin/sh /usr/sbin/openwisp-monitoring --interval 300 --monitored_interfaces ...
+    2713 root      1224 S    /bin/sh /usr/sbin/openwisp-monitoring --url http://192.168.1.195:8000 ...
 
 You can inspect the version of openwisp-monitoring currently installed with::
 
-    openwisp_monitoring --version
+    openwisp-monitoring --version
 
 Quality Assurance Checks
 ------------------------

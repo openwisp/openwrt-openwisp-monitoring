@@ -1,5 +1,5 @@
 package.path = package.path ..
-                 ";../files/lib/openwisp_monitoring/?.lua;../files/sbin/?.lua"
+                 ";../files/lib/openwisp-monitoring/?.lua;../files/sbin/?.lua"
 
 local dhcp_data = require('test_files/dhcp_data')
 
