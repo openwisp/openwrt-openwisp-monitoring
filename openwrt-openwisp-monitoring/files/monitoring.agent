@@ -181,8 +181,6 @@ send_data() {
 					sleep "$timeout"
 				fi
 			done
-			# compress file again
-			gzip "$filename"
 			# retry sending same data again in next cycle
 			[ "$failures" -eq "$MAX_RETRIES" ] && break
 		done
