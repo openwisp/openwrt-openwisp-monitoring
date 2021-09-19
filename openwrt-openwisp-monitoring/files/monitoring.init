@@ -69,7 +69,6 @@ start_service() {
 		exit 1
 	fi
 	interval="--interval $interval"
-	monitored_interfaces="--monitored_interfaces \"$monitored_interfaces\""
 	verbose="--verbose_mode ${verbose_mode:-0}"
 	set -- --monitored_interfaces \""$monitored_interfaces"\"
 	monitored_interfaces="$*"
