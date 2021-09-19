@@ -4,18 +4,14 @@ on:
   push:
     branches:
       - master
-      - gsoc21
   pull_request:
     branches:
       - master
-      - gsoc21
 
 jobs:
-
   tests:
     name: QA-Checks and Tests
     runs-on: ubuntu-20.04
-
     steps:
       - uses: actions/checkout@v2
         with:
