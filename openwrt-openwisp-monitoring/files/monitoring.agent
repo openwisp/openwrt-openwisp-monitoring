@@ -133,7 +133,7 @@ send_data() {
 			failures=0
 			timeout=1
 			# check if the data is latest or old one
-			[ "$(echo "$TMP_DIR"/*.gz | awk '{print $2}')" ] || url="$url&current=true"
+			[ "$(echo "$TMP_DIR"/* | awk '{print $2}')" ] || url="$url&current=true"
 			if [ "${basefilename##*.}" = "gz" ]; then
 				# decompress file
 				gzip -d "$file"
