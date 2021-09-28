@@ -35,17 +35,27 @@ show_version() {
 echoerr() { echo "$@" 1>&2 && exit 1; }
 
 check_available_memory() {
-	total=$(ubus call system info | jsonfilter -e '@.memory.total')
-	available=$(ubus call system info | jsonfilter -e '@.memory.available')
-	required=$(echo - | awk -v percent="$REQUIRED_PERCENT" -v total="$total" '{printf("%.f",percent*total)}')
+	while true; do
+		total=$(ubus call system info | jsonfilter -e '@.memory.total')
+		available=$(ubus call system info | jsonfilter -e '@.memory.available')
+		required=$(echo - | awk -v percent="$REQUIRED_PERCENT" -v total="$total" '{printf("%.f",percent*total)}')
 
-	if [ "$available" -ge "$required" ]; then
-		echo "0"
-	else
-		[ "$VERBOSE_MODE" -eq "1" ] && logger -s "Not enough memory available, skipping collect data." \
-			-p daemon.warn
-		echo "1"
-	fi
+		if [ "$available" -ge "$required" ]; then
+			echo "0"
+			break
+		else
+			# enough memory not available, deleting old data
+			file=$(echo "TMP_DIR"/* | awk '{print $1}')
+			if [ -f "$file" ]; then
+				rm "$file"
+			else
+				[ "$VERBOSE_MODE" -eq "1" ] && logger -s "Not enough memory available, skipping collect data." \
+					-p daemon.warn
+				echo "1"
+				break
+			fi
+		fi
+	done
 }
 
 collect_data() {
