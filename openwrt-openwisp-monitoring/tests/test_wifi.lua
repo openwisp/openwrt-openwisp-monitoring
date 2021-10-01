@@ -1,5 +1,5 @@
 package.path = package.path ..
-                 ";../files/lib/openwisp_monitoring/?.lua;../files/sbin/?.lua"
+                 ";../files/lib/openwisp-monitoring/?.lua;../files/sbin/?.lua"
 
 local wifi_data = require('test_files/wireless_data')
 local luaunit = require('luaunit')

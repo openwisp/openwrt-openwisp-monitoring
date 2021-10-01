@@ -4,12 +4,12 @@
 
 show_help() {
 	printf "Usage:\n"
-	printf "  openwisp_monitoring [OPTIONS...]\n"
+	printf "  openwisp-monitoring [OPTIONS...]\n"
 	printf "\n"
 	printf "Runs OpenWISP Monitoring Agent for collecting and sending data.\n"
 	printf "\n"
 	printf "General options:\n"
-	printf "  --help\t\t\t\t: Show this help text\n"
+	printf "  -h, --help\t\t\t\t: Show this help text\n"
 	printf "  -v, --version\t\t\t\t: Shows version of the agent.\n"
 	printf "  --mode <send, collect>\t\t: Mode for running Monitoring Agent.\n"
 	printf "OpenWISP Config options:\n"
@@ -17,7 +17,7 @@ show_help() {
 	printf "  --uuid <uuid>\t\t\t\t: UUID of the device.\n"
 	printf "  --key <key>\t\t\t\t: Key for the device.\n"
 	printf "  --verify_ssl <0, 1>\t\t\t: Whether SSL Authentication should be enabled or not.\n"
-	printf "OpenWISP Monitoring config options:\n"
+	printf "OpenWISP Monitoring Config options:\n"
 	printf "  --interval <time>\t\t\t: Time in seconds after which data should be sent/collected.\n"
 	printf "  --monitored-interfaces <interfaces>\t: Interfaces that needs to be monitored.\n"
 	printf "  --verbose-mode <0, 1>\t\t\t: Run agent in verbose mode.\n"
@@ -27,7 +27,7 @@ show_help() {
 }
 
 show_version() {
-	VERSION=$(cat /etc/openwisp/monitoring/VERSION)
+	VERSION=$(cat /etc/openwisp-monitoring/VERSION)
 	echo "$(basename "$0") $VERSION"
 	exit 0
 }
@@ -53,7 +53,7 @@ collect_data() {
 	[ "$VERBOSE_MODE" -eq "1" ] && logger -s "Collecting NetJSON Monitoring data" \
 		-p daemon.info
 	until [ "$n" -ge 5 ]; do
-		/usr/sbin/netjson_monitoring "$MONITORED_INTERFACES" && break
+		/usr/sbin/netjson-monitoring --dump "$MONITORED_INTERFACES" && break
 
 		if [ "$n" -eq 5 ]; then
 			[ "$VERBOSE_MODE" -eq "1" ] && logger -s "Collecting data failed!" \
@@ -98,7 +98,7 @@ save_data() {
 				-p daemon.info
 		fi
 		# get process id of the process sending data
-		pid=$(pgrep -f "openwisp_monitoring.*--mode send")
+		pid=$(pgrep -f "openwisp-monitoring.*--mode send")
 		kill -SIGUSR1 "$pid"
 		sleep "$INTERVAL"
 	done
@@ -133,7 +133,7 @@ send_data() {
 			failures=0
 			timeout=1
 			# check if the data is latest or old one
-			[ "$(echo "$TMP_DIR"/*.gz | awk '{print $2}')" ] || url="$url&current=true"
+			[ "$(echo "$TMP_DIR"/* | awk '{print $2}')" ] || url="$url&current=true"
 			if [ "${basefilename##*.}" = "gz" ]; then
 				# decompress file
 				gzip -d "$file"
@@ -152,7 +152,7 @@ send_data() {
 						logger -s "Data not sent successfully. Response code is \"$response_code\"." \
 							"Error message is $error_message" \
 							"Run with verbose mode to find more." \
-							-t openwisp_monitoring \
+							-t openwisp-monitoring \
 							-p daemon.err
 					fi
 					break
@@ -165,7 +165,7 @@ send_data() {
 							-p daemon.info
 					elif [ "$FAILING" -eq "1" ]; then
 						logger -s "Data sent successfully" \
-							-t openwisp_monitoring \
+							-t openwisp-monitoring \
 							-p daemon.info
 						FAILING=0
 						[ -f "$RESPONSE_FILE" ] && rm "$RESPONSE_FILE"

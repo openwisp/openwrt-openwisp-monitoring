@@ -1,5 +1,5 @@
 package.path = package.path ..
-                 ";../files/lib/openwisp_monitoring/?.lua;../files/sbin/?.lua"
+                 ";../files/lib/openwisp-monitoring/?.lua;../files/sbin/?.lua"
 
 local luaunit = require('luaunit')
 
@@ -34,7 +34,7 @@ function TestNeighbor.testArpTable()
   luaunit.assertEquals(neighbor.get_neighbors(), neighbor_data.sample_ip_neigh)
 end
 
-function TestNetJSON.test_netjson_monitoring_neighbors()
+function TestNetJSON.test_neighbors()
   local test_file_dir = './test_files/'
   package.loaded.io = {
     popen = function(arg)

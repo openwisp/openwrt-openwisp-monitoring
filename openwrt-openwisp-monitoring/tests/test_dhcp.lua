@@ -1,5 +1,5 @@
 package.path = package.path ..
-                 ";../files/lib/openwisp_monitoring/?.lua;../files/sbin/?.lua"
+                 ";../files/lib/openwisp-monitoring/?.lua;../files/sbin/?.lua"
 
 local dhcp_data = require('test_files/dhcp_data')
 
@@ -68,7 +68,7 @@ function TestDhcp.test_dhcp_leases()
     dhcp_functions.parse_dhcp_lease_file('/tmp/no_dhcp.leases', {}), {})
 end
 
-function TestNetJSON.test_netjson_monitoring_dhcp()
+function TestNetJSON.test_dhcp()
   local netjson = require('netjson-monitoring')
   luaunit.assertNotNil(string.find(netjson, '"mac":"e8:6a:64:3e:4a:3c"'))
   luaunit.assertNotNil(string.find(netjson, '"client_id":"01:e8:6a:64:3e:4a:3c"'))

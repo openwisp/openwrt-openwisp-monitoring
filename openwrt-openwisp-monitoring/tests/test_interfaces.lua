@@ -1,4 +1,4 @@
-package.path = package.path .. ";../files/lib/openwisp_monitoring/?.lua"
+package.path = package.path .. ";../files/lib/openwisp-monitoring/?.lua"
 
 local luaunit = require('luaunit')
 
@@ -150,7 +150,7 @@ function TestInterface.test_specialized_info()
   luaunit.assertEquals(specialized_info.signal.umts.rssi, nil)
 end
 
-function TestNetJSON.test_netjson_monitoring()
+function TestNetJSON.test_interfaces()
   local netjson_file = assert(loadfile('../files/sbin/netjson-monitoring.lua'))
   local netjson = netjson_file('*')
   luaunit.assertNil(string.find(netjson, '"umts"', 1, true))
