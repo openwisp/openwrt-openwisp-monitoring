@@ -11,7 +11,10 @@ show_help() {
 	printf "Options:\n"
 	printf "  -h, --help\t\t\t\t: Show this help text\n"
 	printf "  -v, --version\t\t\t\t: Shows version of the agent.\n"
-	printf "  --dump <interfaces to be monitored>\t: Dump device metrics data.\n"
+	printf "  --dump \"<interfaces>\"\t\t\t: Dump device metrics data.\n"
+	printf "\t\"<interfaces>\" is a space separated list of interfaces from which traffic stats"
+	printf " will be collected.\n "
+	printf "\tPassing an asterisk(with quotes) here will extract traffic statistics from all interfaces.\n"
 	exit 0
 }
 
