@@ -14,7 +14,7 @@ show_help() {
 	printf "  --dump \"<interfaces>\"\t\t\t: Dump device metrics data.\n"
 	printf "\t\"<interfaces>\" is a space separated list of interfaces from which traffic stats"
 	printf " will be collected.\n "
-	printf "\tPassing a quoted asterisk (eg: "*") will extract traffic statistics from all interfaces.\n"
+	printf "\tPassing a quoted asterisk (eg: \"*\") will extract traffic statistics from all interfaces.\n"
 	exit 0
 }
 
