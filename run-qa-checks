@@ -19,7 +19,8 @@ else
 		runbuild \
 		runtests \
 		./openwrt-openwisp-monitoring/files/monitoring.init \
-		./openwrt-openwisp-monitoring/files/monitoring.agent
+		./openwrt-openwisp-monitoring/files/monitoring.agent \
+		./openwrt-openwisp-monitoring/files/netjson-monitoring
 
 	shfmt -d .
 	shfmt -d openwrt-openwisp-monitoring/files/monitoring.agent
