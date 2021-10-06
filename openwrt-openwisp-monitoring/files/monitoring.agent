@@ -45,7 +45,7 @@ check_available_memory() {
 			break
 		else
 			# enough memory not available, deleting old data
-			file=$(echo "TMP_DIR"/* | awk '{print $1}')
+			file="$TMP_DIR/$(ls -1t "$TMP_DIR" | tail -1)"
 			if [ -f "$file" ]; then
 				rm "$file"
 			else
