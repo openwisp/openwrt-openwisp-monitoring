@@ -41,8 +41,7 @@ check_available_memory() {
 		required=$(echo - | awk -v percent="$REQUIRED_PERCENT" -v total="$total" '{printf("%.f",percent*total)}')
 
 		if [ "$available" -ge "$required" ]; then
-			echo "0"
-			break
+			return 0
 		else
 			# enough memory not available, deleting old data
 			# shellcheck disable=SC2012
@@ -50,10 +49,10 @@ check_available_memory() {
 			if [ -f "$file" ]; then
 				rm "$file"
 			else
-				[ "$VERBOSE_MODE" -eq "1" ] && logger -s "Not enough memory available, skipping collect data." \
-					-p daemon.warn
-				echo "1"
-				break
+				[ "$VERBOSE_MODE" -eq "1" ] \
+					&& logger -s "Not enough memory available, skipping collect data." \
+						-p daemon.warn
+				return 1
 			fi
 		fi
 	done
@@ -67,8 +66,7 @@ collect_data() {
 		/usr/sbin/netjson-monitoring --dump "$MONITORED_INTERFACES" && break
 
 		if [ "$n" -eq 5 ]; then
-			[ "$VERBOSE_MODE" -eq "1" ] && logger -s "Collecting data failed!" \
-				-p daemon.err
+			[ "$VERBOSE_MODE" -eq "1" ] && logger -s "Collecting data failed!" -p daemon.err
 		fi
 		n=$((n + 1))
 		sleep 5
@@ -95,8 +93,7 @@ set_url_and_curl() {
 
 save_data() {
 	while true; do
-		memory_available="$(check_available_memory)"
-		if [ "$memory_available" -eq "0" ]; then
+		if check_available_memory; then
 			data="$(collect_data)"
 			filename="$(date -u +'%d-%m-%Y_%H:%M:%S')"
 			# make directory
