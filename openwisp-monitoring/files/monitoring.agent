@@ -34,6 +34,27 @@ show_version() {
 
 echoerr() { echo "$@" 1>&2 && exit 1; }
 
+log() {
+	level="$1"
+	type="$2"
+	shift 2
+
+	if [ "$type" = "-v" ] && [ "$VERBOSE_MODE" -ne "1" ]; then
+		return 0
+	fi
+
+	case "$level" in
+		-i) level=daemon.info ;;
+		-w) level=daemon.warn ;;
+		-e) level=daemon.err ;;
+		-*)
+			echoerr "Invalid message level : $level"
+			;;
+	esac
+
+	logger -s "$@" -p "$level" -t openwisp-monitoring
+}
+
 check_available_memory() {
 	while true; do
 		total=$(ubus call system info | jsonfilter -e '@.memory.total')
@@ -50,9 +71,7 @@ check_available_memory() {
 			if [ -f "$file" ]; then
 				rm "$file"
 			else
-				[ "$VERBOSE_MODE" -eq "1" ] \
-					&& logger -s "Not enough memory available, skipping collect data." \
-						-p daemon.warn
+				log -w -v "Not enough memory available, skipping collect data."
 				return 1
 			fi
 		fi
@@ -61,14 +80,11 @@ check_available_memory() {
 
 collect_data() {
 	n=0
-	[ "$VERBOSE_MODE" -eq "1" ] && logger -s "Collecting NetJSON Monitoring data." \
-		-p daemon.info
+	log -i -v "Collecting NetJSON Monitoring data."
 	until [ "$n" -ge 5 ]; do
 		/usr/sbin/netjson-monitoring --dump "$MONITORED_INTERFACES" && break
 
-		if [ "$n" -eq 5 ]; then
-			[ "$VERBOSE_MODE" -eq "1" ] && logger -s "Collecting data failed!" -p daemon.err
-		fi
+		[ "$n" -eq 5 ] && log -e -v "Collecting data failed!"
 		n=$((n + 1))
 		sleep 5
 	done
@@ -101,8 +117,7 @@ save_data() {
 			echo "$data" >"$TMP_DIR/$filename"
 			# compress data
 			gzip "$TMP_DIR/$filename"
-			[ "$VERBOSE_MODE" -eq "1" ] && logger -s "Data saved temporarily." \
-				-p daemon.info
+			log -i -v "Data saved temporarily."
 		fi
 		# get process id of the process sending data
 		pid=$(pgrep -f "openwisp-monitoring.*--mode send")
@@ -112,8 +127,7 @@ save_data() {
 }
 
 handle_sigusr1() {
-	[ "$VERBOSE_MODE" -eq "1" ] && logger -s "SIGUSR1 received! Sending data." \
-		-p daemon.info
+	log -i -v "SIGUSR1 received! Sending data."
 	return 0
 }
 
@@ -121,8 +135,7 @@ send_data() {
 	while true; do
 		for file in "$TMP_DIR"/*; do
 			if [ ! -f "$file" ]; then
-				[ "$VERBOSE_MODE" -eq "1" ] && logger -s "No data file found to send." \
-					-p daemon.info
+				log -i -v "No data file found to send. Checking after $INTERVAL seconds"
 				trap handle_sigusr1 USR1
 				# SIGUSR1 signal received, interrupt sleep and continue sending data
 				sleep "$INTERVAL" &
@@ -149,32 +162,25 @@ send_data() {
 			while true; do
 				if [ "$failures" -eq "$MAX_RETRIES" ]; then
 					[ -f "$RESPONSE_FILE" ] && error_message="\"$(cat "$RESPONSE_FILE")\"" || error_message='"".'
-					if [ "$VERBOSE_MODE" -eq "1" ]; then
-						logger -s "Data not sent successfully. Response code is \"$response_code\"." \
-							"Error message is $error_message" \
-							-p daemon.err
-					elif [ "$FAILING" -eq "0" ]; then
+					log -e -v "Data not sent successfully. Response code is \"$response_code\"." \
+						"Error message is $error_message"
+					# check if agent was already passing or not to avoid repeating log messages
+					if [ "$FAILING" -eq "0" ]; then
 						FAILING=1
-						logger -s "Data not sent successfully. Response code is \"$response_code\"." \
-							"Error message is $error_message" \
-							"Run with verbose mode to find more." \
-							-t openwisp-monitoring \
-							-p daemon.err
+						[ "$VERBOSE_MODE" -ne "1" ] && log -e -n "Data not sent successfully. Response code is \"$response_code\"." \
+							"Run with verbose mode to find more."
 					fi
 					break
 				fi
 				# send data
 				response_code=$($CURL_COMMAND -H "Content-Type: application/json" -d "$data" "$url")
 				if [ "$response_code" = "200" ]; then
-					if [ "$VERBOSE_MODE" -eq "1" ]; then
-						logger -s "Data sent successfully." \
-							-p daemon.info
-					elif [ "$FAILING" -eq "1" ]; then
-						logger -s "Data sent successfully." \
-							-t openwisp-monitoring \
-							-p daemon.info
+					log -i -v "Data sent successfully."
+					# check if agent was already failing or not to avoid repeating log messages
+					if [ "$FAILING" -eq "1" ]; then
 						FAILING=0
 						rm -f "$RESPONSE_FILE"
+						[ "$VERBOSE_MODE" -ne "1" ] && log -i -n "Data sent successfully."
 					fi
 					# remove saved data
 					rm -f "$filename"
@@ -187,8 +193,7 @@ send_data() {
 					break
 				else
 					timeout=$(/usr/sbin/openwisp-get-random-number 2 15)
-					[ "$VERBOSE_MODE" -eq "1" ] && logger -s "Data not sent successfully. Retrying in $timeout seconds." \
-						-p daemon.warn
+					log -w -v "Data not sent successfully. Retrying in $timeout seconds."
 					failures=$((failures + 1))
 					sleep "$timeout"
 				fi
@@ -288,8 +293,7 @@ main() {
 				shift
 				;;
 			-*)
-				echo "Invalid option: $1"
-				exit 1
+				echoerr "Invalid option: $1"
 				;;
 			*) break ;;
 		esac
