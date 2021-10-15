@@ -46,6 +46,7 @@ check_available_memory() {
 			# enough memory not available, deleting old data
 			# shellcheck disable=SC2012
 			file="$TMP_DIR/$(ls -1t "$TMP_DIR" | tail -1)"
+			# ensure that temporary directory is not empty
 			if [ -f "$file" ]; then
 				rm "$file"
 			else
