@@ -46,7 +46,7 @@ check_available_memory() {
 			# enough memory not available, deleting old data
 			# shellcheck disable=SC2012
 			file="$TMP_DIR/$(ls -1t "$TMP_DIR" | tail -1)"
-			# ensure that temporary directory is not empty
+			# ensure that memory was available previously and file was written
 			if [ -f "$file" ]; then
 				rm "$file"
 			else
@@ -177,10 +177,10 @@ send_data() {
 							-t openwisp-monitoring \
 							-p daemon.info
 						FAILING=0
-						[ -f "$RESPONSE_FILE" ] && rm "$RESPONSE_FILE"
+						rm -f "$RESPONSE_FILE"
 					fi
 					# remove saved data
-					[ -f "$filename" ] && rm "$filename"
+					rm -f "$filename"
 					break
 				else
 					timeout=$((timeout * 2))
