@@ -35,17 +35,28 @@ show_version() {
 echoerr() { echo "$@" 1>&2 && exit 1; }
 
 check_available_memory() {
-	total=$(ubus call system info | jsonfilter -e '@.memory.total')
-	available=$(ubus call system info | jsonfilter -e '@.memory.available')
-	required=$(echo - | awk -v percent="$REQUIRED_PERCENT" -v total="$total" '{printf("%.f",percent*total)}')
+	while true; do
+		total=$(ubus call system info | jsonfilter -e '@.memory.total')
+		available=$(ubus call system info | jsonfilter -e '@.memory.available')
+		required=$(echo - | awk -v percent="$REQUIRED_PERCENT" -v total="$total" '{printf("%.f",percent*total)}')
 
-	if [ "$available" -ge "$required" ]; then
-		echo "0"
-	else
-		[ "$VERBOSE_MODE" -eq "1" ] && logger -s "Not enough memory available, skipping collect data." \
-			-p daemon.warn
-		echo "1"
-	fi
+		if [ "$available" -ge "$required" ]; then
+			return 0
+		else
+			# enough memory not available, deleting old data
+			# shellcheck disable=SC2012
+			file="$TMP_DIR/$(ls -1t "$TMP_DIR" | tail -1)"
+			# ensure that memory was available previously and file was written
+			if [ -f "$file" ]; then
+				rm "$file"
+			else
+				[ "$VERBOSE_MODE" -eq "1" ] \
+					&& logger -s "Not enough memory available, skipping collect data." \
+						-p daemon.warn
+				return 1
+			fi
+		fi
+	done
 }
 
 collect_data() {
@@ -56,8 +67,7 @@ collect_data() {
 		/usr/sbin/netjson-monitoring --dump "$MONITORED_INTERFACES" && break
 
 		if [ "$n" -eq 5 ]; then
-			[ "$VERBOSE_MODE" -eq "1" ] && logger -s "Collecting data failed!" \
-				-p daemon.err
+			[ "$VERBOSE_MODE" -eq "1" ] && logger -s "Collecting data failed!" -p daemon.err
 		fi
 		n=$((n + 1))
 		sleep 5
@@ -84,8 +94,7 @@ set_url_and_curl() {
 
 save_data() {
 	while true; do
-		memory_available="$(check_available_memory)"
-		if [ "$memory_available" -eq "0" ]; then
+		if check_available_memory; then
 			data="$(collect_data)"
 			filename="$(date -u +'%d-%m-%Y_%H:%M:%S')"
 			# make directory
@@ -168,10 +177,10 @@ send_data() {
 							-t openwisp-monitoring \
 							-p daemon.info
 						FAILING=0
-						[ -f "$RESPONSE_FILE" ] && rm "$RESPONSE_FILE"
+						rm -f "$RESPONSE_FILE"
 					fi
 					# remove saved data
-					[ -f "$filename" ] && rm "$filename"
+					rm -f "$filename"
 					break
 				else
 					timeout=$((timeout * 2))
