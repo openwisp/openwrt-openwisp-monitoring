@@ -126,6 +126,10 @@ The compiled packages will go in ``bin/packages/*/openwisp``.
 Alternatively, you can configure your build interactively with ``make menuconfig``, in this case
 you will need to select the *openwisp-monitoring* variant and *netjson-monitoring* by going to ``Administration > admin > openwisp``:
 
+.. image:: https://raw.githubusercontent.com/openwisp/openwrt-openwisp-monitoring/media/docs/OpenWISP%20Compilation.gif
+   :target: https://github.com/openwisp/openwrt-openwisp-monitoring/media/docs/OpenWISP%20Compilation.gif
+   :alt: OpenWISP Monitoring Package Compilation
+
 .. code-block:: shell
 
     git clone https://git.openwrt.org/openwrt/openwrt.git
