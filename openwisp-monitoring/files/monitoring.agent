@@ -55,6 +55,20 @@ log() {
 	logger -s "$@" -p "$level" -t openwisp-monitoring
 }
 
+time_to_seconds() {
+	time=$1
+
+	{ [ "$time" -ge 1 ] 2>/dev/null && seconds="$time"; } \
+		|| { [ "${time%s}" -ge 1 ] 2>/dev/null && seconds="${time%s}"; } \
+		|| { [ "${time%m}" -ge 1 ] 2>/dev/null && seconds=$((${time%m} * 60)); } \
+		|| { [ "${time%h}" -ge 1 ] 2>/dev/null && seconds=$((${time%h} * 3600)); } \
+		|| { [ "${time%d}" -ge 1 ] 2>/dev/null && seconds=$((${time%d} * 86400)); }
+
+	echo $seconds
+	unset seconds
+	unset time
+}
+
 check_available_memory() {
 	while true; do
 		total=$(ubus call system info | jsonfilter -e '@.memory.total')
@@ -302,6 +316,8 @@ main() {
 
 	INTERVAL=${INTERVAL:-300}
 	REGISTRATION_INTERVAL=$((INTERVAL / 10))
+	INTERVAL="$(time_to_seconds "$INTERVAL")"
+	[ -z "$INTERVAL" ] && echoerr "Interval is invalid. Use time value(eg: '10', '2m', '3h', '1d')"
 	VERBOSE_MODE=${VERBOSE_MODE:-0}
 	BOOTUP_DELAY=${BOOTUP_DELAY:-10}
 	TMP_DIR="/tmp/openwisp/monitoring"
