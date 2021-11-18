@@ -41,10 +41,7 @@ sed -i '/routing/d' feeds.conf
 # add required packages
 {
 	echo "CONFIG_PACKAGE_netjson-monitoring=y"
-	echo "CONFIG_PACKAGE_openwisp-monitoring-mbedtls=y"
-	echo "CONFIG_PACKAGE_openwisp-monitoring-nossl=y"
-	echo "CONFIG_PACKAGE_openwisp-monitoring-openssl=y"
-	echo "CONFIG_PACKAGE_openwisp-monitoring-wolfssl=y"
+	echo "CONFIG_PACKAGE_openwisp-monitoring=y"
 } >>.config
 make defconfig
 
