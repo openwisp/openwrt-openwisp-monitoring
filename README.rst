@@ -91,20 +91,13 @@ There are 2 packages for *openwisp-netjson-monitoring*:
 - **netjson-monitoring**: provides NetJSON Device Monitoring output
 - **openwisp-monitoring**: depends on **netjson-monitoring** and `openwisp-config <https://github.com/openwisp/openwisp-config>`_
 
-There are four variants of openwisp-monitoring:
-
-- **openwisp-monitoring-openssl**: depends on *openwisp-config-openssl* and *netjson-monitoring*
-- **openwisp-monitoring-mbedtls**: depends on *openwisp-config-mbedtls* and *netjson-monitoring*
-- **openwisp-monitoring-wolfssl**: depends on *openwisp-config-wolfssl* and *netjson-monitoring*
-- **openwisp-monitoring-nossl**: depends on *openwisp-config-nossl* and *netjson-monitoring*
-
-The following procedure illustrates how to compile all variants of *openwisp-monitoring*, *netjson-monitoring* and their dependencies:
+The following procedure illustrates how to compile *openwisp-monitoring*, *netjson-monitoring* and their dependencies:
 
 .. code-block:: shell
 
     git clone https://git.openwrt.org/openwrt/openwrt.git
     cd openwrt
-    git checkout openwrt-21.02
+    git checkout <openwrt-branch>
 
     # configure feeds
     echo "src-git monitoring https://github.com/openwisp/openwrt-openwisp-monitoring.git" > feeds.conf
@@ -112,10 +105,7 @@ The following procedure illustrates how to compile all variants of *openwisp-mon
     ./scripts/feeds update -a
     ./scripts/feeds install -a
     echo "CONFIG_PACKAGE_netjson-monitoring=y" >> .config
-    echo "CONFIG_PACKAGE_openwisp-monitoring-mbedtls=y" >> .config
-    echo "CONFIG_PACKAGE_openwisp-monitoring-nossl=y" >> .config
-    echo "CONFIG_PACKAGE_openwisp-monitoring-openssl=y" >> .config
-    echo "CONFIG_PACKAGE_openwisp-monitoring-wolfssl=y" >> .config    
+    echo "CONFIG_PACKAGE_openwisp-monitoring=y" >> .config
     make defconfig
     make tools/install
     make toolchain/install
@@ -124,13 +114,13 @@ The following procedure illustrates how to compile all variants of *openwisp-mon
 The compiled packages will go in ``bin/packages/*/openwisp``.
 
 Alternatively, you can configure your build interactively with ``make menuconfig``, in this case
-you will need to select the *openwisp-monitoring* variant and *netjson-monitoring* by going to ``Administration > admin > openwisp``:
+you will need to select the *openwisp-monitoring* and *netjson-monitoring* by going to ``Administration > admin > openwisp``:
 
 .. code-block:: shell
 
     git clone https://git.openwrt.org/openwrt/openwrt.git
     cd openwrt
-    git checkout openwrt-21.02
+    git checkout <openwrt-branch>
 
     # configure feeds
     echo "src-git openwisp https://github.com/openwisp/openwisp-monitoring.git" > feeds.conf
