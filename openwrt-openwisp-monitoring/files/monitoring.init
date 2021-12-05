@@ -57,6 +57,7 @@ start_service() {
 	config_load openwisp-monitoring
 	config_get monitored_interfaces monitoring monitored_interfaces "*"
 	config_get interval monitoring interval "300"
+	config_get_bool verbose_mode monitoring verbose_mode "0"
 	config_get_bool debug_mode monitoring debug_mode "0"
 	config_get required_memory monitoring required_memory "0.05"
 	config_get max_retries monitoring max_retries "5"
@@ -69,6 +70,7 @@ start_service() {
 		exit 1
 	fi
 	interval="--interval $interval"
+	verbose="--verbose_mode ${verbose_mode:-0}"
 	debug="--debug_mode ${debug_mode:-0}"
 	set -- --monitored_interfaces \""$monitored_interfaces"\"
 	monitored_interfaces="$*"
