@@ -14,13 +14,12 @@ PKG_LICENSE:=GPL-3.0-or-later
 
 include $(INCLUDE_DIR)/package.mk
 
-define Package/openwisp-monitoring/default
-	TITLE:=OpenWISP Monitoring agent ($(2) variant)
+define Package/openwisp-monitoring
+	TITLE:=OpenWISP Monitoring agent
 	CATEGORY:=Administration
 	SECTION:=admin
 	SUBMENU:=openwisp
-	DEPENDS:=+netjson-monitoring $(3)
-	VARIANT:=$(1)
+	DEPENDS:=+netjson-monitoring +openwisp-config
 	PKGARCH:=all
 	URL:=http://openwisp.org
 endef
@@ -35,16 +34,10 @@ define Package/netjson-monitoring
 	URL:=http://openwisp.org
 endef
 
-Package/openwisp-monitoring-openssl=$(call Package/openwisp-monitoring/default, openssl, OpenSSL, +openwisp-config-openssl)
-Package/openwisp-monitoring-mbedtls=$(call Package/openwisp-monitoring/default, mbedtls, mbedTLS, +openwisp-config-mbedtls)
-Package/openwisp-monitoring-wolfssl=$(call Package/openwisp-monitoring/default, wolfssl, WolfSSL, +openwisp-config-wolfssl)
-Package/openwisp-monitoring-nossl=$(call Package/openwisp-monitoring/default, nossl, No SSL, +openwisp-config-nossl)
-
-
 define Build/Compile
 endef
 
-define Package/openwisp-monitoring-$(BUILD_VARIANT)/conffiles
+define Package/openwisp-monitoring/conffiles
 /etc/config/openwisp-monitoring
 endef
 
@@ -95,7 +88,7 @@ define Package/netjson-monitoring/install
 
 endef
 
-define Package/openwisp-monitoring-$(BUILD_VARIANT)/install
+define Package/openwisp-monitoring/install
 	$(INSTALL_DIR) \
 		$(1)/usr/sbin \
 		$(1)/etc/init.d \
@@ -116,8 +109,5 @@ define Package/openwisp-monitoring-$(BUILD_VARIANT)/install
 
 endef
 
-$(eval $(call BuildPackage,openwisp-monitoring-openssl))
-$(eval $(call BuildPackage,openwisp-monitoring-mbedtls))
-$(eval $(call BuildPackage,openwisp-monitoring-wolfssl))
-$(eval $(call BuildPackage,openwisp-monitoring-nossl))
+$(eval $(call BuildPackage,openwisp-monitoring))
 $(eval $(call BuildPackage,netjson-monitoring))
