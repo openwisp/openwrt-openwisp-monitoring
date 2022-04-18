@@ -19,7 +19,7 @@ define Package/openwisp-monitoring
 	CATEGORY:=Administration
 	SECTION:=admin
 	SUBMENU:=openwisp
-	DEPENDS:=+netjson-monitoring +openwisp-config
+	DEPENDS:=+netjson-monitoring +openwisp-config-openssl
 	PKGARCH:=all
 	URL:=http://openwisp.org
 endef
