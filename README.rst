@@ -32,6 +32,40 @@ for `OpenWRT <https://openwrt.org/>`_.
  :backlinks: none
  :depth: 3
 
+Install pre-compiled packages
+-----------------------------
+
+First run:
+
+.. code-block:: shell
+
+    opkg update
+
+Then install ``openwisp-monitoring`` and ``netjson-monitoring`` packages from the
+`latest builds <https://downloads.openwisp.io/?prefix=openwisp-monitoring/latest/>`_:
+
+.. code-block:: shell
+
+    opkg install <URL>
+
+Where ``<URL>`` is the URL of the pre-compiled package.
+
+For a list of the latest built images, take a look at `downloads.openwisp.io/?prefix=openwisp-monitoring/
+<https://downloads.openwisp.io/?prefix=openwisp-monitoring/>`_.
+
+**If you need to compile the package yourself**, see
+`Compiling openwrt-openwisp-monitoring <#compiling-openwrt-openwisp-monitoring>`_.
+
+Once installed *openwisp-monitoring* needs to be configured (see `Configuration options <#configuration-options>`_)
+and then started with:
+
+.. code-block:: shell
+
+    /etc/init.d/openwisp-monitoring restart
+
+To ensure the agent is working correctly find out how to perform debugging in
+the `Debugging <#debugging>`_ section.
+
 Configuration options
 ---------------------
 
@@ -132,11 +166,6 @@ you will need to select the *openwisp-monitoring* and *netjson-monitoring* by go
     make tools/install
     make toolchain/install
     make package/openwrt-openwisp-monitoring/compile
-
-Once installed *openwisp-monitoring* needs to be configured (see `Configuration options`_)
-and then started with::
-
-    /etc/init.d/openwisp-monitoring restart
 
 Debugging
 ---------
