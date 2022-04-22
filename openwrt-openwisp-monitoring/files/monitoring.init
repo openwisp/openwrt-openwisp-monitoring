@@ -47,10 +47,15 @@ start_service() {
 	fi
 
 	if [ -z "$uuid" ] || [ -z "$key" ]; then
-		logger -s "uuid or key are not set, please add these to /etc/config/openwisp" \
-			-t openwisp-monitoring \
-			-p daemon.err
-		exit 1
+		until [ -n "$uuid" ] && [ -n "$key" ]; do
+			logger -s "waiting for uuid and key to be set" \
+				-t openwisp-monitoring \
+				-p daemon.err
+			sleep 5
+			config_load openwisp
+			config_get uuid http uuid
+			config_get key http key
+		done
 	fi
 
 	# for openwisp-monitoring
