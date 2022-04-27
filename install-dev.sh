@@ -16,7 +16,7 @@ git clone https://git.openwrt.org/project/libubox.git --depth=1
 git clone https://git.openwrt.org/project/uci.git --depth=1
 { cd uci && cmake . && make install && cd ..; } || { echo 'Installing uci failed!' && exit 1; }
 # install nixio
-luarocks install https://raw.githubusercontent.com/Neopallium/nixio/master/nixio-scm-0.rockspec
+luarocks install https://raw.githubusercontent.com/openwisp/nixio/master/nixio-scm-0.rockspec
 # install luaformatter
 git clone --recurse-submodules https://github.com/Koihik/LuaFormatter.git
 { cd LuaFormatter && cmake . && make install && cd ..; } || { echo 'Installing LuaFormatter failed' && exit 1; }
