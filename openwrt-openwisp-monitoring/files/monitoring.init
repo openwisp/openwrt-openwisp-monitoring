@@ -46,16 +46,6 @@ start_service() {
 		exit 1
 	fi
 
-	until [ -n "$uuid" ] && [ -n "$key" ]; do
-		logger -s "waiting for uuid and key to be set" \
-			-t openwisp-monitoring \
-			-p daemon.err
-		sleep 5
-		config_load openwisp
-		config_get uuid http uuid
-		config_get key http key
-	done
-
 	# for openwisp-monitoring
 	config_load openwisp-monitoring
 	config_get monitored_interfaces monitoring monitored_interfaces "*"

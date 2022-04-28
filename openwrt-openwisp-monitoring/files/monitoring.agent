@@ -196,6 +196,24 @@ send_data() {
 	done
 }
 
+register() {
+	logger -s "Waiting for device to register" \
+		-t openwisp-monitoring \
+		-p daemon.info
+	# shellcheck disable=SC2002
+	{
+		UUID=$(cmd /etc/config/openwisp | awk '/option uuid / { print $3 }' | tr -d "'")
+		KEY=$(cat /etc/config/openwisp | awk '/option key / { print $3 }' | tr -d "'")
+	}
+	if [ -z "$UUID" ] || [ -z "$KEY" ]; then
+		return 1
+	fi
+	logger -s "Setting uuid and key" \
+		-t openwisp-monitoring \
+		-p daemon.info
+	export UUID KEY
+}
+
 main() {
 	# parse options
 	while [ -n "$1" ]; do
@@ -256,6 +274,7 @@ main() {
 	done
 
 	INTERVAL=${INTERVAL:-300}
+	REGISTRATION_INTERVAL=$((INTERVAL / 10))
 	VERBOSE_MODE=${VERBOSE_MODE:-0}
 	TMP_DIR="/tmp/openwisp/monitoring"
 
@@ -267,6 +286,11 @@ main() {
 		MONITORED_INTERFACES=$(echo "$MONITORED_INTERFACES" | tr -d '"')
 		save_data
 	elif [ "$MODE" = "send" ]; then
+		if [ -z "$UUID" ] || [ -z "$KEY" ]; then
+			until register; do
+				sleep "$REGISTRATION_INTERVAL"
+			done
+		fi
 		VERIFY_SSL=${VERIFY_SSL:-0}
 		RESPONSE_FILE="$TMP_DIR"/response.txt
 		set_url_and_curl && send_data
