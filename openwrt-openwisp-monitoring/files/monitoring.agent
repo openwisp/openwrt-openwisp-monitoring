@@ -203,8 +203,8 @@ wait_until_registered() {
 	logger -s "Waiting for device to register" \
 		-t openwisp-monitoring \
 		-p daemon.info
-	UUID=$(uci get openwisp.http.uuid)
-	KEY=$(uci get openwisp.http.key)
+	UUID=$(uci get openwisp.http.uuid 2>/dev/null)
+	KEY=$(uci get openwisp.http.key 2>/dev/null)
 	if [ -z "$UUID" ] || [ -z "$KEY" ]; then
 		return 1
 	fi
