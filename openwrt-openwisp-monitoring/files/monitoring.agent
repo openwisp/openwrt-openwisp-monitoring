@@ -196,15 +196,15 @@ send_data() {
 	done
 }
 
-register() {
+wait_until_registered() {
+	if [ -n "$UUID" ] && [ -n "$KEY" ]; then
+		return 0
+	fi
 	logger -s "Waiting for device to register" \
 		-t openwisp-monitoring \
 		-p daemon.info
-	# shellcheck disable=SC2002
-	{
-		UUID=$(cmd /etc/config/openwisp | awk '/option uuid / { print $3 }' | tr -d "'")
-		KEY=$(cat /etc/config/openwisp | awk '/option key / { print $3 }' | tr -d "'")
-	}
+	UUID=$(uci get openwisp.http.uuid)
+	KEY=$(uci get openwisp.http.key)
 	if [ -z "$UUID" ] || [ -z "$KEY" ]; then
 		return 1
 	fi
@@ -286,11 +286,9 @@ main() {
 		MONITORED_INTERFACES=$(echo "$MONITORED_INTERFACES" | tr -d '"')
 		save_data
 	elif [ "$MODE" = "send" ]; then
-		if [ -z "$UUID" ] || [ -z "$KEY" ]; then
-			until register; do
-				sleep "$REGISTRATION_INTERVAL"
-			done
-		fi
+		until wait_until_registered; do
+			sleep "$REGISTRATION_INTERVAL"
+		done
 		VERIFY_SSL=${VERIFY_SSL:-0}
 		RESPONSE_FILE="$TMP_DIR"/response.txt
 		set_url_and_curl && send_data
