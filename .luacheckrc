@@ -1,4 +1,4 @@
-files["openwrt-openwisp-monitoring/tests"]={
+files["openwisp-monitoring/tests"]={
 	ignore={"Test.*"}
 }
 

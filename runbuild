@@ -31,7 +31,8 @@ git checkout $OPENWRT_BRANCH
 git reset --hard origin/$OPENWRT_BRANCH
 
 # configure feeds
-echo "src-link openwisp $CURRENT_DIR" >feeds.conf
+echo "src-git openwisp_config https://github.com/openwisp/openwisp-config.git^1.0.0" >feeds.conf
+echo "src-link openwisp_monitoring $CURRENT_DIR" >>feeds.conf
 cat feeds.conf.default >>feeds.conf
 # remove unneeded feeds
 sed -i '/telephony/d' feeds.conf
@@ -50,9 +51,9 @@ if [ ! "$CI_CACHE" ]; then
 	make -j"$CORES" toolchain/install
 fi
 
-make -j"$CORES" package/openwrt-openwisp-monitoring/compile || exit 1
+make -j"$CORES" package/openwisp-monitoring/compile || exit 1
 
-mv "$BUILD_DIR"/openwrt/bin/packages/"$COMPILE_TARGET"/openwisp "$VERSIONED_DIR"
+mv "$BUILD_DIR/openwrt/bin/packages/$COMPILE_TARGET/openwisp_monitoring" "$VERSIONED_DIR"
 
 rm "$LATEST_LINK" || true
 ln -s "$VERSIONED_DIR" "$LATEST_LINK"

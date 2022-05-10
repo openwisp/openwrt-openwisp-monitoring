@@ -1,6 +1,6 @@
-===========================
-openwrt-openwisp-monitoring
-===========================
+===================================
+OpenWISP Monitoring OpenWrt package
+===================================
 
 .. image:: https://github.com/openwisp/openwrt-openwisp-monitoring/workflows/OpenWRT%20OPENWISP%20MONITORING%20CI%20Build/badge.svg?branch=master
    :target: https://github.com/openwisp/openwrt-openwisp-monitoring/actions?query=OpenWRT+OPENWISP+MONITORING+CI+Build%22
@@ -54,7 +54,7 @@ For a list of the latest built images, take a look at `downloads.openwisp.io/?pr
 <https://downloads.openwisp.io/?prefix=openwisp-monitoring/>`_.
 
 **If you need to compile the package yourself**, see
-`Compiling openwrt-openwisp-monitoring <#compiling-openwrt-openwisp-monitoring>`_.
+`Compiling openwisp-monitoring <#compiling-openwrt-openwisp-monitoring>`_.
 
 Once installed *openwisp-monitoring* needs to be configured (see `Configuration options <#configuration-options>`_)
 and then started with:
@@ -117,13 +117,22 @@ If data is sent successfully, then the data file will be deleted and agent will 
 **SIGUSR1** signals are used to instantly send the data when collected. However, the service will keep trying
 to send data periodically.
 
-Compiling openwrt-openwisp-monitoring
--------------------------------------
+Compiling openwisp-monitoring
+-----------------------------
 
-There are 2 packages for *openwisp-netjson-monitoring*:
+This repository ships 2 OpenWrt packages:
 
-- **netjson-monitoring**: provides NetJSON Device Monitoring output
-- **openwisp-monitoring**: depends on **netjson-monitoring** and `openwisp-config <https://github.com/openwisp/openwisp-config>`_
+- **netjson-monitoring**: provides
+  `NetJSON DeviceMonitoring
+  <https://netjson.org/docs/what.html#devicemonitoring>`_ output
+- **openwisp-monitoring**: daemon which collects and sends
+  `NetJSON DeviceMonitoring
+  <https://netjson.org/docs/what.html#devicemonitoring>`_ data to
+  `OpenWISP Monitoring
+  <https://github.com/openwisp/openwisp-monitoring>`_
+  depends on **netjson-monitoring** and
+  `openwisp-config
+  <https://github.com/openwisp/openwisp-config>`_
 
 The following procedure illustrates how to compile *openwisp-monitoring*, *netjson-monitoring* and their dependencies:
 
@@ -134,7 +143,8 @@ The following procedure illustrates how to compile *openwisp-monitoring*, *netjs
     git checkout <openwrt-branch>
 
     # configure feeds
-    echo "src-git monitoring https://github.com/openwisp/openwrt-openwisp-monitoring.git" > feeds.conf
+    echo "src-git openwisp_config https://github.com/openwisp/openwisp-config.git^1.0.0" >feeds.conf
+    echo "src-git openwisp_monitoring https://github.com/openwisp/openwrt-openwisp-monitoring.git" >> feeds.conf
     cat feeds.conf.default >> feeds.conf
     ./scripts/feeds update -a
     ./scripts/feeds install -a
@@ -143,7 +153,7 @@ The following procedure illustrates how to compile *openwisp-monitoring*, *netjs
     make defconfig
     make tools/install
     make toolchain/install
-    make package/openwrt-openwisp-monitoring/compile
+    make package/openwisp-monitoring/compile
 
 The compiled packages will go in ``bin/packages/*/openwisp``.
 
@@ -157,7 +167,8 @@ you will need to select the *openwisp-monitoring* and *netjson-monitoring* by go
     git checkout <openwrt-branch>
 
     # configure feeds
-    echo "src-git openwisp https://github.com/openwisp/openwisp-monitoring.git" > feeds.conf
+    echo "src-git openwisp_config https://github.com/openwisp/openwisp-config.git^1.0.0" >feeds.conf
+    echo "src-git openwisp_monitoring https://github.com/openwisp/openwrt-openwisp-monitoring.git" >> feeds.conf
     cat feeds.conf.default >> feeds.conf
     ./scripts/feeds update -a
     ./scripts/feeds install -a
@@ -165,12 +176,13 @@ you will need to select the *openwisp-monitoring* and *netjson-monitoring* by go
     # go to Administration > admin > openwisp and select the packages you need interactively
     make tools/install
     make toolchain/install
-    make package/openwrt-openwisp-monitoring/compile
+    make package/openwisp-monitoring/compile
 
 Debugging
 ---------
 
-Debugging *openwisp-monitoring package* can be easily done by using the ``logread`` command::
+Debugging the *openwisp-monitoring package* can be easily done by using
+the ``logread`` command::
 
     logread | grep openwisp-monitoring
 
@@ -192,7 +204,9 @@ You can inspect the version of openwisp-monitoring currently installed with::
 Quality Assurance Checks
 ------------------------
 
-We use `LuaFormatter <https://luarocks.org/modules/tammela/luaformatter>`_ and `shfmt <https://github.com/mvdan/sh#shfmt>`_ to format lua files and shell scripts respectively.
+We use `LuaFormatter <https://luarocks.org/modules/tammela/luaformatter>`_
+and `shfmt <https://github.com/mvdan/sh#shfmt>`_ to format lua files and
+shell scripts respectively.
 
 Once they are installed, you can format all files by::
 
@@ -209,8 +223,12 @@ Run quality assurance tests with::
 Run tests
 ---------
 
-To run the unit tests, you must install the required dependencies first; to do this, you can take
-a look at the `install-dev.sh <https://github.com/openwisp/openwisp-config/blob/master/install-dev.sh>`_ script.
+To run the unit tests, you must install the required dependencies first;
+to do this, you can take
+a look at the
+`install-dev.sh
+<https://github.com/openwisp/openwisp-config/blob/master/install-dev.sh>`_
+script.
 
 Install test requirements::
 
