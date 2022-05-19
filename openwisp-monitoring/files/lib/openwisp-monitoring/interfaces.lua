@@ -128,8 +128,10 @@ function interfaces.get_addresses(name)
           if utils.starts_with(addr, 'fe80') then
             proto = 'static'
           else
-            local ula = uci_cursor.get('network', 'globals', 'ula_prefix')
-            local ula_prefix = utils.split(ula, '::')[1]
+            local ula_prefix = uci_cursor.get('network', 'globals', 'ula_prefix') or ''
+            if ula_prefix then
+              ula_prefix = ula_prefix:sub(0,13)
+            end
             if utils.starts_with(addr, ula_prefix) then
               proto = 'static'
             else
