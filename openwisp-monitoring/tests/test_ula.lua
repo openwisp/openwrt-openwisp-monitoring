@@ -1,4 +1,5 @@
-package.path = package.path .. ";../files/lib/openwisp-monitoring/?.lua" .. ";../files/lib/?.lua"
+package.path = package.path .. ";../files/lib/openwisp-monitoring/?.lua" ..
+                 ";../files/lib/?.lua"
 
 local luaunit = require('luaunit')
 
@@ -9,11 +10,7 @@ TestUla = {
     local env = require('main_env')
     package.loaded.ubus = env.ubus
     package.loaded.uci = {
-      cursor = function()
-        return {
-          get = function(...) return nil end
-        }
-      end
+      cursor = function() return {get = function(...) return nil end} end
     }
     package.loaded.nixio = {
       getifaddrs = function() return require('test_files/nixio_data') end
@@ -24,9 +21,13 @@ TestUla = {
 
 function TestUla.test_ula_prefix()
   local interface_functions = require('interfaces')
-  luaunit.assertEquals(interface_functions.get_addresses('lo'),{{address="127.0.0.1", family="ipv4", mask=8, proto="static"}})
-  luaunit.assertEquals(interface_functions.get_addresses('br-mng')[1],interface_data.br_mng_addresses[1])
-  luaunit.assertNotEquals(interface_functions.get_addresses('br-mng')[2],interface_data.br_mng_addresses[2])
+  luaunit.assertEquals(interface_functions.get_addresses('lo'), {
+    {address = "127.0.0.1", family = "ipv4", mask = 8, proto = "static"}
+  })
+  luaunit.assertEquals(interface_functions.get_addresses('br-mng')[1],
+    interface_data.br_mng_addresses[1])
+  luaunit.assertNotEquals(interface_functions.get_addresses('br-mng')[2],
+    interface_data.br_mng_addresses[2])
 end
 
 os.exit(luaunit.LuaUnit.run())
