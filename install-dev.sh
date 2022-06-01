@@ -8,7 +8,7 @@ apt-get install shellcheck
 # install lua
 apt-get install -y lua5.1 liblua5.1-0-dev luarocks
 # install json-c
-git clone https://github.com/json-c/json-c.git --depth=1
+git clone --branch json-c-0.16 https://github.com/json-c/json-c.git --depth=1
 { cd json-c && cmake . && make install && cd ..; } || { echo 'Installing json-c failed!' && exit 1; }
 # install openwrt libubox and uci
 git clone https://git.openwrt.org/project/libubox.git --depth=1
