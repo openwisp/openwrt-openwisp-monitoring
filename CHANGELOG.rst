@@ -1,6 +1,11 @@
 Change log
 ^^^^^^^^^^
 
+0.1.1 [2022-06-08]
+==================
+
+- Fixed crash when ULA prefix is not available
+
 0.1.0 [2022-05-10]
 ==================
 
