@@ -73,6 +73,7 @@ UCI configuration options must go in ``/etc/config/openwisp-monitoring``.
 
 - ``monitored_interfaces``: interfaces that needs to be monitored, defaults to ``*`` for all interfaces.
 - ``interval``: time after which device data should be sent to server, defaults to ``300``.
+- ``send_delay``: add random wait up to this amount into ``interval`` before send data, defaults to ``10``.
 - ``verbose_mode``: can be enabled (set to ``1``) to ease `debugging <#debugging>`__ in case of issues, defaults to ``0`` (disabled).
 - ``required_memory``: available memory required to save data temporarily, defaults to ``0.05`` (5 percent).
 - ``max_retries``: maximum number of retries in case of failures to send data to server in case of failure, defaults to ``5`` retries.
@@ -106,7 +107,7 @@ If openwisp-monitoring agent is called with this mode, then the agent will keep 
 
 Agent will check if any data file is available in temporary storage.
 
-If there is no data file, the agent will sleep for the time interval and check for the data file again. This will be continued until a data file is found.
+If there is no data file, the agent will sleep for the time ``interval+send_delay`` and check for the data file again. This will be continued until a data file is found.
 If a signal is received from the other agent, then the sleep will be interrupted and agent will start sending data.
 
 If agent fails to send data to the server, an exponential backoff will be used to retry until `max_retries` is reached.

@@ -19,6 +19,7 @@ show_help() {
 	printf "  --verify_ssl <0, 1>\t\t\t: Whether SSL Authentication should be enabled or not.\n"
 	printf "OpenWISP Monitoring Config options:\n"
 	printf "  --interval <time>\t\t\t: Time in seconds after which data should be sent/collected.\n"
+	printf "  --send-delay <time>\t\t\t: Max random delay time in seconds to be added before sending data.\n"
 	printf "  --monitored-interfaces <interfaces>\t: Interfaces that needs to be monitored.\n"
 	printf "  --verbose-mode <0, 1>\t\t\t: Run agent in verbose mode.\n"
 	printf "  --required-memory <0-1>\t\t: Fraction of total memory that should be available to collect data.\n"
@@ -127,7 +128,7 @@ send_data() {
 					-p daemon.info
 				trap handle_sigusr1 USR1
 				# SIGUSR1 signal received, interrupt sleep and continue sending data
-				sleep "$INTERVAL" &
+				sleep "$(($INTERVAL+$SEND_DELAY))" &
 				wait $!
 				continue
 			fi
@@ -244,6 +245,10 @@ main() {
 				export INTERVAL="$2"
 				shift
 				;;
+			--send_delay)
+				export SEND_DELAY="$2"
+				shift
+				;;
 			--monitored_interfaces)
 				export MONITORED_INTERFACES="$2"
 				shift
@@ -274,6 +279,7 @@ main() {
 	done
 
 	INTERVAL=${INTERVAL:-300}
+	SEND_DELAY=$(($RANDOM%${SEND_DELAY:-10}))
 	REGISTRATION_INTERVAL=$((INTERVAL / 10))
 	VERBOSE_MODE=${VERBOSE_MODE:-0}
 	TMP_DIR="/tmp/openwisp/monitoring"
