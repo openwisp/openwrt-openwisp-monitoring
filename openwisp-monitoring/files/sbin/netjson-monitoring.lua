@@ -121,7 +121,6 @@ for name, interface in pairs(network_status) do
       txqueuelen = interface.txqueuelen,
       mtu = interface.mtu,
       speed = interface.speed,
-      bridge_members = interface['bridge-members'],
       multicast = interface.multicast
     }
 
@@ -136,7 +135,9 @@ for name, interface in pairs(network_status) do
           end
         end
       end
-      netjson_interface['bridge_members'] = bridge_members
+      if next(bridge_members) ~= nil then
+         netjson_interface['bridge_members'] = bridge_members
+      end
     end
     if wireless_interfaces[name] then
       monitoring.utils.dict_merge(wireless_interfaces[name], netjson_interface)
