@@ -182,9 +182,9 @@ send_data() {
 					# remove saved data
 					rm -f "$filename"
 					break
-				elif [ "$response_code" = "400" ];then
+				elif [ "$response_code" = "400" ]; then
 					logger -s "Data not sent successfully. Response code is \"$response_code\"." \
-					    "The data being sent is being rejected by the server, discarding data" \
+						"The data being sent is being rejected by the server, discarding data" \
 						-t openwisp-monitoring \
 						-p daemon.err
 					rm -f "$filename"
