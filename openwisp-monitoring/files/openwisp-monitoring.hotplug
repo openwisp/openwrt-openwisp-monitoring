@@ -1,0 +1,10 @@
+#!/bin/sh
+#
+# OpenWISP Monitoring HotPlug Script
+
+if [ "$ACTION" = "bootup" ] || [ "$ACTION" = "restart" ]; then
+	logger -s "'openwisp-config' started. Restarting 'openwisp-monitoring'" \
+		-t openwisp_monitoring \
+		-p daemon.info
+	/etc/init.d/openwisp-monitoring restart
+fi

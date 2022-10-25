@@ -93,7 +93,8 @@ define Package/openwisp-monitoring/install
 		$(1)/usr/sbin \
 		$(1)/etc/init.d \
 		$(1)/etc/config \
-		$(1)/etc/openwisp-monitoring
+		$(1)/etc/openwisp-monitoring \
+		$(1)/etc/hotplug.d/openwisp
 
 	$(INSTALL_BIN) \
 		files/monitoring.agent \
@@ -102,6 +103,10 @@ define Package/openwisp-monitoring/install
 	$(INSTALL_BIN) \
 		files/monitoring.init \
 		$(1)/etc/init.d/openwisp-monitoring
+	
+	$(INSTALL_BIN) \
+		files/openwisp-monitoring.hotplug \
+		$(1)/etc/hotplug.d/openwisp/openwisp-monitoring
 
 	$(INSTALL_CONF) \
 		files/monitoring.config \

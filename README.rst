@@ -130,7 +130,7 @@ This repository ships 2 OpenWrt packages:
   <https://netjson.org/docs/what.html#devicemonitoring>`_ data to
   `OpenWISP Monitoring
   <https://github.com/openwisp/openwisp-monitoring>`_
-  depends on **netjson-monitoring** and
+  It depends on **netjson-monitoring** and
   `openwisp-config
   <https://github.com/openwisp/openwisp-config>`_
 
