@@ -5,6 +5,7 @@ set -e
 shfmt -w -l .
 shfmt -w -l openwisp-monitoring/files/monitoring.agent
 shfmt -w -l openwisp-monitoring/files/monitoring.init
+shfmt -w -l openwisp-monitoring/files/openwisp-monitoring.hotplug
 
 # format lua files
 cd openwisp-monitoring/

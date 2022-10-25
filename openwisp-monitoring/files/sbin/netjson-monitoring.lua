@@ -136,7 +136,7 @@ for name, interface in pairs(network_status) do
         end
       end
       if next(bridge_members) ~= nil then
-         netjson_interface['bridge_members'] = bridge_members
+        netjson_interface['bridge_members'] = bridge_members
       end
     end
     if wireless_interfaces[name] then
