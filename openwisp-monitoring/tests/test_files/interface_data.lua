@@ -210,6 +210,40 @@ test_data.interface_data = {
       up = true,
       updated = {"addresses", "routes", "data"},
       uptime = 132
+    }, {
+      autostart = true,
+      available = true,
+      data = {},
+      delegation = true,
+      device = "wg0",
+      ["dns-server"] = {},
+      ["dns-search"] = {},
+      dns_metric = 0,
+      dynamic = false,
+      inactive = {
+        ["ipv4-address"] = {},
+        ["ipv6-address"] = {},
+        route = {},
+        ["dns-server"] = {},
+        ["dns-search"] = {},
+        neighbors = {}
+      },
+      interface = "wg0",
+      ["ipv4-address"] = {{address = "172.16.0.9", mask = 32}},
+      ["ipv6-address"] = {},
+      ["ipv6-prefix"] = {},
+      ["ipv6-prefix-assignment"] = {},
+      l3_device = "wg0",
+      metric = 0,
+      neighbors = {},
+      pending = false,
+      proto = "wireguard",
+      route = {
+        {target = "172.16.0.1", mask = 32, nexthop = "0.0.0.0", source = "0.0.0.0/0"}
+      },
+      up = true,
+      updated = {"addresses", "routes"},
+      uptime = 81437
     }
   }
 }

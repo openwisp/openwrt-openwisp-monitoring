@@ -136,7 +136,7 @@ for name, interface in pairs(network_status) do
         end
       end
       if next(bridge_members) ~= nil then
-         netjson_interface['bridge_members'] = bridge_members
+        netjson_interface['bridge_members'] = bridge_members
       end
     end
     if wireless_interfaces[name] then
@@ -164,6 +164,12 @@ for name, interface in pairs(network_status) do
       netjson_interface.statistics = interface.statistics
     end
     local addresses = monitoring.interfaces.get_addresses(name)
+    local virtual_interfaces = {'wireguard'}
+
+    if next(addresses) and
+      monitoring.utils.has_value(virtual_interfaces, addresses[1].proto) then
+      netjson_interface.type = 'virtual'
+    end
     if next(addresses) then netjson_interface.addresses = addresses end
     local info = monitoring.interfaces.get_interface_info(name, netjson_interface)
     if info.stp ~= nil then netjson_interface.stp = info.stp end

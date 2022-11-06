@@ -174,4 +174,11 @@ function TestNetJSON.test_only_existing_bridge_members_not_empty()
   luaunit.assertNil(string.find(netjson, '"bridge_members":{}', 1, true))
 end
 
+function TestNetJSON.test_virtual_interface_type()
+  local netjson_file = assert(loadfile('../files/sbin/netjson-monitoring.lua'))
+  local netjson = netjson_file('*')
+  luaunit.assertNotNil(string.find(netjson,
+    '"type":"virtual","mtu":65536,"txqueuelen":1000,"name":"wg0"'))
+end
+
 os.exit(luaunit.LuaUnit.run())
