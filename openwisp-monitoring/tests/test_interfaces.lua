@@ -1,6 +1,7 @@
 package.path = package.path .. ";../files/lib/openwisp-monitoring/?.lua"
 
 local luaunit = require('luaunit')
+local cjson = require('cjson')
 
 local address_data = require('test_files/address_data')
 local interface_data = require('test_files/interface_data')
@@ -176,9 +177,9 @@ end
 
 function TestNetJSON.test_virtual_interface_type()
   local netjson_file = assert(loadfile('../files/sbin/netjson-monitoring.lua'))
-  local netjson = netjson_file('*')
-  luaunit.assertNotNil(string.find(netjson,
-    '"type":"virtual","mtu":65536,"txqueuelen":1000,"name":"wg0"'))
+  local netjson = cjson.decode(netjson_file('*'))
+  luaunit.assertEquals(netjson["interfaces"][4]["type"], "virtual")
+  luaunit.assertEquals(netjson["interfaces"][4]["name"], "wg0")
 end
 
 os.exit(luaunit.LuaUnit.run())
