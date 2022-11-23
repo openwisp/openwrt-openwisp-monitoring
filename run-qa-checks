@@ -10,6 +10,7 @@ if [ "$CI" -eq "1" ]; then
 	# copy files in github actions so that shell formatter can check for them
 	cp openwisp-monitoring/files/monitoring.agent monitoring_agent
 	cp openwisp-monitoring/files/monitoring.init monitoring_init
+	cp openwisp-monitoring/files/openwisp-monitoring.hotplug monitoring_hotplug
 else
 	# check scripts formaating
 	shellcheck \
@@ -20,7 +21,8 @@ else
 		runtests \
 		./openwisp-monitoring/files/monitoring.init \
 		./openwisp-monitoring/files/monitoring.agent \
-		./openwisp-monitoring/files/netjson-monitoring
+		./openwisp-monitoring/files/netjson-monitoring \
+		./openwisp-monitoring/files/openwisp-monitoring.hotplug
 
 	shfmt -d .
 	shfmt -d openwisp-monitoring/files/monitoring.agent

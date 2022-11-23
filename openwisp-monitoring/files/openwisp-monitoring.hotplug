@@ -1,0 +1,8 @@
+#!/bin/sh
+# OpenWISP Monitoring HotPlug Script
+# Restarts the Monitoring agent when the OpenWISP Config
+# agent boots up or is restarted.
+
+if [ "$ACTION" = "bootup" ] || [ "$ACTION" = "restart" ]; then
+	/etc/init.d/openwisp-monitoring restart
+fi
