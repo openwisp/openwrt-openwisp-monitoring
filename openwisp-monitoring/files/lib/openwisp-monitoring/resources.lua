@@ -36,9 +36,7 @@ function resources.get_cpus()
   processors_file:close()
   local cpus = tonumber(processors)
   -- assume the hardware has at least 1 proc
-  if cpus == 0 then
-    return 1
-  end
+  if cpus == 0 then return 1 end
   return cpus
 end
 
