@@ -140,7 +140,6 @@ send_data() {
 			url="$URL&time=$filename.000000"
 			# retry sending data in case of failure
 			failures=0
-			timeout=1
 			# check if the data is latest or old one
 			[ "$(echo "$TMP_DIR"/* | awk '{print $2}')" ] || url="$url&current=true"
 			if [ "${basefilename##*.}" = "gz" ]; then
@@ -183,7 +182,7 @@ send_data() {
 					rm -f "$filename"
 					break
 				else
-					timeout=$((timeout * 2))
+					timeout=$(/usr/sbin/openwisp-get-random-number 2 15)
 					[ "$VERBOSE_MODE" -eq "1" ] && logger -s "Data not sent successfully. Retrying in $timeout seconds" \
 						-p daemon.warn
 					failures=$((failures + 1))
