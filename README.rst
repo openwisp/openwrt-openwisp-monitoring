@@ -76,6 +76,7 @@ UCI configuration options must go in ``/etc/config/openwisp-monitoring``.
 - ``verbose_mode``: can be enabled (set to ``1``) to ease `debugging <#debugging>`__ in case of issues, defaults to ``0`` (disabled).
 - ``required_memory``: available memory required to save data temporarily, defaults to ``0.05`` (5 percent).
 - ``max_retries``: maximum number of retries in case of failures to send data to server in case of failure, defaults to ``5`` retries.
+- ``bootup_delay``: maximum value in seconds of a random delay after bootup, defaults to ``10``, see `Bootup Delay`_
 
 In case, `maximum retries are reached <#send-mode>`_, agent will try sending data again in next cycle.
 
@@ -116,6 +117,15 @@ If data is sent successfully, then the data file will be deleted and agent will 
 
 **SIGUSR1** signals are used to instantly send the data when collected. However, the service will keep trying
 to send data periodically.
+
+Bootup Delay
+------------
+
+The option ``bootup_delay`` can be used to make the send mode wait for a random amount of seconds after the bootup of
+the device. Allowed random values range from 0 up to the value of ``bootup_delay``.
+
+The random bootup delay reduces the load on the OpenWISP controller when a large amount of devices boot up at the
+same time after a power failure, all trying to upload metrics to the controller.
 
 Compiling openwisp-monitoring
 -----------------------------
