@@ -97,8 +97,6 @@ save_data() {
 		if check_available_memory; then
 			data="$(collect_data)"
 			filename="$(date -u +'%d-%m-%Y_%H:%M:%S')"
-			# make directory
-			mkdir -p "$TMP_DIR"
 			# save data with file_name
 			echo "$data" >"$TMP_DIR/$filename"
 			# compress data
@@ -219,6 +217,22 @@ wait_until_registered() {
 	export UUID KEY
 }
 
+bootup_delay() {
+	if [ ! -f "$BOOTUP" ]; then
+		# actions to do only after agent start, not after restart
+		if [ "$BOOTUP_DELAY" -ne "0" ]; then
+			# get a random number between zero and $BOOTUP_DELAY
+			DELAY=$(/usr/sbin/openwisp-get-random-number 0 "$BOOTUP_DELAY")
+			logger "Delaying initialization of the monitoring agent for $DELAY seconds." \
+				-t openwisp-monitoring \
+				-p daemon.info
+			sleep "$DELAY"
+		fi
+		# send bootup hotplug event
+		touch "$BOOTUP"
+	fi
+}
+
 main() {
 	# parse options
 	while [ -n "$1" ]; do
@@ -269,6 +283,10 @@ main() {
 				export MAX_RETRY="$2"
 				shift
 				;;
+			--bootup_delay)
+				export BOOTUP_DELAY="$2"
+				shift
+				;;
 			-*)
 				echo "Invalid option: $1"
 				exit 1
@@ -281,11 +299,20 @@ main() {
 	INTERVAL=${INTERVAL:-300}
 	REGISTRATION_INTERVAL=$((INTERVAL / 10))
 	VERBOSE_MODE=${VERBOSE_MODE:-0}
+	BOOTUP_DELAY=${BOOTUP_DELAY:-10}
 	TMP_DIR="/tmp/openwisp/monitoring"
+	# The agent tries to upload all files in /tmp/openwisp/monitoring
+	# to the controller, hence /tmp/openwisp/monitoring-bootup
+	# is used to prevent agent from uploading this file.
+	BOOTUP="$TMP_DIR-bootup"
 
 	[ -z "$MODE" ] && echoerr "missing required --mode option"
 
+	# make directory
+	mkdir -p "$TMP_DIR"
+
 	if [ "$MODE" = "collect" ]; then
+		bootup_delay
 		MONITORED_INTERFACES=${MONITORED_INTERFACES:-*}
 		# remove double quotes from interfaces
 		MONITORED_INTERFACES=$(echo "$MONITORED_INTERFACES" | tr -d '"')
