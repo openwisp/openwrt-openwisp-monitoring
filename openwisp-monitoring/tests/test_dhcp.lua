@@ -1,9 +1,9 @@
 package.path = package.path ..
                  ";../files/lib/openwisp-monitoring/?.lua;../files/sbin/?.lua"
 
-local dhcp_data = require('test_files/dhcp_data')
-
+local cjson = require('cjson')
 local luaunit = require('luaunit')
+local dhcp_data = require('test_files/dhcp_data')
 
 TestDhcp = {
   setUp = function()
@@ -69,11 +69,12 @@ function TestDhcp.test_dhcp_leases()
 end
 
 function TestNetJSON.test_dhcp()
-  local netjson = require('netjson-monitoring')
-  luaunit.assertNotNil(string.find(netjson, '"mac":"e8:6a:64:3e:4a:3c"'))
-  luaunit.assertNotNil(string.find(netjson, '"client_id":"01:e8:6a:64:3e:4a:3c"'))
-  luaunit.assertNotNil(string.find(netjson, '"ip":"192.168.1.136"'))
-  luaunit.assertNotNil(string.find(netjson, '"expiry":1620788343'))
+  local netjson_string = require('netjson-monitoring')
+  local netjson = cjson.decode(netjson_string)
+  luaunit.assertEquals(netjson["dhcp_leases"][1]["ip"], "192.168.1.136")
+  luaunit.assertEquals(netjson["dhcp_leases"][1]["expiry"], 1620788343)
+  luaunit.assertEquals(netjson["dhcp_leases"][1]["mac"], "e8:6a:64:3e:4a:3c")
+  luaunit.assertEquals(netjson["dhcp_leases"][1]["client_id"], "01:e8:6a:64:3e:4a:3c")
 end
 
 os.exit(luaunit.LuaUnit.run())
