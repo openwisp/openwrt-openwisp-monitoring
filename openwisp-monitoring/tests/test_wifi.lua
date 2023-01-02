@@ -1,9 +1,10 @@
 package.path = package.path ..
                  ";../files/lib/openwisp-monitoring/?.lua;../files/sbin/?.lua"
 
-local wifi_data = require('test_files/wireless_data')
+local cjson = require("cjson")
 local luaunit = require('luaunit')
 local wifi_functions = require('wifi')
+local wifi_data = require('test_files/wireless_data')
 
 local function string_count(base, pattern)
   return select(2, string.gsub(base, pattern, ""))
@@ -37,6 +38,8 @@ TestNetJSON = {
                 return wifi_data.wlan0_iwinfo
               elseif arg[4].device == "wlan1" then
                 return wifi_data.wlan1_iwinfo
+              elseif arg[4].device == "wlan2" then
+                return wifi_data.wlan2_iwinfo
               elseif arg[4].device == "mesh0" then
                 return wifi_data.mesh0_iwinfo
               elseif arg[4].device == "mesh1" then
@@ -129,6 +132,23 @@ function TestNetJSON.test_wifi_interfaces_stats_include()
   luaunit.assertNotNil(string.find(netjson, '"tx_packets":2367747', 1, true))
   luaunit.assertNotNil(string.find(netjson, '"tx_packets":2367747', 1, true))
   luaunit.assertEquals(string_count(netjson, '"tx_errors":0'), 3)
+end
+
+function TestNetJSON.test_wifi_interfaces_when_iwinfo_channel_empty()
+  local netjson_file = assert(loadfile('../files/sbin/netjson-monitoring.lua'))
+  local netjson = cjson.decode(netjson_file('wlan0 wlan1 wlan2 mesh1'))
+  luaunit.assertEquals(netjson["interfaces"][1]["name"], "wlan2")
+  -- the `wireless` key should be missing when "iwinfo.channel" is `nil`
+  luaunit.assertNil(netjson["interfaces"][1]["wireless"])
+  luaunit.assertEquals(netjson["interfaces"][2]["name"], "mesh1")
+  luaunit.assertIsTable(netjson["interfaces"][2]["wireless"])
+  luaunit.assertEquals(netjson["interfaces"][3]["name"], "wan")
+  luaunit.assertEquals(netjson["interfaces"][4]["name"], "wlan1")
+  luaunit.assertIsTable(netjson["interfaces"][4]["wireless"])
+  luaunit.assertEquals(netjson["interfaces"][5]["name"], "mesh0")
+  luaunit.assertIsTable(netjson["interfaces"][5]["wireless"])
+  luaunit.assertEquals(netjson["interfaces"][6]["name"], "wlan0")
+  luaunit.assertIsTable(netjson["interfaces"][6]["wireless"])
 end
 
 os.exit(luaunit.LuaUnit.run())
