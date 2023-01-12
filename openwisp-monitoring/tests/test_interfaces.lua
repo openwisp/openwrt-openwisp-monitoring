@@ -154,8 +154,10 @@ end
 function TestNetJSON.test_interfaces()
   local netjson_file = assert(loadfile('../files/sbin/netjson-monitoring.lua'))
   local netjson = cjson.decode(netjson_file('*'))
-  luaunit.assertEquals(netjson["dns_servers"][1], "8.8.8.8")
-  luaunit.assertEquals(netjson["dns_servers"][2], "8.8.4.4")
+  luaunit.assertEquals(netjson["interfaces"][2]["mobile"]["signal"]["umts"], nil)
+  luaunit.assertEquals(netjson["interfaces"][3]["addresses"][1]["address"],
+  "192.168.1.41")
+  luaunit.assertEquals(netjson["interfaces"][3]["stp"], true)
   luaunit.assertEquals(netjson["interfaces"][2]["mobile"]["signal"]["lte"]["snr"],
     19.2)
   luaunit.assertEquals(netjson["interfaces"][2]["mobile"]["signal"]["lte"]["rssi"],
@@ -163,10 +165,8 @@ function TestNetJSON.test_interfaces()
   luaunit.assertEquals(netjson["interfaces"][2]["mobile"]["signal"]["lte"]["rsrq"], -9)
   luaunit.assertEquals(netjson["interfaces"][2]["mobile"]["signal"]["lte"]["rsrp"],
     -92)
-  luaunit.assertEquals(netjson["interfaces"][2]["mobile"]["signal"]["umts"], nil)
-  luaunit.assertEquals(netjson["interfaces"][3]["stp"], true)
-  luaunit.assertEquals(netjson["interfaces"][3]["addresses"][1]["address"],
-    "192.168.1.41")
+  luaunit.assertEquals(netjson["dns_servers"][1], "8.8.8.8")
+  luaunit.assertEquals(netjson["dns_servers"][2], "8.8.4.4")
 end
 
 function TestNetJSON.test_only_existing_bridge_members_add()

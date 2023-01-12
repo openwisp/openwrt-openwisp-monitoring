@@ -57,9 +57,9 @@ function TestNetJSON.test_neighbors()
   local netjson_string = require('netjson-monitoring')
   local netjson = cjson.decode(netjson_string)
   luaunit.assertNotNil(test_file_dir .. 'ip_neigh.txt')
-  luaunit.assertEquals(netjson['neighbors'][1]["interface"], "eth1")
-  luaunit.assertNotNil(netjson['neighbors'][3]["ip"], "fe80::bfca:28ed:f368:6cbc")
   luaunit.assertEquals(netjson['neighbors'][3]["mac"], "bc:0f:9a:17:5a:5c")
+  luaunit.assertNotNil(netjson['neighbors'][3]["ip"], "fe80::bfca:28ed:f368:6cbc")
+  luaunit.assertEquals(netjson['neighbors'][1]["interface"], "eth1")
 end
 
 os.exit(luaunit.LuaUnit.run())

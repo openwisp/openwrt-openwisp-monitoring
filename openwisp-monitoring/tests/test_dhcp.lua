@@ -71,10 +71,10 @@ end
 function TestNetJSON.test_dhcp()
   local netjson_string = require('netjson-monitoring')
   local netjson = cjson.decode(netjson_string)
-  luaunit.assertEquals(netjson["dhcp_leases"][1]["ip"], "192.168.1.136")
-  luaunit.assertEquals(netjson["dhcp_leases"][1]["expiry"], 1620788343)
   luaunit.assertEquals(netjson["dhcp_leases"][1]["mac"], "e8:6a:64:3e:4a:3c")
   luaunit.assertEquals(netjson["dhcp_leases"][1]["client_id"], "01:e8:6a:64:3e:4a:3c")
+  luaunit.assertEquals(netjson["dhcp_leases"][1]["ip"], "192.168.1.136")
+  luaunit.assertEquals(netjson["dhcp_leases"][1]["expiry"], 1620788343)
 end
 
 os.exit(luaunit.LuaUnit.run())
