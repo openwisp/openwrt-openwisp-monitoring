@@ -1,8 +1,8 @@
 package.path = package.path ..
                  ";../files/lib/openwisp-monitoring/?.lua;../files/sbin/?.lua"
 
+local cjson = require('cjson')
 local luaunit = require('luaunit')
-
 local resources_data = require('test_files/resources_data')
 
 TestResources = {
@@ -58,11 +58,12 @@ function TestNetJSON.test_resources()
     open = function(arg) return nil end,
     write = function(...) return nil end
   }
-  local netjson = require('netjson-monitoring')
+  local netjson_string = require('netjson-monitoring')
+  local netjson = cjson.decode(netjson_string)
   luaunit.assertNotNil(test_file_dir .. 'disk_usage.txt')
-  luaunit.assertNotNil(string.find(netjson, '"cpus":8'))
-  luaunit.assertNotNil(string.find(netjson, '"filesystem":"\\/dev\\/root"'))
-  luaunit.assertNotNil(string.find(netjson, '"used_percent":25'))
+  luaunit.assertEquals(netjson["resources"]["cpus"], 8)
+  luaunit.assertEquals(netjson["resources"]["disk"][1]["filesystem"], "/dev/root")
+  luaunit.assertEquals(netjson["resources"]["disk"][2]["used_percent"], 25)
 end
 
 os.exit(luaunit.LuaUnit.run())
