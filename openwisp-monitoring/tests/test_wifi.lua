@@ -6,10 +6,6 @@ local luaunit = require('luaunit')
 local wifi_functions = require('wifi')
 local wifi_data = require('test_files/wireless_data')
 
-local function string_count(base, pattern)
-  return select(2, string.gsub(base, pattern, ""))
-end
-
 TestWifi = {setUp = function() end, tearDown = function() end}
 
 TestNetJSON = {
@@ -107,31 +103,38 @@ function TestWifi.test_invert_rx_tx()
 end
 
 function TestNetJSON.test_wifi_interfaces()
-  local netjson = require('netjson-monitoring')
-  luaunit.assertNotNil(string.find(netjson, '"signal":-67', 1, true))
-  luaunit.assertNotNil(string.find(netjson, '"signal":-76', 1, true))
-  luaunit.assertEquals(string_count(netjson, '"ssid":"meshID"'), 2)
-  luaunit.assertEquals(string_count(netjson, '"tx_power":20'), 4)
-  luaunit.assertEquals(string_count(netjson, '"vht":true'), 1)
-  luaunit.assertEquals(string_count(netjson, '"vht":false'), 1)
-  luaunit.assertEquals(string_count(netjson, '"tx_power":20'), 4)
-  luaunit.assertEquals(string_count(netjson, '"frequency":5200'), 1)
-  luaunit.assertEquals(string_count(netjson, '"mode":"access_point"'), 1)
+  local netjson_string = require('netjson-monitoring')
+  local netjson = cjson.decode(netjson_string)
+  luaunit.assertEquals(netjson["interfaces"][5]["wireless"]["signal"], -67)
+  luaunit.assertEquals(netjson["interfaces"][2]["wireless"]["signal"], -76)
+  luaunit.assertEquals(netjson["interfaces"][2]["wireless"]["ssid"], "meshID")
+  luaunit.assertEquals(netjson["interfaces"][5]["wireless"]["ssid"], "meshID")
+  luaunit.assertEquals(netjson["interfaces"][2]["wireless"]["tx_power"], 20)
+  luaunit.assertEquals(netjson["interfaces"][4]["wireless"]["tx_power"], 20)
+  luaunit.assertEquals(netjson["interfaces"][5]["wireless"]["tx_power"], 20)
+  luaunit.assertEquals(netjson["interfaces"][6]["wireless"]["tx_power"], 20)
+  luaunit.assertEquals(netjson["interfaces"][5]["wireless"]["clients"][1]["vht"], true)
+  luaunit.assertEquals(netjson["interfaces"][2]["wireless"]["clients"][1]["vht"],
+    false)
+  luaunit.assertEquals(netjson["interfaces"][2]["wireless"]["frequency"], 5200)
+  luaunit.assertEquals(netjson["interfaces"][4]["wireless"]["mode"], "access_point")
 end
 
 function TestNetJSON.test_wifi_interfaces_stats_include()
   local netjson_file = assert(loadfile('../files/sbin/netjson-monitoring.lua'))
-  local netjson = netjson_file('wlan0 wlan1 mesh1')
-  luaunit.assertNotNil(string.find(netjson, '"channel":40', 1, true))
-  luaunit.assertNotNil(string.find(netjson, '"mode":"802.11s"', 1, true))
-  luaunit.assertNotNil(string.find(netjson, '"rx_packets":198', 1, true))
-  luaunit.assertNotNil(string.find(netjson, '"rx_packets":2367515', 1, true))
-  luaunit.assertNotNil(string.find(netjson, '"rx_bytes":25967', 1, true))
-  luaunit.assertNotNil(string.find(netjson, '"tx_bytes":531641723', 1, true))
-  luaunit.assertNotNil(string.find(netjson, '"tx_bytes":151599685066', 1, true))
-  luaunit.assertNotNil(string.find(netjson, '"tx_packets":2367747', 1, true))
-  luaunit.assertNotNil(string.find(netjson, '"tx_packets":2367747', 1, true))
-  luaunit.assertEquals(string_count(netjson, '"tx_errors":0'), 3)
+  local netjson = cjson.decode(netjson_file('wlan0 wlan1 mesh1'))
+  luaunit.assertEquals(netjson["interfaces"][2]["wireless"]["channel"], 40)
+  luaunit.assertEquals(netjson["interfaces"][2]["wireless"]["mode"], "802.11s")
+  luaunit.assertEquals(netjson["interfaces"][6]["statistics"]["rx_packets"], 198)
+  luaunit.assertEquals(netjson["interfaces"][4]["statistics"]["rx_packets"], 2367515)
+  luaunit.assertEquals(netjson["interfaces"][6]["statistics"]["rx_bytes"], 25967)
+  luaunit.assertEquals(netjson["interfaces"][6]["statistics"]["tx_bytes"], 531641723)
+  luaunit.assertEquals(netjson["interfaces"][2]["statistics"]["tx_bytes"],
+  151599685066)
+  luaunit.assertEquals(netjson["interfaces"][6]["statistics"]["tx_packets"], 2367747)
+  luaunit.assertEquals(netjson["interfaces"][2]["statistics"]["tx_errors"], 0)
+  luaunit.assertEquals(netjson["interfaces"][4]["statistics"]["tx_errors"], 0)
+  luaunit.assertEquals(netjson["interfaces"][6]["statistics"]["tx_errors"], 0)
 end
 
 function TestNetJSON.test_wifi_interfaces_when_iwinfo_channel_empty()
