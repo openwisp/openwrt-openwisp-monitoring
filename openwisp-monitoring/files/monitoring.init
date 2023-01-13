@@ -61,11 +61,11 @@ start_service() {
 	procd_set_param respawn "${respawn_threshold:-3600}" "${respawn_timeout:-5}" "${respawn_retry:-5}"
 	procd_close_instance
 
-	logger -s "$PROG_NAME started" -t openwisp-monitoring -p daemon.info
+	logger -s "$PROG_NAME started." -t openwisp-monitoring -p daemon.info
 }
 
 stop_service() {
-	logger -s "$PROG_NAME stopping" -t openwisp-monitoring -p daemon.info
+	logger -s "$PROG_NAME stopping." -t openwisp-monitoring -p daemon.info
 }
 
 service_triggers() {
