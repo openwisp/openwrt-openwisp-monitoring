@@ -89,6 +89,11 @@ local function get_wireless_netjson_interface(radio, name, iwinfo)
       htmode = htmode
     }
   }
+  -- if `iwinfo.channel` is empty then remove
+  -- the `wireless` table from the `netjson_interface`
+  if monitoring.utils.is_empty(iwinfo.channel) then
+    monitoring.utils.remove_table_key(netjson_interface, 'wireless')
+  end
   if iwinfo.mode == 'Ad-Hoc' or iwinfo.mode == 'Mesh Point' then
     clients = ubus:call('iwinfo', 'assoclist', {device = name}).results
     is_mesh = true
@@ -110,11 +115,7 @@ for _, radio in pairs(wireless_status) do
     local name = interface.ifname
     if name and not monitoring.utils.is_excluded(name) then
       local iwinfo = ubus:call('iwinfo', 'info', {device = name})
-      -- if `iwinfo.channel` is present
-      -- then add it to `wireless_interfaces`
-      if not monitoring.utils.is_empty(iwinfo.channel) then
-        wireless_interfaces[name] = get_wireless_netjson_interface(radio, name, iwinfo)
-      end
+      wireless_interfaces[name] = get_wireless_netjson_interface(radio, name, iwinfo)
     end
   end
 end

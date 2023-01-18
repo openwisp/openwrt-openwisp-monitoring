@@ -9,7 +9,9 @@ wifi.iwinfo_modes = {
 }
 
 function wifi.needs_inversion(interface)
-  return interface.type == 'wireless' and interface.wireless.mode == 'access_point'
+  if interface.wireless then
+    return interface.type == 'wireless' and interface.wireless.mode == 'access_point'
+  end
 end
 
 function wifi.invert_rx_tx(interface)
