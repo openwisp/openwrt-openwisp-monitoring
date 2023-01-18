@@ -1,10 +1,10 @@
 package.path = package.path ..
                  ";../files/lib/openwisp-monitoring/?.lua;../files/sbin/?.lua"
 
-local cjson = require('cjson')
-local wifi_data = require('test_files/wireless_data')
+local cjson = require("cjson")
 local luaunit = require('luaunit')
 local wifi_functions = require('wifi')
+local wifi_data = require('test_files/wireless_data')
 
 TestWifi = {setUp = function() end, tearDown = function() end}
 
@@ -132,6 +132,19 @@ function TestNetJSON.test_wifi_interfaces_stats_include()
   luaunit.assertEquals(netjson["interfaces"][1]["statistics"]["tx_errors"], 0)
   luaunit.assertEquals(netjson["interfaces"][3]["statistics"]["tx_errors"], 0)
   luaunit.assertEquals(netjson["interfaces"][5]["statistics"]["tx_errors"], 0)
+end
+
+function TestNetJSON.test_wifi_interfaces_stats_include_htmode()
+  local netjson_file = assert(loadfile('../files/sbin/netjson-monitoring.lua'))
+  local netjson = cjson.decode(netjson_file('wlan0 wlan1 mesh1'))
+  luaunit.assertEquals(netjson["interfaces"][1]["name"], "mesh1")
+  luaunit.assertEquals(netjson["interfaces"][1]["wireless"]["htmode"], "VHT80")
+  luaunit.assertEquals(netjson["interfaces"][3]["name"], "wlan1")
+  luaunit.assertEquals(netjson["interfaces"][3]["wireless"]["htmode"], "VHT80")
+  luaunit.assertEquals(netjson["interfaces"][4]["name"], "mesh0")
+  luaunit.assertEquals(netjson["interfaces"][4]["wireless"]["htmode"], "HT20")
+  luaunit.assertEquals(netjson["interfaces"][5]["name"], "wlan0")
+  luaunit.assertEquals(netjson["interfaces"][5]["wireless"]["htmode"], "HT20")
 end
 
 os.exit(luaunit.LuaUnit.run())

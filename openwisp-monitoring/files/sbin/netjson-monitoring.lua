@@ -77,6 +77,7 @@ for _, radio in pairs(wireless_status) do
     local name = interface.ifname
     local is_mesh = false
     local clients = nil
+    local htmode = radio.config.htmode
     if name and not monitoring.utils.is_excluded(name) then
       local iwinfo = ubus:call('iwinfo', 'info', {device = name})
       local netjson_interface = {
@@ -90,7 +91,8 @@ for _, radio in pairs(wireless_status) do
           tx_power = iwinfo.txpower,
           signal = iwinfo.signal,
           noise = iwinfo.noise,
-          country = iwinfo.country
+          country = iwinfo.country,
+          htmode = htmode
         }
       }
       if iwinfo.mode == 'Ad-Hoc' or iwinfo.mode == 'Mesh Point' then
