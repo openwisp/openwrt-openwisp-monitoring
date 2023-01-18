@@ -154,4 +154,18 @@ function TestNetJSON.test_wifi_interfaces_when_iwinfo_channel_empty()
   luaunit.assertIsTable(netjson["interfaces"][6]["wireless"])
 end
 
+function TestNetJSON.test_wifi_interfaces_stats_include_htmode()
+  local netjson_file = assert(loadfile('../files/sbin/netjson-monitoring.lua'))
+  local netjson = cjson.decode(netjson_file('wlan0 wlan1 mesh1'))
+  luaunit.assertEquals(netjson["interfaces"][1]["name"], "wlan2")
+  luaunit.assertEquals(netjson["interfaces"][2]["name"], "mesh1")
+  luaunit.assertEquals(netjson["interfaces"][2]["wireless"]["htmode"], "VHT80")
+  luaunit.assertEquals(netjson["interfaces"][4]["name"], "wlan1")
+  luaunit.assertEquals(netjson["interfaces"][4]["wireless"]["htmode"], "VHT80")
+  luaunit.assertEquals(netjson["interfaces"][5]["name"], "mesh0")
+  luaunit.assertEquals(netjson["interfaces"][5]["wireless"]["htmode"], "HT20")
+  luaunit.assertEquals(netjson["interfaces"][6]["name"], "wlan0")
+  luaunit.assertEquals(netjson["interfaces"][6]["wireless"]["htmode"], "HT20")
+end
+
 os.exit(luaunit.LuaUnit.run())

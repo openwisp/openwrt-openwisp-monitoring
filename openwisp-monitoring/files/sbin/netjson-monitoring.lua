@@ -70,9 +70,10 @@ local host_interfaces = {}
 local dns_servers = {}
 local dns_search = {}
 
-local function get_wireless_netjson_interface(name, iwinfo)
+local function get_wireless_netjson_interface(radio, name, iwinfo)
   local clients = nil
   local is_mesh = false
+  local htmode = radio.config.htmode
   local netjson_interface = {
     name = name,
     type = 'wireless',
@@ -84,7 +85,8 @@ local function get_wireless_netjson_interface(name, iwinfo)
       tx_power = iwinfo.txpower,
       signal = iwinfo.signal,
       noise = iwinfo.noise,
-      country = iwinfo.country
+      country = iwinfo.country,
+      htmode = htmode
     }
   }
   if iwinfo.mode == 'Ad-Hoc' or iwinfo.mode == 'Mesh Point' then
@@ -111,7 +113,7 @@ for _, radio in pairs(wireless_status) do
       -- if `iwinfo.channel` is present
       -- then add it to `wireless_interfaces`
       if not monitoring.utils.is_empty(iwinfo.channel) then
-        wireless_interfaces[name] = get_wireless_netjson_interface(name, iwinfo)
+        wireless_interfaces[name] = get_wireless_netjson_interface(radio, name, iwinfo)
       end
     end
   end
