@@ -65,4 +65,13 @@ function TestUtils.testIsExcluded()
   luaunit.assertFalse(utils.is_excluded('wlo1'))
 end
 
+function TestUtils.testIsEmpty()
+  luaunit.assertTrue(utils.is_empty(''))
+  luaunit.assertTrue(utils.is_empty(nil))
+  luaunit.assertTrue(utils.is_empty(false))
+  luaunit.assertFalse(utils.is_empty('-12'))
+  luaunit.assertFalse(utils.is_empty(12))
+  luaunit.assertFalse(utils.is_empty(-12))
+end
+
 os.exit(luaunit.LuaUnit.run())

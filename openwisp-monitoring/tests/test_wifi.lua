@@ -34,6 +34,8 @@ TestNetJSON = {
                 return wifi_data.wlan0_iwinfo
               elseif arg[4].device == "wlan1" then
                 return wifi_data.wlan1_iwinfo
+              elseif arg[4].device == "wlan2" then
+                return wifi_data.wlan2_iwinfo
               elseif arg[4].device == "mesh0" then
                 return wifi_data.mesh0_iwinfo
               elseif arg[4].device == "mesh1" then
@@ -103,48 +105,68 @@ end
 function TestNetJSON.test_wifi_interfaces()
   local netjson_string = require('netjson-monitoring')
   local netjson = cjson.decode(netjson_string)
-  luaunit.assertEquals(netjson["interfaces"][4]["wireless"]["signal"], -67)
-  luaunit.assertEquals(netjson["interfaces"][1]["wireless"]["signal"], -76)
-  luaunit.assertEquals(netjson["interfaces"][1]["wireless"]["ssid"], "meshID")
-  luaunit.assertEquals(netjson["interfaces"][4]["wireless"]["ssid"], "meshID")
-  luaunit.assertEquals(netjson["interfaces"][1]["wireless"]["tx_power"], 20)
-  luaunit.assertEquals(netjson["interfaces"][3]["wireless"]["tx_power"], 20)
+  luaunit.assertEquals(netjson["interfaces"][5]["wireless"]["signal"], -67)
+  luaunit.assertEquals(netjson["interfaces"][2]["wireless"]["signal"], -76)
+  luaunit.assertEquals(netjson["interfaces"][2]["wireless"]["ssid"], "meshID")
+  luaunit.assertEquals(netjson["interfaces"][5]["wireless"]["ssid"], "meshID")
+  luaunit.assertEquals(netjson["interfaces"][2]["wireless"]["tx_power"], 20)
   luaunit.assertEquals(netjson["interfaces"][4]["wireless"]["tx_power"], 20)
   luaunit.assertEquals(netjson["interfaces"][5]["wireless"]["tx_power"], 20)
-  luaunit.assertEquals(netjson["interfaces"][4]["wireless"]["clients"][1]["vht"], true)
-  luaunit.assertEquals(netjson["interfaces"][1]["wireless"]["clients"][1]["vht"], false)
-  luaunit.assertEquals(netjson["interfaces"][1]["wireless"]["frequency"], 5200)
-  luaunit.assertEquals(netjson["interfaces"][3]["wireless"]["mode"], "access_point")
+  luaunit.assertEquals(netjson["interfaces"][6]["wireless"]["tx_power"], 20)
+  luaunit.assertEquals(netjson["interfaces"][5]["wireless"]["clients"][1]["vht"], true)
+  luaunit.assertEquals(netjson["interfaces"][2]["wireless"]["clients"][1]["vht"],
+    false)
+  luaunit.assertEquals(netjson["interfaces"][2]["wireless"]["frequency"], 5200)
+  luaunit.assertEquals(netjson["interfaces"][4]["wireless"]["mode"], "access_point")
 end
 
 function TestNetJSON.test_wifi_interfaces_stats_include()
   local netjson_file = assert(loadfile('../files/sbin/netjson-monitoring.lua'))
   local netjson = cjson.decode(netjson_file('wlan0 wlan1 mesh1'))
-  luaunit.assertEquals(netjson["interfaces"][1]["wireless"]["channel"], 40)
-  luaunit.assertEquals(netjson["interfaces"][1]["wireless"]["mode"], "802.11s")
-  luaunit.assertEquals(netjson["interfaces"][5]["statistics"]["rx_packets"], 198)
-  luaunit.assertEquals(netjson["interfaces"][3]["statistics"]["rx_packets"], 2367515)
-  luaunit.assertEquals(netjson["interfaces"][5]["statistics"]["rx_bytes"], 25967)
-  luaunit.assertEquals(netjson["interfaces"][5]["statistics"]["tx_bytes"], 531641723)
-  luaunit.assertEquals(netjson["interfaces"][1]["statistics"]["tx_bytes"],
+  luaunit.assertEquals(netjson["interfaces"][2]["wireless"]["channel"], 40)
+  luaunit.assertEquals(netjson["interfaces"][2]["wireless"]["mode"], "802.11s")
+  luaunit.assertEquals(netjson["interfaces"][6]["statistics"]["rx_packets"], 198)
+  luaunit.assertEquals(netjson["interfaces"][4]["statistics"]["rx_packets"], 2367515)
+  luaunit.assertEquals(netjson["interfaces"][6]["statistics"]["rx_bytes"], 25967)
+  luaunit.assertEquals(netjson["interfaces"][6]["statistics"]["tx_bytes"], 531641723)
+  luaunit.assertEquals(netjson["interfaces"][2]["statistics"]["tx_bytes"],
   151599685066)
-  luaunit.assertEquals(netjson["interfaces"][5]["statistics"]["tx_packets"], 2367747)
-  luaunit.assertEquals(netjson["interfaces"][1]["statistics"]["tx_errors"], 0)
-  luaunit.assertEquals(netjson["interfaces"][3]["statistics"]["tx_errors"], 0)
-  luaunit.assertEquals(netjson["interfaces"][5]["statistics"]["tx_errors"], 0)
+  luaunit.assertEquals(netjson["interfaces"][6]["statistics"]["tx_packets"], 2367747)
+  luaunit.assertEquals(netjson["interfaces"][2]["statistics"]["tx_errors"], 0)
+  luaunit.assertEquals(netjson["interfaces"][4]["statistics"]["tx_errors"], 0)
+  luaunit.assertEquals(netjson["interfaces"][6]["statistics"]["tx_errors"], 0)
 end
 
 function TestNetJSON.test_wifi_interfaces_stats_include_htmode()
   local netjson_file = assert(loadfile('../files/sbin/netjson-monitoring.lua'))
   local netjson = cjson.decode(netjson_file('wlan0 wlan1 mesh1'))
-  luaunit.assertEquals(netjson["interfaces"][1]["name"], "mesh1")
-  luaunit.assertEquals(netjson["interfaces"][1]["wireless"]["htmode"], "VHT80")
-  luaunit.assertEquals(netjson["interfaces"][3]["name"], "wlan1")
-  luaunit.assertEquals(netjson["interfaces"][3]["wireless"]["htmode"], "VHT80")
-  luaunit.assertEquals(netjson["interfaces"][4]["name"], "mesh0")
-  luaunit.assertEquals(netjson["interfaces"][4]["wireless"]["htmode"], "HT20")
-  luaunit.assertEquals(netjson["interfaces"][5]["name"], "wlan0")
+  luaunit.assertEquals(netjson["interfaces"][1]["name"], "wlan2")
+  luaunit.assertEquals(netjson["interfaces"][2]["name"], "mesh1")
+  luaunit.assertEquals(netjson["interfaces"][2]["wireless"]["htmode"], "VHT80")
+  luaunit.assertEquals(netjson["interfaces"][4]["name"], "wlan1")
+  luaunit.assertEquals(netjson["interfaces"][4]["wireless"]["htmode"], "VHT80")
+  luaunit.assertEquals(netjson["interfaces"][5]["name"], "mesh0")
   luaunit.assertEquals(netjson["interfaces"][5]["wireless"]["htmode"], "HT20")
+  luaunit.assertEquals(netjson["interfaces"][6]["name"], "wlan0")
+  luaunit.assertEquals(netjson["interfaces"][6]["wireless"]["htmode"], "HT20")
 end
 
+function TestNetJSON.test_wifi_interfaces_when_iwinfo_channel_empty()
+  local netjson_file = assert(loadfile('../files/sbin/netjson-monitoring.lua'))
+  local netjson = cjson.decode(netjson_file('wlan0 wlan1 wlan2 mesh1'))
+  -- make sure the correct `name` and `type` are present in the netjson
+  luaunit.assertEquals(netjson["interfaces"][1]["name"], "wlan2")
+  luaunit.assertEquals(netjson["interfaces"][1]["type"], "wireless")
+  -- the `wireless` key should be missing when "iwinfo.channel" is `nil`
+  luaunit.assertNil(netjson["interfaces"][1]["wireless"])
+  luaunit.assertEquals(netjson["interfaces"][2]["name"], "mesh1")
+  luaunit.assertIsTable(netjson["interfaces"][2]["wireless"])
+  luaunit.assertEquals(netjson["interfaces"][3]["name"], "wan")
+  luaunit.assertEquals(netjson["interfaces"][4]["name"], "wlan1")
+  luaunit.assertIsTable(netjson["interfaces"][4]["wireless"])
+  luaunit.assertEquals(netjson["interfaces"][5]["name"], "mesh0")
+  luaunit.assertIsTable(netjson["interfaces"][5]["wireless"])
+  luaunit.assertEquals(netjson["interfaces"][6]["name"], "wlan0")
+  luaunit.assertIsTable(netjson["interfaces"][6]["wireless"])
+end
 os.exit(luaunit.LuaUnit.run())

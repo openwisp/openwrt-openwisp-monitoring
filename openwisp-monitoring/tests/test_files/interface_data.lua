@@ -292,7 +292,9 @@ test_data.br_lan_interface = {
       proto = "dhcp"
     }
   },
-  bridge_members = {"lan1", "lan2", "mesh0", "mesh1", "wan", "wlan0", "wlan1"},
+  bridge_members = {
+    "lan1", "lan2", "mesh0", "mesh1", "wan", "wlan0", "wlan1", "wlan2"
+  },
   mac = "00:00:00:00:00:00",
   mtu = 1500,
   multicast = true,

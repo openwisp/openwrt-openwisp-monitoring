@@ -38,4 +38,6 @@ end
 
 function utils.is_excluded(name) return name == 'lo' end
 
+function utils.is_empty(data) return data == nil or data == false or data == '' end
+
 return utils
