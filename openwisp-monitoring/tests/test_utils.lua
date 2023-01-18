@@ -74,17 +74,4 @@ function TestUtils.testIsEmpty()
   luaunit.assertFalse(utils.is_empty(-12))
 end
 
-function TestUtils.testTableRemoveKey()
-  local test_table = {
-    test_key1 = 123,
-    test_key2 = 'sample_2',
-    test_key3 = {t3 = 'sample_3'}
-  }
-  luaunit.assertEquals(utils.remove_table_key(test_table, 'test_key1'), 123)
-  luaunit.assertTable(utils.remove_table_key(test_table, 'test_key3'))
-  luaunit.assertNil(test_table.test_key1)
-  luaunit.assertNil(test_table.test_key3)
-  luaunit.assertEquals(test_table.test_key2, 'sample_2')
-end
-
 os.exit(luaunit.LuaUnit.run())

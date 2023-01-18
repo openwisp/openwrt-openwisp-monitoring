@@ -77,7 +77,11 @@ local function get_wireless_netjson_interface(radio, name, iwinfo)
   local netjson_interface = {
     name = name,
     type = 'wireless',
-    wireless = {
+  }
+  -- if channel is missing the WiFi interface is not fully up
+  -- and hence we avoid including its info because it will be rejected
+  if monitoring.utils.is_empty(iwinfo.channel) == false then
+    netjson_interface.wireless = {
       ssid = iwinfo.ssid,
       mode = monitoring.wifi.iwinfo_modes[iwinfo.mode] or iwinfo.mode,
       channel = iwinfo.channel,
@@ -88,22 +92,17 @@ local function get_wireless_netjson_interface(radio, name, iwinfo)
       country = iwinfo.country,
       htmode = htmode
     }
-  }
-  -- if `iwinfo.channel` is empty then remove
-  -- the `wireless` table from the `netjson_interface`
-  if monitoring.utils.is_empty(iwinfo.channel) then
-    monitoring.utils.remove_table_key(netjson_interface, 'wireless')
-  end
-  if iwinfo.mode == 'Ad-Hoc' or iwinfo.mode == 'Mesh Point' then
-    clients = ubus:call('iwinfo', 'assoclist', {device = name}).results
-    is_mesh = true
-  else
-    local hostapd_output = ubus:call('hostapd.' .. name, 'get_clients', {})
-    if hostapd_output then clients = hostapd_output.clients end
-  end
-  if not monitoring.utils.is_table_empty(clients) then
-    netjson_interface.wireless.clients = monitoring.wifi.netjson_clients(clients,
-      is_mesh)
+    if iwinfo.mode == 'Ad-Hoc' or iwinfo.mode == 'Mesh Point' then
+      clients = ubus:call('iwinfo', 'assoclist', {device = name}).results
+      is_mesh = true
+    else
+      local hostapd_output = ubus:call('hostapd.' .. name, 'get_clients', {})
+      if hostapd_output then clients = hostapd_output.clients end
+    end
+    if not monitoring.utils.is_table_empty(clients) then
+      netjson_interface.wireless.clients = monitoring.wifi.netjson_clients(clients,
+        is_mesh)
+    end
   end
   return netjson_interface
 end

@@ -40,10 +40,4 @@ function utils.is_excluded(name) return name == 'lo' end
 
 function utils.is_empty(data) return data == nil or data == false or data == '' end
 
-function utils.remove_table_key(table_, key)
-  local element = table_[key]
-  table_[key] = nil
-  return element
-end
-
 return utils
