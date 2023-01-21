@@ -61,7 +61,7 @@ check_available_memory() {
 
 collect_data() {
 	n=0
-	[ "$VERBOSE_MODE" -eq "1" ] && logger -s "Collecting NetJSON Monitoring data" \
+	[ "$VERBOSE_MODE" -eq "1" ] && logger -s "Collecting NetJSON Monitoring data." \
 		-p daemon.info
 	until [ "$n" -ge 5 ]; do
 		/usr/sbin/netjson-monitoring --dump "$MONITORED_INTERFACES" && break
@@ -103,7 +103,7 @@ save_data() {
 			echo "$data" >"$TMP_DIR/$filename"
 			# compress data
 			gzip "$TMP_DIR/$filename"
-			[ "$VERBOSE_MODE" -eq "1" ] && logger -s "Data saved temporarily" \
+			[ "$VERBOSE_MODE" -eq "1" ] && logger -s "Data saved temporarily." \
 				-p daemon.info
 		fi
 		# get process id of the process sending data
@@ -114,7 +114,7 @@ save_data() {
 }
 
 handle_sigusr1() {
-	[ "$VERBOSE_MODE" -eq "1" ] && logger -s "SIGUSR1 received! Sending data" \
+	[ "$VERBOSE_MODE" -eq "1" ] && logger -s "SIGUSR1 received! Sending data." \
 		-p daemon.info
 	return 0
 }
@@ -173,7 +173,7 @@ send_data() {
 						logger -s "Data sent successfully." \
 							-p daemon.info
 					elif [ "$FAILING" -eq "1" ]; then
-						logger -s "Data sent successfully" \
+						logger -s "Data sent successfully." \
 							-t openwisp-monitoring \
 							-p daemon.info
 						FAILING=0
@@ -183,15 +183,14 @@ send_data() {
 					rm -f "$filename"
 					break
 				elif [ "$response_code" = "400" ]; then
-					logger -s "Data not sent successfully. Response code is \"$response_code\"." \
-						"The data being sent is being rejected by the server, discarding data" \
+					logger -s "Data not sent successfully (HTTP status $response_code), discarding data." \
 						-t openwisp-monitoring \
 						-p daemon.err
 					rm -f "$filename"
 					break
 				else
 					timeout=$((timeout * 2))
-					[ "$VERBOSE_MODE" -eq "1" ] && logger -s "Data not sent successfully. Retrying in $timeout seconds" \
+					[ "$VERBOSE_MODE" -eq "1" ] && logger -s "Data not sent successfully. Retrying in $timeout seconds." \
 						-p daemon.warn
 					failures=$((failures + 1))
 					sleep "$timeout"
@@ -207,7 +206,7 @@ wait_until_registered() {
 	if [ -n "$UUID" ] && [ -n "$KEY" ]; then
 		return 0
 	fi
-	logger -s "Waiting for device to register" \
+	logger -s "Waiting for device to register." \
 		-t openwisp-monitoring \
 		-p daemon.info
 	UUID=$(uci get openwisp.http.uuid 2>/dev/null)
@@ -215,7 +214,7 @@ wait_until_registered() {
 	if [ -z "$UUID" ] || [ -z "$KEY" ]; then
 		return 1
 	fi
-	logger -s "Setting uuid and key" \
+	logger -s "Setting uuid and key." \
 		-t openwisp-monitoring \
 		-p daemon.info
 	export UUID KEY
