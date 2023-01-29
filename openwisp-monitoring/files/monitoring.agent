@@ -85,7 +85,7 @@ check_available_memory() {
 			if [ -f "$file" ]; then
 				rm "$file"
 			else
-				log -w -v "Not enough memory available, skipping collect data."
+				log -w -n "Not enough memory available, skipping collect data."
 				return 1
 			fi
 		fi
@@ -98,7 +98,7 @@ collect_data() {
 	until [ "$n" -ge 5 ]; do
 		/usr/sbin/netjson-monitoring --dump "$MONITORED_INTERFACES" && break
 
-		[ "$n" -eq 5 ] && log -e -v "Collecting data failed!."
+		[ "$n" -eq 5 ] && log -e -v "Collecting data failed!"
 		n=$((n + 1))
 		sleep 5
 	done
@@ -149,7 +149,7 @@ send_data() {
 	while true; do
 		for file in "$TMP_DIR"/*; do
 			if [ ! -f "$file" ]; then
-				log -i -v "No data file found to send. Checking after $INTERVAL seconds."
+				log -i -v "No data file found to send. Checking again in $INTERVAL seconds."
 				trap handle_sigusr1 USR1
 				# SIGUSR1 signal received, interrupt sleep and continue sending data
 				sleep "$INTERVAL" &
