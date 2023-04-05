@@ -18,7 +18,7 @@ time_to_seconds() {
 		|| { [ "${time%h}" -ge 1 ] 2>/dev/null && seconds=$((${time%h} * 3600)); } \
 		|| { [ "${time%d}" -ge 1 ] 2>/dev/null && seconds=$((${time%d} * 86400)); }
 
-	echo $seconds
+	echo "$seconds"
 	unset seconds
 	unset time
 }
