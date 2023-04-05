@@ -19,7 +19,7 @@ show_help() {
 }
 
 show_version() {
-	VERSION=$(cat /etc/openwisp-monitoring/VERSION)
+	VERSION=$(cat /usr/lib/openwisp-monitoring/VERSION)
 	echo "$(basename "$0") $VERSION"
 	exit 0
 }

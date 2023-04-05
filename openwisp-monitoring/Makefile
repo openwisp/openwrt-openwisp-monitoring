@@ -46,7 +46,7 @@ define Package/netjson-monitoring/install
 		$(1)/usr/sbin \
 		$(1)/usr/libexec \
 		$(1)/usr/lib/lua/openwisp-monitoring \
-		$(1)/etc/openwisp-monitoring
+		$(1)/usr/lib/openwisp-monitoring
 
 	$(INSTALL_BIN) \
 		files/sbin/netjson-monitoring.lua \
@@ -84,7 +84,7 @@ define Package/netjson-monitoring/install
 		files/lib/openwisp-monitoring/wifi.lua \
 		$(1)/usr/lib/lua/openwisp-monitoring/wifi.lua
 
-	$(CP) ../VERSION $(1)/etc/openwisp-monitoring/
+	$(CP) ../VERSION $(1)/usr/lib/openwisp-monitoring/
 
 endef
 
@@ -93,7 +93,7 @@ define Package/openwisp-monitoring/install
 		$(1)/usr/sbin \
 		$(1)/etc/init.d \
 		$(1)/etc/config \
-		$(1)/etc/openwisp-monitoring \
+		$(1)/usr/lib/openwisp-monitoring \
 		$(1)/etc/hotplug.d/openwisp
 
 	$(INSTALL_BIN) \
