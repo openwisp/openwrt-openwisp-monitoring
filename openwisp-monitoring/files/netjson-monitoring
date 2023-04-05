@@ -48,6 +48,7 @@ main() {
 	done
 
 	show_help
+	# shellcheck disable=SC2317
 	exit 0
 }
 
