@@ -165,7 +165,7 @@ The following procedure illustrates how to compile *openwisp-monitoring*, *netjs
     git checkout <openwrt-branch>
 
     # configure feeds
-    echo "src-git openwisp_config https://github.com/openwisp/openwisp-config.git^1.0.0" >feeds.conf
+    echo "src-git openwisp_config https://github.com/openwisp/openwisp-config.git" > feeds.conf
     echo "src-git openwisp_monitoring https://github.com/openwisp/openwrt-openwisp-monitoring.git" >> feeds.conf
     cat feeds.conf.default >> feeds.conf
     ./scripts/feeds update -a
@@ -189,7 +189,7 @@ you will need to select the *openwisp-monitoring* and *netjson-monitoring* by go
     git checkout <openwrt-branch>
 
     # configure feeds
-    echo "src-git openwisp_config https://github.com/openwisp/openwisp-config.git^1.0.0" >feeds.conf
+    echo "src-git openwisp_config https://github.com/openwisp/openwisp-config.git" > feeds.conf
     echo "src-git openwisp_monitoring https://github.com/openwisp/openwrt-openwisp-monitoring.git" >> feeds.conf
     cat feeds.conf.default >> feeds.conf
     ./scripts/feeds update -a
