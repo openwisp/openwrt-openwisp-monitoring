@@ -25,6 +25,12 @@ env.uci = {
           return '/sys/devices/platform/soc/8af8800.usb3/8a00000.dwc3/' ..
                    'xhci-hcd.0.auto/usb2/2-1'
         end
+      end,
+      foreach = function(...)
+        local args = {...}
+        if args[2] == 'network' and args[3] == 'device' then
+          args[4]({name = 'br-lan2', stp = '1'})
+        end
       end
     }
   end

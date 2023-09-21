@@ -59,7 +59,8 @@ TestNetJSON = {
                        'xhci-hcd.0.auto/usb2/2-1'
             end
             return nil
-          end
+          end,
+          foreach = function(...) return nil end
         }
       end
     }
@@ -123,11 +124,18 @@ function TestInterface.test_get_addresses()
 end
 
 function TestInterface.test_get_interface_info()
+  -- For OpenWrt < 21
   local interface_functions = require('interfaces')
   local interface_info = interface_functions.get_interface_info('br-lan',
     interface_data.br_lan_interface)
   luaunit.assertEquals(interface_info,
     {dns_servers = {"8.8.8.8", "8.8.4.4"}, stp = true})
+  -- For OpenWrt >= 21
+  interface_info = interface_functions.get_interface_info('br-lan2',
+    interface_data.br_lan2_interface)
+  luaunit.assertEquals(interface_info,
+    {dns_servers = {"8.8.8.8", "8.8.4.4"}, stp = true})
+
 end
 
 function TestInterface.test_specialized_info()
@@ -156,7 +164,7 @@ function TestNetJSON.test_interfaces()
   local netjson = cjson.decode(netjson_file('*'))
   luaunit.assertEquals(netjson["interfaces"][2]["mobile"]["signal"]["umts"], nil)
   luaunit.assertEquals(netjson["interfaces"][3]["addresses"][1]["address"],
-  "192.168.1.41")
+    "192.168.1.41")
   luaunit.assertEquals(netjson["interfaces"][3]["stp"], true)
   luaunit.assertEquals(netjson["interfaces"][2]["mobile"]["signal"]["lte"]["snr"],
     19.2)
