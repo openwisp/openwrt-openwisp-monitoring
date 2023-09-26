@@ -135,7 +135,7 @@ function TestNetJSON.test_wifi_interfaces_stats_include()
   luaunit.assertEquals(netjson["interfaces"][6]["statistics"]["rx_bytes"], 25967)
   luaunit.assertEquals(netjson["interfaces"][6]["statistics"]["tx_bytes"], 531641723)
   luaunit.assertEquals(netjson["interfaces"][2]["statistics"]["tx_bytes"],
-    151599685066)
+  151599685066)
   luaunit.assertEquals(netjson["interfaces"][6]["statistics"]["tx_packets"], 2367747)
   luaunit.assertEquals(netjson["interfaces"][2]["statistics"]["tx_errors"], 0)
   luaunit.assertEquals(netjson["interfaces"][4]["statistics"]["tx_errors"], 0)
