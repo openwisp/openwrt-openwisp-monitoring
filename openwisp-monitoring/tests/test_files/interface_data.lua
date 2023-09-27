@@ -154,6 +154,45 @@ test_data.interface_data = {
     }, {
       autostart = true,
       available = true,
+      data = {leasetime = 86400},
+      delegation = true,
+      device = "br-lan3",
+      ["dns-search"] = {},
+      ["dns-server"] = {"8.8.8.8", "8.8.4.4"},
+      dns_metric = 0,
+      dynamic = false,
+      inactive = {
+        ["dns-search"] = {},
+        ["dns-server"] = {},
+        ["ipv4-address"] = {},
+        ["ipv6-address"] = {},
+        neighbors = {},
+        route = {}
+      },
+      interface = "lan3",
+      ["ipv4-address"] = {{address = "192.168.1.42", mask = 24}},
+      ["ipv6-address"] = {},
+      ["ipv6-prefix"] = {},
+      ["ipv6-prefix-assignment"] = {{address = "fd78:adb4:afb3::", mask = 60}},
+      l3_device = "br-lan3",
+      metric = 0,
+      neighbors = {},
+      pending = false,
+      proto = "dhcp",
+      route = {
+        {
+          target = "0.0.0.0",
+          mask = 0,
+          nexthop = "192.168.1.1",
+          source = "192.168.1.41/32"
+        }
+      },
+      up = true,
+      updated = {"addresses"},
+      uptime = 773875
+    }, {
+      autostart = true,
+      available = true,
       data = {},
       delegation = true,
       device = "lo",
@@ -351,6 +390,17 @@ test_data.br_lan2_interface = {
   mtu = 1500,
   multicast = true,
   name = "br-lan2",
+  txqueuelen = 1000,
+  type = "bridge",
+  up = true
+}
+
+test_data.br_lan3_interface = {
+  bridge_members = {"lan1", "lan2"},
+  mac = "00:00:00:00:00:00",
+  mtu = 1500,
+  multicast = true,
+  name = "br-lan3",
   txqueuelen = 1000,
   type = "bridge",
   up = true

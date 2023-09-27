@@ -131,10 +131,16 @@ function TestInterface.test_get_interface_info()
   luaunit.assertEquals(interface_info,
     {dns_servers = {"8.8.8.8", "8.8.4.4"}, stp = true})
   -- For OpenWrt >= 21
+  -- Test STP is set to true
   interface_info = interface_functions.get_interface_info('br-lan2',
     interface_data.br_lan2_interface)
   luaunit.assertEquals(interface_info,
     {dns_servers = {"8.8.8.8", "8.8.4.4"}, stp = true})
+  -- Test STP is set false
+  interface_info = interface_functions.get_interface_info('br-lan3',
+    interface_data.br_lan3_interface)
+  luaunit.assertEquals(interface_info,
+    {dns_servers = {"8.8.8.8", "8.8.4.4"}, stp = false})
 
 end
 

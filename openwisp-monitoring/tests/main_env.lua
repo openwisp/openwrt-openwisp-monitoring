@@ -30,6 +30,7 @@ env.uci = {
         local args = {...}
         if args[2] == 'network' and args[3] == 'device' then
           args[4]({name = 'br-lan2', stp = '1'})
+          args[4]({name = 'br-lan3', stp = '0'})
         end
       end
     }
