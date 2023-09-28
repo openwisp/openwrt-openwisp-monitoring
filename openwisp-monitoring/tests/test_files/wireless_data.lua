@@ -116,7 +116,50 @@ test_data.wireless_status = {
   }
 }
 
-test_data.wlan0_clients = {}
+test_data.wlan0_clients = {
+  results = {
+    {
+      mac = "22:33:2F:9A:14:9D",
+      signal = -3,
+      signal_avg = -3,
+      noise = 0,
+      inactive = 12100,
+      connected_time = 1376,
+      thr = 4500,
+      authorized = true,
+      authenticated = true,
+      preamble = "long",
+      wme = true,
+      mfp = false,
+      tdls = false,
+      ["mesh llid"] = 0,
+      ["mesh plid"] = 0,
+      ["mesh plink"] = "",
+      ["mesh local PS"] = "",
+      ["mesh peer PS"] = "",
+      ["mesh non-peer PS"] = "",
+      rx = {
+        drop_misc = 64,
+        packets = 26932,
+        bytes = 2767915,
+        ht = false,
+        vht = false,
+        mhz = 20,
+        rate = 6000
+      },
+      tx = {
+        failed = 0,
+        retries = 0,
+        packets = 57,
+        bytes = 2582,
+        ht = false,
+        vht = false,
+        mhz = 20,
+        rate = 6000
+      }
+    }
+  }
+}
 
 test_data.wlan1_clients = {
   ["20:a6:0c:b2:da:10"] = {
@@ -148,6 +191,8 @@ test_data.wlan1_clients = {
     wps = false
   }
 }
+
+test_data.wlan2_clients = {}
 
 test_data.wlan0_iwinfo = {
   phy = "phy0",

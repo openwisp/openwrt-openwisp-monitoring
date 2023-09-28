@@ -42,7 +42,9 @@ TestNetJSON = {
                 return wifi_data.mesh1_iwinfo
               end
             elseif arg[2] == 'iwinfo' and arg[3] == 'assoclist' then
-              if arg[4].device == "mesh0" then
+              if arg[4].device == "wlan0" then
+                return wifi_data.wlan0_clients
+              elseif arg[4].device == "mesh0" then
                 return wifi_data.mesh0_clients
               elseif arg[4].device == "mesh1" then
                 return wifi_data.mesh1_clients
@@ -61,7 +63,7 @@ TestNetJSON = {
 function TestWifi.test_parse_hostapd_clients()
   luaunit.assertEquals(wifi_functions.parse_hostapd_clients(wifi_data.wlan1_clients),
     wifi_data.parsed_clients)
-  luaunit.assertEquals(wifi_functions.parse_hostapd_clients(wifi_data.wlan0_clients),
+  luaunit.assertEquals(wifi_functions.parse_hostapd_clients(wifi_data.wlan2_clients),
     {})
 end
 
@@ -76,7 +78,7 @@ function TestWifi.test_netjson_clients()
   -- testing hostapd clients
   luaunit.assertEquals(wifi_functions.netjson_clients(wifi_data.wlan1_clients, false),
     wifi_data.parsed_clients)
-  luaunit.assertEquals(wifi_functions.netjson_clients(wifi_data.wlan0_clients, false),
+  luaunit.assertEquals(wifi_functions.netjson_clients(wifi_data.wlan2_clients, false),
     {})
   -- testing iwinfo clients
   luaunit.assertEquals(
@@ -118,6 +120,9 @@ function TestNetJSON.test_wifi_interfaces()
     false)
   luaunit.assertEquals(netjson["interfaces"][2]["wireless"]["frequency"], 5200)
   luaunit.assertEquals(netjson["interfaces"][4]["wireless"]["mode"], "access_point")
+  luaunit.assertEquals(netjson["interfaces"][6]["wireless"]["mode"], "station")
+  luaunit.assertEquals(netjson["interfaces"][6]["wireless"]["clients"][1]["mac"],
+    "22:33:2F:9A:14:9D")
 end
 
 function TestNetJSON.test_wifi_interfaces_stats_include()

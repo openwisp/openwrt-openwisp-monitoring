@@ -90,9 +90,13 @@ local function get_wireless_netjson_interface(radio, name, iwinfo)
       signal = iwinfo.signal,
       noise = iwinfo.noise,
       country = iwinfo.country,
+      quality = iwinfo.quality,
+      quality_max = iwinfo.quality_max,
+      bitrate = iwinfo.bitrate,
       htmode = htmode
     }
-    if iwinfo.mode == 'Ad-Hoc' or iwinfo.mode == 'Mesh Point' then
+    if iwinfo.mode == 'Ad-Hoc' or iwinfo.mode == 'Mesh Point' or iwinfo.mode ==
+      'Client' then
       clients = ubus:call('iwinfo', 'assoclist', {device = name}).results
       is_mesh = true
     else
