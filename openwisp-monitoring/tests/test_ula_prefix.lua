@@ -10,7 +10,12 @@ TestUla = {
     local env = require('main_env')
     package.loaded.ubus = env.ubus
     package.loaded.uci = {
-      cursor = function() return {get = function(...) return nil end} end
+      cursor = function()
+        return {
+          get = function(...) return nil end,
+          foreach = function(...) return nil end
+        }
+      end
     }
     package.loaded.nixio = {
       getifaddrs = function() return require('test_files/nixio_data') end

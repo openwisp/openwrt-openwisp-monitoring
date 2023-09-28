@@ -50,7 +50,8 @@ TestNetJSON = {
               return nil
             end
           end,
-          get = function(...) return nil end
+          get = function(...) return nil end,
+          foreach = function(...) return nil end
         }
       end
     }

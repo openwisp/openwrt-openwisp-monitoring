@@ -155,6 +155,20 @@ function interfaces.get_addresses(name)
   return addresses
 end
 
+function interfaces.get_network_devices()
+  local devices = {}
+  uci_cursor:foreach('network', 'device', function(uci_device)
+    local device = {}
+    for key, value in pairs(uci_device) do
+      if not string.match(key, '^%.') then device[key] = value end
+    end
+    devices[uci_device['name']] = device
+  end)
+  return devices
+end
+
+local network_devices = interfaces.get_network_devices()
+
 function interfaces.get_interface_info(name, netjson_interface)
   local info = {dns_search = nil, dns_servers = nil}
   for _, interface in pairs(interface_data['interface']) do
@@ -166,7 +180,14 @@ function interfaces.get_interface_info(name, netjson_interface)
         info.dns_servers = interface['dns-server']
       end
       if netjson_interface.type == 'bridge' then
-        info.stp = uci_cursor.get('network', interface['interface'], 'stp') == '1'
+        -- On OpenWrt > 21, "stp" is present in the "device" section
+        local device_name = interface['device']
+        if device_name and network_devices[device_name] then
+          info.stp = network_devices[device_name]['stp']
+        else
+          info.stp = uci_cursor.get('network', interface['interface'], 'stp')
+        end
+        info.stp = info.stp == '1'
       end
       -- collect specialized info if available
       local specialized_info = specialized_interfaces[interface.proto]
