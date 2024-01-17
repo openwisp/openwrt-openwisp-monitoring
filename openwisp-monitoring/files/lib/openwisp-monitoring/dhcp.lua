@@ -11,13 +11,16 @@ function dhcp.parse_dhcp_lease_file(path, leases)
   for line in f:lines() do
     local expiry, mac, ip, name, id = line:match(
       '(%S+)%s+(%S+)%s+(%S+)%s+(%S+)%s+(%S+)')
-    table.insert(leases, {
+    local lease = {
       expiry = tonumber(expiry),
       mac = mac,
       ip = ip,
       client_name = name,
       client_id = id
-    })
+    }
+    if not utils.is_table_empty(lease) then
+      table.insert(leases, lease)
+    end
   end
 
   return leases
