@@ -190,6 +190,20 @@ send_data() {
 					[ "$VERBOSE_MODE" -eq "1" ] && logger -s "Data not sent successfully. Retrying in $timeout seconds." \
 						-p daemon.warn
 					failures=$((failures + 1))
+					if [ "$response_code" = "404" ]; then
+						# If we get a HTTP 404 response, it could mean that the device has been deleted from OpenWISP
+						# Controller. We check if openwisp-config agent is running to determine if the device has been
+						# deleted. If openwisp-config agent is not running, the monitoring agent will also exit.
+						if ! pgrep -x "openwisp_config" >/dev/null; then
+							logger -s "Giving up and shutting down: the device may have been deleted from OpenWISP Controller" \
+								-t openwisp-monitoring \
+								-p daemon.err
+							# get process id of the process collecting data
+							pid=$(pgrep -f "openwisp-monitoring.*--mode collect")
+							kill -SIGKILL "$pid"
+							exit 2
+						fi
+					fi
 					sleep "$timeout"
 				fi
 			done
