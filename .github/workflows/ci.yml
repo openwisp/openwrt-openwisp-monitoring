@@ -93,7 +93,7 @@ jobs:
           path: "${{ env.DOWNLOADS_DIR }}/${{ env.START_TIME }}"
 
       - name: Setup Google Cloud
-        uses: google-github-actions/setup-gcloud@v0
+        uses: google-github-actions/setup-gcloud@v2
         with:
           service_account_key: ${{ secrets.GCS_DOWNLOADS_SERVICE_ACCOUNT_JSON }}
           project_id: ${{ secrets.GCS_PROJECT_ID }}
