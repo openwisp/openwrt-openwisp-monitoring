@@ -118,6 +118,7 @@ handle_sigusr1() {
 }
 
 send_data() {
+	success=0
 	while true; do
 		for file in "$TMP_DIR"/*; do
 			if [ ! -f "$file" ]; then
@@ -166,6 +167,7 @@ send_data() {
 				# send data
 				response_code=$($CURL_COMMAND -H "Content-Type: application/json" -d "$data" "$url")
 				if [ "$response_code" = "200" ]; then
+					success=$((success + 1))
 					if [ "$VERBOSE_MODE" -eq "1" ]; then
 						logger -s "Data sent successfully." \
 							-p daemon.info
@@ -209,6 +211,12 @@ send_data() {
 			done
 			# retry sending same data again in next cycle
 			[ "$failures" -eq "$MAX_RETRIES" ] && break
+			# pause for a random time between 1 and 5 seconds every
+			# 10 successful requests sent to avoid overload the server
+			if [ $((success % 10)) -eq 0 ]; then
+				pause_duration=$(/usr/sbin/openwisp-get-random-number 1 5)
+				sleep "$pause_duration"
+			fi
 		done
 	done
 }
