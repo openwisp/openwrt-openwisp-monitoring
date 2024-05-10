@@ -118,7 +118,7 @@ handle_sigusr1() {
 }
 
 send_data() {
-	success=1
+	success=0
 	while true; do
 		for file in "$TMP_DIR"/*; do
 			if [ ! -f "$file" ]; then
