@@ -20,10 +20,10 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
-          python-version: 3.7
+          python-version: "3.8"
 
       - name: Install Python dependencies
-        run: pip install openwisp-utils[qa]>=0.7
+        run: pip install openwisp-utils[qa]
 
       - name: Install Development dependencies
         run: sudo ./install-dev.sh
@@ -92,12 +92,16 @@ jobs:
           name: Packages
           path: "${{ env.DOWNLOADS_DIR }}/${{ env.START_TIME }}"
 
-      - name: Setup Google Cloud
-        uses: google-github-actions/setup-gcloud@v0
+      - name: Google Cloud Auth
+        uses: 'google-github-actions/auth@v2'
         with:
-          service_account_key: ${{ secrets.GCS_DOWNLOADS_SERVICE_ACCOUNT_JSON }}
           project_id: ${{ secrets.GCS_PROJECT_ID }}
-          export_default_credentials: true
+          credentials_json: ${{ secrets.GCS_DOWNLOADS_SERVICE_ACCOUNT_JSON }}
+
+      - name: Google Cloud Setup
+        uses: google-github-actions/setup-gcloud@v2
+        with:
+          project_id: ${{ secrets.GCS_PROJECT_ID }}
 
       - name: Upload compiled packages to downloads.openwisp.io
         if: ${{ github.event_name=='push' }}
