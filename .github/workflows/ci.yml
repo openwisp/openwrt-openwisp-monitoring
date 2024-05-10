@@ -93,12 +93,14 @@ jobs:
           path: "${{ env.DOWNLOADS_DIR }}/${{ env.START_TIME }}"
 
       - name: Google Cloud Auth
+        if: ${{ github.event_name=='push' }}
         uses: 'google-github-actions/auth@v2'
         with:
           project_id: ${{ secrets.GCS_PROJECT_ID }}
           credentials_json: ${{ secrets.GCS_DOWNLOADS_SERVICE_ACCOUNT_JSON }}
 
       - name: Google Cloud Setup
+        if: ${{ github.event_name=='push' }}
         uses: google-github-actions/setup-gcloud@v2
         with:
           project_id: ${{ secrets.GCS_PROJECT_ID }}
