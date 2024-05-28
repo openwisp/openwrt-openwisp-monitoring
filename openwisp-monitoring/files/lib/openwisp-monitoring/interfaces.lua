@@ -67,6 +67,10 @@ local specialized_interfaces = {
       end
     end
 
+    if not utils.is_table_empty(info.signal.threshold) then
+      info.signal.threshold = nil
+    end
+
     return {type = 'modem-manager', mobile = info}
   end
 }
