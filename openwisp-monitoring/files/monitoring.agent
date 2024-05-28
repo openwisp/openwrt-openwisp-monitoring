@@ -196,7 +196,7 @@ send_data() {
 						# If we get a HTTP 404 response, it could mean that the device has been deleted from OpenWISP
 						# Controller. We check if openwisp-config agent is running to determine if the device has been
 						# deleted. If openwisp-config agent is not running, the monitoring agent will also exit.
-						if ! pgrep -x "openwisp_config" >/dev/null; then
+						if ! pgrep -x "openwisp-config" >/dev/null; then
 							logger -s "Giving up and shutting down: the device may have been deleted from OpenWISP Controller" \
 								-t openwisp-monitoring \
 								-p daemon.err
