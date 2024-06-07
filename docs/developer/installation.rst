@@ -1,6 +1,8 @@
 Developer Documentation
 =======================
 
+.. include:: ../partials/developer-docs.rst
+
 .. _compiling_openwrt_openwisp_monitoring:
 
 Compiling openwisp-monitoring
