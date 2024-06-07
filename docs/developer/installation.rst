@@ -1,5 +1,5 @@
-Developer Installation Instructions
-===================================
+Developer Documentation
+=======================
 
 .. _compiling_openwrt_openwisp_monitoring:
 
