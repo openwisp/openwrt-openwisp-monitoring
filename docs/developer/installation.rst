@@ -1,24 +1,23 @@
 Developer Installation Instructions
 ===================================
 
+.. _compiling_openwrt_openwisp_monitoring:
+
 Compiling openwisp-monitoring
 -----------------------------
 
 This repository ships 2 OpenWrt packages:
 
-- **netjson-monitoring**: provides
-  `NetJSON DeviceMonitoring
+- **netjson-monitoring**: provides `NetJSON DeviceMonitoring
   <https://netjson.org/docs/what.html#devicemonitoring>`_ output
-- **openwisp-monitoring**: daemon which collects and sends
-  `NetJSON DeviceMonitoring
-  <https://netjson.org/docs/what.html#devicemonitoring>`_ data to
-  `OpenWISP Monitoring
-  <https://github.com/openwisp/openwisp-monitoring>`_
-  It depends on **netjson-monitoring** and
-  `openwisp-config
-  <https://github.com/openwisp/openwisp-config>`_
+- **openwisp-monitoring**: daemon which collects and sends `NetJSON
+  DeviceMonitoring <https://netjson.org/docs/what.html#devicemonitoring>`_
+  data to :doc:`OpenWISP Monitoring </monitoring/index>` It depends on
+  **netjson-monitoring** and :doc:`openwisp-config
+  </openwrt-config-agent/index>`
 
-The following procedure illustrates how to compile *openwisp-monitoring*, *netjson-monitoring* and their dependencies:
+The following procedure illustrates how to compile *openwisp-monitoring*,
+*netjson-monitoring* and their dependencies:
 
 .. code-block:: shell
 
@@ -41,8 +40,10 @@ The following procedure illustrates how to compile *openwisp-monitoring*, *netjs
 
 The compiled packages will go in ``bin/packages/*/openwisp``.
 
-Alternatively, you can configure your build interactively with ``make menuconfig``, in this case
-you will need to select the *openwisp-monitoring* and *netjson-monitoring* by going to ``Administration > admin > openwisp``:
+Alternatively, you can configure your build interactively with ``make
+menuconfig``, in this case you will need to select the
+*openwisp-monitoring* and *netjson-monitoring* by going to
+``Administration > admin > openwisp``:
 
 .. code-block:: shell
 
@@ -69,11 +70,15 @@ We use `LuaFormatter <https://luarocks.org/modules/tammela/luaformatter>`_
 and `shfmt <https://github.com/mvdan/sh#shfmt>`_ to format lua files and
 shell scripts respectively.
 
-Once they are installed, you can format all files by::
+Once they are installed, you can format all files by:
+
+.. code-block:: shell
 
     ./qa-format
 
-Run quality assurance tests with::
+Run quality assurance tests with:
+
+.. code-block:: shell
 
     #install openwisp-utils QA tools first
     pip install openwisp-utils[qa]
@@ -85,21 +90,25 @@ Run tests
 ---------
 
 To run the unit tests, you must install the required dependencies first;
-to do this, you can take
-a look at the
-`install-dev.sh
-<https://github.com/openwisp/openwisp-config/blob/master/install-dev.sh>`_
+to do this, you can take a look at the `install-dev.sh
+<https://github.com/openwisp/openwrt-openwisp-monitoring/blob/master/install-dev.sh>`_
 script.
 
-Install test requirements::
+Install test requirements:
+
+.. code-block:: shell
 
     sudo ./install-dev.sh
 
-You can run all unit tests by launching the dedicated script::
+You can run all unit tests by launching the dedicated script:
+
+.. code-block:: shell
 
     ./runtests
 
-Alternatively, you can run specific tests, e.g.::
+Alternatively, you can run specific tests, e.g.:
+
+.. code-block:: shell
 
     cd openwrt-openwisp-monitoring/tests/
     lua test_utils.lua -v

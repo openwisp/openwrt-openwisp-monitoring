@@ -1,34 +1,34 @@
-===================================
 OpenWISP Monitoring OpenWrt package
 ===================================
 
 .. image:: https://github.com/openwisp/openwrt-openwisp-monitoring/workflows/OpenWRT%20OPENWISP%20MONITORING%20CI%20Build/badge.svg?branch=master
-   :target: https://github.com/openwisp/openwrt-openwisp-monitoring/actions?query=OpenWRT+OPENWISP+MONITORING+CI+Build%22
-   :alt: CI build status
+    :target: https://github.com/openwisp/openwrt-openwisp-monitoring/actions?query=OpenWRT+OPENWISP+MONITORING+CI+Build%22
+    :alt: CI build status
 
 .. image:: https://coveralls.io/repos/github/openwisp/openwrt-openwisp-monitoring/badge.svg
-   :target: https://coveralls.io/github/openwisp/openwrt-openwisp-monitoring
-   :alt: Test Coverage
+    :target: https://coveralls.io/github/openwisp/openwrt-openwisp-monitoring
+    :alt: Test Coverage
 
 .. image:: http://img.shields.io/github/release/openwisp/openwrt-openwisp-monitoring.svg
-   :target: https://github.com/openwisp/openwrt-openwisp-monitoring/releases
+    :target: https://github.com/openwisp/openwrt-openwisp-monitoring/releases
 
 .. image:: https://img.shields.io/gitter/room/nwjs/nw.js.svg?style=flat-square
-   :target: https://gitter.im/openwisp/general
-   :alt: support chat
+    :target: https://gitter.im/openwisp/general
+    :alt: support chat
 
-------------
+----
 
-The `OpenWISP Monitoring <https://github.com/openwisp/openwisp-monitoring>`_ agent
-for `OpenWRT <https://openwrt.org/>`_.
+The `OpenWISP Monitoring
+<https://github.com/openwisp/openwisp-monitoring>`_ agent for `OpenWRT
+<https://openwrt.org/>`_.
 
 **Want to help OpenWISP?** `Find out how to help us grow here
 <http://openwisp.io/docs/general/help-us.html>`_.
 
 .. image:: http://netjsonconfig.openwisp.org/en/latest/_images/openwisp.org.svg
-  :target: http://openwisp.org
+    :target: http://openwisp.org
 
-------------
+----
 
 Documentation
 -------------
@@ -47,12 +47,14 @@ Please read the `OpenWISP contributing guidelines
 Changelog
 ---------
 
-See `CHANGELOG <https://github.com/openwisp/openwrt-openwisp-monitoring/blob/master/CHANGELOG.rst>`_.
+See `CHANGELOG
+<https://github.com/openwisp/openwrt-openwisp-monitoring/blob/master/CHANGELOG.rst>`_.
 
 License
 -------
 
-See `LICENSE <https://github.com/openwisp/openwrt-openwisp-monitoring/blob/master/LICENSE>`_.
+See `LICENSE
+<https://github.com/openwisp/openwrt-openwisp-monitoring/blob/master/LICENSE>`_.
 
 Support
 -------
