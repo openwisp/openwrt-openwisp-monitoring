@@ -29,8 +29,8 @@ start_service() {
 	config_get base_url http url
 	config_get uuid http uuid
 	config_get key http key
-        config_get cacert http cacert
-        config_get capath http capath
+	config_get cacert http cacert
+	config_get capath http capath
 	config_get_bool verify_ssl http verify_ssl "1"
 	config_get respawn_threshold http respawn_threshold
 	config_get respawn_timeout http respawn_timeout
@@ -39,8 +39,8 @@ start_service() {
 	[ -n "$base_url" ] && base_url="--url $base_url"
 	[ -n "$uuid" ] && uuid="--uuid $uuid"
 	[ -n "$key" ] && key="--key $key"
-        [ -n "$cacert" ] && cacert="--cacert $cacert"
-        [ -n "$capath" ] && capath="--capath $capath"
+	[ -n "$cacert" ] && cacert="--cacert $cacert"
+	[ -n "$capath" ] && capath="--capath $capath"
 	[ -n "$verify_ssl" ] && verify_ssl="--verify_ssl $verify_ssl"
 
 	if [ -z "$base_url" ]; then
