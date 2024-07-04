@@ -17,6 +17,8 @@ show_help() {
 	printf "  --uuid <uuid>\t\t\t\t: UUID of the device.\n"
 	printf "  --key <key>\t\t\t\t: Key for the device.\n"
 	printf "  --verify_ssl <0, 1>\t\t\t: Whether SSL Authentication should be enabled or not.\n"
+	printf "  --cacert <file>\t\t\t: Value passed to curl --cacert argument.\n"
+	printf "  --capath <directory>\t\t\t: Value passed to curl --capath argument.\n"
 	printf "OpenWISP Monitoring Config options:\n"
 	printf "  --interval <time>\t\t\t: Time in seconds after which data should be sent/collected.\n"
 	printf "  --monitored-interfaces <interfaces>\t: Interfaces that needs to be monitored.\n"
@@ -86,6 +88,8 @@ set_url_and_curl() {
 	# shellcheck disable=SC1083
 	CURL_COMMAND="curl -s -w "%{http_code}" --output $RESPONSE_FILE"
 	[ "$VERIFY_SSL" -eq "0" ] && CURL_COMMAND="$CURL_COMMAND -k"
+	[ -n "$CACERT" ] && CURL_COMMAND="$CURL_COMMAND --cacert $CACERT"
+	[ -n "$CAPATH" ] && CURL_COMMAND="$CURL_COMMAND --capath $CAPATH"
 	[ "$VERBOSE_MODE" -eq "1" ] && CURL_COMMAND="$CURL_COMMAND -v"
 	MAX_RETRIES=${MAX_RETRIES:-5}
 	FAILING=0
@@ -279,6 +283,14 @@ main() {
 				;;
 			--verify_ssl)
 				export VERIFY_SSL="$2"
+				shift
+				;;
+			--capath)
+				export CAPATH="$2"
+				shift
+				;;
+			--cacert)
+				export CACERT="$2"
 				shift
 				;;
 			--interval)
