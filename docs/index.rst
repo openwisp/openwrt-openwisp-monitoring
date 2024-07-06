@@ -1,23 +1,29 @@
-OpenWrt OpenWISP Monitoring
-===========================
+OpenWISP Monitoring Agent
+=========================
 
-The OpenWrt OpenWISP Monitoring package is offered for installation on
-OpenWrt devices. This package facilitates communication with a central
-OpenWISP Monitoring server, enabling remote monitoring of critical network
-metrics. These metrics encompass interface traffic, WiFi client
-information, CPU load, and memory usage. Through collection of this data,
-valuable insights into network health and performance become obtainable,
-allowing for the proactive identification and troubleshooting of potential
-network issues.
+The OpenWISP Monitoring OpenWrt agent is responsible for collecting
+monitoring metrics from network devices and sending them to a central
+:doc:`OpenWISP Monitoring server </monitoring/index>` via HTTPS, allowing
+to collect critical network metrics without the need of a VPN.
 
-For a comprehensive overview of features, please refer to the
-:doc:`user/intro` page.
+These metrics include:
+
+- General system information, uptime
+- Interface traffic
+- WiFi client statistics
+- CPU load averages
+- Memory usage
+- Storage space and usage
+- Cellular Modem Status, Cellular Signal Quality/Strength
+
+By collecting this data, administrators gain valuable insights into
+network health and performance, facilitating proactive troubleshooting of
+potential issues.
 
 .. toctree::
     :caption: User Docs
     :maxdepth: 1
 
-    ./user/intro.rst
     ./user/quickstart.rst
     ./user/settings.rst
     ./user/debugging.rst
