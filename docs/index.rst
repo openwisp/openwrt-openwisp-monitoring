@@ -1,6 +1,9 @@
 OpenWISP Monitoring Agent
 =========================
 
+**Source code**: `github.com/openwisp/openwrt-openwisp-monitoring
+<https://github.com/openwisp/openwrt-openwisp-monitoring>`_.
+
 The OpenWISP Monitoring OpenWrt agent is responsible for collecting
 monitoring metrics from network devices and sending them to a central
 :doc:`OpenWISP Monitoring server </monitoring/index>` via HTTPS, allowing
