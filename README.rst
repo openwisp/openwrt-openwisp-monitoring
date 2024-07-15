@@ -1,8 +1,8 @@
 OpenWISP Monitoring OpenWrt package
 ===================================
 
-.. image:: https://github.com/openwisp/openwrt-openwisp-monitoring/workflows/OpenWRT%20OPENWISP%20MONITORING%20CI%20Build/badge.svg?branch=master
-    :target: https://github.com/openwisp/openwrt-openwisp-monitoring/actions?query=OpenWRT+OPENWISP+MONITORING+CI+Build%22
+.. image:: https://github.com/openwisp/openwrt-openwisp-monitoring/actions/workflows/ci.yml/badge.svg
+    :target: https://github.com/openwisp/openwrt-openwisp-monitoring/actions/workflows/ci.yml
     :alt: CI build status
 
 .. image:: https://coveralls.io/repos/github/openwisp/openwrt-openwisp-monitoring/badge.svg
@@ -19,7 +19,7 @@ OpenWISP Monitoring OpenWrt package
 ----
 
 The `OpenWISP Monitoring
-<https://openwisp.io/docs/dev/monitoring/>`_ agent for `OpenWRT
+<https://openwisp.io/docs/dev/monitoring/>`_ agent for `OpenWrt
 <https://openwrt.org/>`_.
 
 **Want to help OpenWISP?** `Find out how to help us grow here
