@@ -22,6 +22,8 @@ UCI configuration options must go in ``/etc/config/openwisp-monitoring``.
 In case, :ref:`maximum retries are reached <monitoring_agent_send_mode>`,
 agent will try sending data again in next cycle.
 
+.. _monitoring_agent_collecting_vs_sending:
+
 Collecting Vs Sending
 ---------------------
 
