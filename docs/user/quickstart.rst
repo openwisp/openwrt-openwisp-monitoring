@@ -1,10 +1,8 @@
-Quickstart
-==========
+Quickstart Guide
+================
 
-Install pre-compiled packages
------------------------------
-
-First run:
+To install the pre-compiled monitoring packages, proceed to update
+the package feeds:
 
 .. code-block:: shell
 

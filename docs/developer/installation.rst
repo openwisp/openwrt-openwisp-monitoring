@@ -3,6 +3,10 @@ Developer Documentation
 
 .. include:: ../partials/developer-docs.rst
 
+.. contents:: **Table of Contents**:
+    :depth: 2
+    :local:
+
 .. _compiling_openwrt_openwisp_monitoring:
 
 Compiling openwisp-monitoring
