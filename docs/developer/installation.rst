@@ -9,8 +9,8 @@ Developer Documentation
 
 .. _compiling_openwrt_openwisp_monitoring:
 
-Compiling openwisp-monitoring
------------------------------
+Compiling the Monitoring Agent
+------------------------------
 
 This repository ships 2 OpenWrt packages:
 

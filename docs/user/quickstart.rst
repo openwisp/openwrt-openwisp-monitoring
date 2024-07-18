@@ -1,38 +1,42 @@
-Quickstart Guide
-================
+Quick Start Guide
+=================
 
-To install the pre-compiled monitoring packages, proceed to update
-the package feeds:
+To install the Monitoring Agent on your OpenWrt system, follow these
+steps.
+
+Download and install the latest builds of both `netjson-monitoring` and
+`openwisp-monitoring` from `downloads.openwisp.io
+<http://downloads.openwisp.io/?prefix=openwisp-monitoring/>`_. Copy the
+URL of the IPK file you want to download, then run the following commands
+on your OpenWrt device:
 
 .. code-block:: shell
 
+    cd /tmp  # /tmp runs in memory
     opkg update
-
-Then install the ``netjson-monitoring`` and ``openwisp-monitoring``
-packages from our `latest builds
-<https://downloads.openwisp.io/?prefix=openwisp-monitoring/latest/>`_:
-
-.. code-block:: shell
-
-    cd /tmp
-    wget <URL>
+    # Install netjson-monitoring first
+    wget <URL-just-copied>
+    opkg install ./<file-just-downloaded>
+    # Install openwisp-monitoring last
+    wget <URL-just-copied>
     opkg install ./<file-just-downloaded>
 
-Where ``<URL>`` is the URL of the pre-compiled package.
-
-For a list of the latest built images, take a look at
+Replace ``<URL-just-copied>`` with the URL of the respective package from
 `downloads.openwisp.io
-<https://downloads.openwisp.io/?prefix=openwisp-monitoring/>`_.
+<http://downloads.openwisp.io/?prefix=openwisp-monitoring/>`_.
 
-**If you need to compile the package yourself**, see :ref:`Compiling
-openwisp-monitoring <compiling_openwrt_openwisp_monitoring>`.
-
-Once installed *openwisp-monitoring* needs to be configured (see
-:doc:`Configuration options <settings>`) and then started with:
+Now you can start the agent:
 
 .. code-block:: shell
 
-    /etc/init.d/openwisp-monitoring restart
+    /etc/init.d/openwisp-monitoring start
 
-To ensure the agent is working correctly find out how to perform debugging
-in the :doc:`debugging` section.
+.. seealso::
+
+    - For troubleshooting and debugging, refer to :doc:`debugging`.
+    - To learn more about the configuration options of the monitoring
+      agent, refer to :doc:`settings`.
+    - For instructions on how to compile the package, refer to
+      :ref:`compiling_openwrt_openwisp_monitoring`.
+    - Read about the complementary :doc:`Config Agent
+      </openwrt-config-agent/index>`.

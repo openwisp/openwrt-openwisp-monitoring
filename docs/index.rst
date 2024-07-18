@@ -6,7 +6,7 @@ OpenWISP Monitoring Agent
 
 The OpenWISP Monitoring OpenWrt agent is responsible for collecting
 monitoring metrics from network devices and sending them to a central
-:doc:`OpenWISP Monitoring server </monitoring/index>` via HTTPS, allowing
+:doc:`OpenWISP Monitoring Server </monitoring/index>` via HTTPS, allowing
 to collect critical network metrics without the need of a VPN.
 
 These metrics include:
