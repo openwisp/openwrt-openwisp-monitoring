@@ -18,9 +18,8 @@ OpenWISP Monitoring OpenWrt package
 
 ----
 
-The `OpenWISP Monitoring
-<https://openwisp.io/docs/dev/monitoring/>`_ agent for `OpenWrt
-<https://openwrt.org/>`_.
+The `OpenWISP Monitoring <https://openwisp.io/docs/dev/monitoring/>`_
+agent for `OpenWrt <https://openwrt.org/>`_.
 
 **Want to help OpenWISP?** `Find out how to help us grow here
 <http://openwisp.io/docs/general/help-us.html>`_.
