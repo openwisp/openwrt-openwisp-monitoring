@@ -22,11 +22,11 @@ jobs:
         with:
           python-version: "3.8"
 
-      - name: Install Python dependencies
-        run: pip install openwisp-utils[qa]
-
-      - name: Install Development dependencies
-        run: sudo ./install-dev.sh
+      - name: Install dependencies
+        id: deps
+        run: |
+          pip install openwisp-utils[qa]
+          sudo ./install-dev.sh
 
       - name: QA-Checks
         run: ./run-qa-checks
@@ -41,9 +41,11 @@ jobs:
           sh_checker_comment: true
 
       - name: Tests
+        if: ${{ !cancelled() && steps.deps.conclusion == 'success' }}
         run: ./runtests
 
       - name: Upload Coverage
+        if: ${{ success() }}
         run: |
           cd openwisp-monitoring/tests
           luacov-coveralls -v
@@ -52,7 +54,6 @@ jobs:
 
   build:
     name: Build and upload package as artifacts
-    needs: tests
     runs-on: ubuntu-20.04
     env:
       BUILD_DIR: '/home/runner/work/build'
@@ -87,6 +88,7 @@ jobs:
           CI_CACHE: ${{ steps.cache.outputs.cache-hit }}
 
       - name: Upload packages as artifacts
+        if: ${{ github.event_name=='push' }}
         uses: actions/upload-artifact@v2
         with:
           name: Packages
