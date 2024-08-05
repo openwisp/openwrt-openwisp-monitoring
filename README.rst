@@ -32,10 +32,10 @@ agent for `OpenWrt <https://openwrt.org/>`_.
 Documentation
 -------------
 
-- `Developer documentation
-  <https://openwisp.io/docs/dev/openwrt-monitoring-agent/developer/>`_
-- `User documentation
+- `Usage documentation
   <https://openwisp.io/docs/dev/openwrt-monitoring-agent/>`_
+- `Developer documentation
+  <https://openwisp.io/docs/dev/openwrt-monitoring-agent/developer/installation.html>`_
 
 Contributing
 ------------
