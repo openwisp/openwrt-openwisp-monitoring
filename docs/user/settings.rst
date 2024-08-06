@@ -20,8 +20,8 @@ UCI configuration options must go in ``/etc/config/openwisp-monitoring``.
   defaults to ``0.05`` (5 percent).
 - ``max_retries``: maximum number of retries in case of failures to send
   data to server in case of failure, defaults to ``5`` retries.
-- ``bootup_delay``: maximum value in seconds of a random delay after
-  bootup, defaults to ``10``, see :ref:`monitoring_agent_bootup_delay`.
+- ``bootup_delay``: maximum value in seconds of a random delay after boot
+  up, defaults to ``10``, see :ref:`monitoring_agent_bootup_delay`.
 
 In case, :ref:`maximum retries are reached <monitoring_agent_send_mode>`,
 agent will try sending data again in next cycle.
@@ -90,8 +90,8 @@ However, the service will keep trying to send data periodically.
 
 .. _monitoring_agent_bootup_delay:
 
-Bootup Delay
-------------
+Boot Up Delay
+-------------
 
 The option ``bootup_delay`` is used to delay the initialization of the
 agent for a random amount of seconds after the device boots.
