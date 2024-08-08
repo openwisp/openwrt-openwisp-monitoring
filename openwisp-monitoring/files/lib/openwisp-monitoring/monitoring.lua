@@ -8,5 +8,6 @@ monitoring.neighbors = require('openwisp-monitoring.neighbors')
 monitoring.resources = require('openwisp-monitoring.resources')
 monitoring.utils = require('openwisp-monitoring.utils')
 monitoring.wifi = require('openwisp-monitoring.wifi')
+monitoring.iwinfo = require('openwisp-monitoring.iwinfo')
 
 return monitoring
