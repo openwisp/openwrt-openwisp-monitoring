@@ -78,6 +78,10 @@ local function get_wireless_netjson_interface(radio, name, iwinfo)
     name = name,
     type = 'wireless',
   }
+  -- iwinfo disabled
+  if iwinfo == nil then
+    return netjson_interface
+  end
   -- if channel is missing the WiFi interface is not fully up
   -- and hence we avoid including its info because it will be rejected
   if monitoring.utils.is_empty(iwinfo.channel) == false then
@@ -117,7 +121,10 @@ for _, radio in pairs(wireless_status) do
   for _, interface in ipairs(radio.interfaces) do
     local name = interface.ifname
     if name and not monitoring.utils.is_excluded(name) then
-      local iwinfo = ubus:call('iwinfo', 'info', {device = name})
+      local iwinfo = nil
+      if monitoring.iwinfo.enabled then
+        iwinfo = ubus:call('iwinfo', 'info', {device = name})
+      end
       wireless_interfaces[name] = get_wireless_netjson_interface(radio, name, iwinfo)
     end
   end
