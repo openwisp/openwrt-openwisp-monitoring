@@ -59,8 +59,10 @@ UTC timezone).
 Once the data is saved, a signal will be sent to the other agent to ensure
 data is sent as soon as it is collected.
 
-**Note:** Date and time on device should be set correctly. Otherwise, data
-will be saved with wrong timestamp in timeseries database.
+.. important::
+
+    Date and time on device should be set correctly. Otherwise, data
+    will be saved with wrong timestamp in time series database.
 
 .. _monitoring_agent_send_mode:
 
