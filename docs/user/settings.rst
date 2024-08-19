@@ -61,8 +61,8 @@ data is sent as soon as it is collected.
 
 .. important::
 
-    Date and time on device should be set correctly. Otherwise, data
-    will be saved with wrong timestamp in time series database.
+    Date and time on device should be set correctly. Otherwise, data will
+    be saved with wrong timestamp in time series database.
 
 .. _monitoring_agent_send_mode:
 
