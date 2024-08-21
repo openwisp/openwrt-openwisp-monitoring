@@ -8,104 +8,103 @@ Settings
 Configuration Options
 ---------------------
 
-UCI configuration options must go in ``/etc/config/openwisp-monitoring``.
+UCI configuration options should be placed in
+``/etc/config/openwisp-monitoring``.
 
-- ``monitored_interfaces``: interfaces that needs to be monitored,
-  defaults to ``*`` for all interfaces.
-- ``interval``: the periodic interval in seconds at which the agent sends
-  data to the server, defaults to ``300``.
-- ``verbose_mode``: can be enabled (set to ``1``) to ease :doc:`debugging
-  <debugging>` in case of issues, defaults to ``0`` (disabled).
-- ``required_memory``: available memory required to save data temporarily,
-  defaults to ``0.05`` (5 percent).
-- ``max_retries``: maximum number of retries in case of failures to send
-  data to server in case of failure, defaults to ``5`` retries.
-- ``bootup_delay``: maximum value in seconds of a random delay after boot
-  up, defaults to ``10``, see :ref:`monitoring_agent_bootup_delay`.
+- ``monitored_interfaces``: Specifies the interfaces to be monitored.
+  Defaults to ``*``, meaning all interfaces.
+- ``interval``: Sets the interval in seconds for the agent to send data to
+  the server. The default is ``300`` seconds.
+- ``verbose_mode``: Can be enabled by setting to ``1`` to assist in
+  :doc:`debugging <debugging>`. The default is ``0`` (disabled).
+- ``required_memory``: Minimum available memory required to temporarily
+  store data. Defaults to ``0.05`` (5 percent).
+- ``max_retries``: Maximum number of retries if there is a failure in
+  sending data to the server. The default is ``5`` retries.
+- ``bootup_delay``: Maximum value, in seconds, of a random delay after
+  boot-up. Defaults to ``10``. See :ref:`monitoring_agent_bootup_delay`.
 
-In case, :ref:`maximum retries are reached <monitoring_agent_send_mode>`,
-agent will try sending data again in next cycle.
+If the :ref:`maximum retries are reached <monitoring_agent_send_mode>`,
+the agent will attempt to send data in the next cycle.
 
 .. _monitoring_agent_collecting_vs_sending:
 
-Collecting Vs Sending
----------------------
+Collecting vs. Sending
+----------------------
 
-We use two procd services in `monitoring agent
-<https://github.com/openwisp/openwrt-openwisp-monitoring/blob/master/openwisp-monitoring/files/monitoring.agent>`_,
-one for collecting the data and other for sending the data.
+The `monitoring agent
+<https://github.com/openwisp/openwrt-openwisp-monitoring/blob/master/openwisp-monitoring/files/monitoring.agent>`_
+uses two procd services: one for collecting data and another for sending
+it.
 
-This helps handle failure in sending the data in more flexible way. Old
-data saved during network connectivity issues can be sent while new data
-is being collected. If old data has piled up and takes several minutes to
-be uploaded, new data will be collected without waiting for the sending to
-complete.
+This setup allows for more flexible handling of data transmission
+failures. Data collected during network outages can be sent later, while
+new data continues to be collected. If there is a backlog of data to
+upload, the collection process will continue independently.
 
-Monitoring agent uses two different modes to handle this, ``send`` and
-``collect``.
+The monitoring agent operates in two modes: ``send`` and ``collect``.
 
 .. _monitoring_agent_collect_mode:
 
 Collect Mode
 ~~~~~~~~~~~~
 
-If openwisp-monitoring agent is called with this mode, then the agent will
-keep charge of collecting and saving data.
+When the OpenWISP monitoring agent operates in this mode, it is
+responsible for collecting and storing data.
 
-Agent will periodically check if enough memory is available. If true, data
-will be collected and saved in temporary storage with the timestamp (in
-UTC timezone).
+The agent periodically checks if there is enough memory available. If
+sufficient memory is detected, data will be collected and saved in
+temporary storage with a timestamp (in UTC).
 
-Once the data is saved, a signal will be sent to the other agent to ensure
-data is sent as soon as it is collected.
+Once the data is stored, a signal is sent to the other agent to ensure the
+data is transmitted promptly.
 
 .. important::
 
-    Date and time on device should be set correctly. Otherwise, data will
-    be saved with wrong timestamp in time series database.
+    Ensure that the date and time on the device are correctly set.
+    Incorrect timestamps can lead to inaccurate data in the time series
+    database.
 
 .. _monitoring_agent_send_mode:
 
 Send Mode
 ~~~~~~~~~
 
-If openwisp-monitoring agent is called with this mode, then the agent will
-keep charge of sending data.
+When operating in this mode, the OpenWISP monitoring agent handles data
+transmission.
 
-Agent will check if any data file is available in temporary storage.
+The agent checks for available data files in temporary storage. If no data
+files are found, the agent will wait for the specified interval and check
+again. This process continues until data files are detected. If a signal
+is received from the other agent, the wait will be interrupted, and the
+agent will start sending data.
 
-If there is no data file, the agent will sleep for the time interval and
-check for the data file again. This will be continued until a data file is
-found. If a signal is received from the other agent, then the sleep will
-be interrupted and agent will start sending data.
+If the agent fails to send data, a randomized backoff (between 2 and 15
+seconds) is used to retry until the ``max_retries`` limit is reached. If
+all attempts fail, the agent will try again in the next cycle.
 
-If agent fails to send data to the server, a randomized backoff (between 2
-and 15 seconds) will be used to retry until ``max_retries`` is reached. If
-all attempts of sending data failed, the agent will try to send data in
-the next cycle.
+Upon successful data transmission, the corresponding data file is deleted,
+and the agent checks for any remaining files.
 
-If data is sent successfully, then the data file will be deleted and agent
-will look for another file.
-
-**SIGUSR1** signals are used to instantly send the data when collected.
-However, the service will keep trying to send data periodically.
+**SIGUSR1** signals are used to trigger immediate data transmission when
+new data is collected. The service will continue to attempt data
+transmission at regular intervals.
 
 .. _monitoring_agent_bootup_delay:
 
-Boot Up Delay
+Boot-Up Delay
 -------------
 
-The option ``bootup_delay`` is used to delay the initialization of the
-agent for a random amount of seconds after the device boots.
+The ``bootup_delay`` option introduces a random delay during the agent's
+initialization after the device boots.
 
-The value specified in this option represents the maximum value of the
-range of possible random values, the minimum value being ``0``.
+This option specifies the maximum value for the random delay, with a
+minimum value of ``0``.
 
-The default value of this option is 10, meaning that the initialization of
-the agent will be delayed for a random number of seconds, this random
-number being comprised between ``0`` and ``10``.
+The default setting is 10, meaning the agent's initialization will be
+delayed by a random number of seconds, ranging from ``0`` to ``10``.
 
-This feature is used to spread the load on the OpenWISP server when a
-large amount of devices boot up at the same time after a blackout.
+This feature is designed to distribute the load on the OpenWISP server
+when a large number of devices boot simultaneously after a power outage.
 
-Large OpenWISP installations may want to increase this value.
+Large OpenWISP installations may benefit from increasing this value.
