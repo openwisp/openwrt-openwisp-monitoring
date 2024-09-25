@@ -11,7 +11,7 @@ on:
 jobs:
   tests:
     name: QA-Checks and Tests
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v2
         with:
@@ -20,7 +20,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
-          python-version: "3.8"
+          python-version: "3.x"
 
       - name: Install dependencies
         id: deps
@@ -34,7 +34,7 @@ jobs:
           CI: 1
 
       - name: Run sh-checker
-        uses: luizm/action-sh-checker@master
+        uses: luizm/action-sh-checker@v0.9.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
@@ -54,7 +54,7 @@ jobs:
 
   build:
     name: Build and upload package as artifacts
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     env:
       BUILD_DIR: '/home/runner/work/build'
       DOWNLOADS_DIR: '/home/runner/work/downloads'
@@ -67,7 +67,7 @@ jobs:
 
       - name: Cache OpenWrt dependencies
         id: cache
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         env:
           cache-name: cache-openwrt-dependencies
         with:
@@ -89,7 +89,7 @@ jobs:
 
       - name: Upload packages as artifacts
         if: ${{ github.event_name=='push' }}
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: Packages
           path: "${{ env.DOWNLOADS_DIR }}/${{ env.START_TIME }}"
