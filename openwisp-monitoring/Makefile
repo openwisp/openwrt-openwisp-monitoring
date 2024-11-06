@@ -89,10 +89,10 @@ define Package/netjson-monitoring/install
 		files/lib/openwisp-monitoring/wifi.lua \
 		$(1)/usr/lib/lua/openwisp-monitoring/wifi.lua
 
-	# Iwinfo is enabled by default unless specified otherwise
-	$(INSTALL_DIR) $(1)/usr/lib/lua/openwisp-monitoring
-	sed 's/true/$(if $(CONFIG_NETJSON_MONITORING_IWINFO),true,false)/' \
-		files/lib/openwisp-monitoring/iwinfo.lua > $(1)/usr/lib/lua/openwisp-monitoring/iwinfo.lua
+# Iwinfo is enabled by default unless specified otherwise
+ifeq ($(CONFIG_NETJSON_MONITORING_IWINFO), y)
+	$(CP) files/lib/openwisp-monitoring/iwinfo.lua $(1)/usr/lib/lua/openwisp-monitoring/iwinfo.lua
+endif
 
 	$(CP) ../VERSION $(1)/usr/lib/openwisp-monitoring/
 endef
