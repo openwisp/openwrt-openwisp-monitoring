@@ -1,6 +1,14 @@
 Change log
 ==========
 
+0.2.1 [2024-11-07]
+------------------
+
+Bugfixes
+~~~~~~~~
+
+- Fixed compiling the package without the ``rpcd-mod-iwinfo`` dependency.
+
 0.2.0 [2024-09-25]
 ------------------
 
