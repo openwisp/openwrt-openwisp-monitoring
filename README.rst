@@ -18,11 +18,8 @@ OpenWISP Monitoring OpenWrt package
 
 ----
 
-The `OpenWISP Monitoring <https://openwisp.io/docs/dev/monitoring/>`_
+The `OpenWISP Monitoring <https://openwisp.io/docs/stable/monitoring/>`_
 agent for `OpenWrt <https://openwrt.org/>`_.
-
-**Want to help OpenWISP?** `Find out how to help us grow here
-<http://openwisp.io/docs/general/help-us.html>`_.
 
 .. image:: http://netjsonconfig.openwisp.org/en/latest/_images/openwisp.org.svg
     :target: http://openwisp.org
@@ -33,15 +30,15 @@ Documentation
 -------------
 
 - `Usage documentation
-  <https://openwisp.io/docs/dev/openwrt-monitoring-agent/>`_
+  <https://openwisp.io/docs/stable/openwrt-monitoring-agent/>`_
 - `Developer documentation
-  <https://openwisp.io/docs/dev/openwrt-monitoring-agent/developer/installation.html>`_
+  <https://openwisp.io/docs/stable/openwrt-monitoring-agent/developer/installation.html>`_
 
 Contributing
 ------------
 
 Please read the `OpenWISP contributing guidelines
-<http://openwisp.io/docs/developer/contributing.html>`_.
+<http://openwisp.io/docs/stable/developer/contributing.html>`_.
 
 Changelog
 ---------
