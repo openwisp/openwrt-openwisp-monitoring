@@ -25,6 +25,8 @@ show_help() {
 	printf "  --verbose-mode <0, 1>\t\t\t: Run agent in verbose mode.\n"
 	printf "  --required-memory <0-1>\t\t: Fraction of total memory that should be available to collect data.\n"
 	printf "  --max-retries <max-retries-count>\t: No. of time agent should retry to send data.\n"
+	printf "  --ignore-wifi <interfaces>\t: Interfaces that ignored for wifi clients.\n"
+	printf "  --ignore-wifi-mac <mac>\t: Space seperated list off Client MAC addresses that will be ignored.\n"
 	exit 0
 }
 
@@ -66,7 +68,7 @@ collect_data() {
 	[ "$VERBOSE_MODE" -eq "1" ] && logger -s "Collecting NetJSON Monitoring data." \
 		-p daemon.info
 	until [ "$n" -ge 5 ]; do
-		/usr/sbin/netjson-monitoring --dump "$MONITORED_INTERFACES" && break
+		/usr/sbin/netjson-monitoring --dump "$MONITORED_INTERFACES" "$IGNORE_WIFI" "$IGNORE_WIFI_MAC" && break
 
 		if [ "$n" -eq 5 ]; then
 			[ "$VERBOSE_MODE" -eq "1" ] && logger -s "Collecting data failed!" -p daemon.err
@@ -103,6 +105,7 @@ save_data() {
 			filename="$(date -u +'%d-%m-%Y_%H:%M:%S')"
 			# save data with file_name
 			echo "$data" >"$TMP_DIR/$filename"
+			cp "$TMP_DIR/$filename" "/tmp/$filename.json"
 			# compress data
 			gzip "$TMP_DIR/$filename"
 			[ "$VERBOSE_MODE" -eq "1" ] && logger -s "Data saved temporarily." \
@@ -319,6 +322,14 @@ main() {
 				;;
 			--bootup_delay)
 				export BOOTUP_DELAY="$2"
+				shift
+				;;
+			--ignore_wifi)
+				export IGNORE_WIFI="$2"
+				shift
+				;;
+			--ignore_wifi_mac)
+				export IGNORE_WIFI_MAC="$2"
 				shift
 				;;
 			-*)
