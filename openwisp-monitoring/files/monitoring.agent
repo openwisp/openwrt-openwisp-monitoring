@@ -105,7 +105,6 @@ save_data() {
 			filename="$(date -u +'%d-%m-%Y_%H:%M:%S')"
 			# save data with file_name
 			echo "$data" >"$TMP_DIR/$filename"
-			cp "$TMP_DIR/$filename" "/tmp/$filename.json"
 			# compress data
 			gzip "$TMP_DIR/$filename"
 			[ "$VERBOSE_MODE" -eq "1" ] && logger -s "Data saved temporarily." \
