@@ -27,7 +27,7 @@ function wifi.invert_rx_tx(interface)
 end
 
 function wifi.parse_hostapd_clients(clients)
-  local data = {}
+  local data
   for mac, properties in pairs(clients) do
     properties.mac = mac
     table.insert(data, properties)
@@ -36,7 +36,7 @@ function wifi.parse_hostapd_clients(clients)
 end
 
 function wifi.parse_iwinfo_clients(clients)
-  local data = {}
+  local data
   for _, p in pairs(clients) do
     local client = {}
     client.mac = p.mac
