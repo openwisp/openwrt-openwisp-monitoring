@@ -28,6 +28,9 @@ end
 
 function wifi.parse_hostapd_clients(clients,exclude_mac)
   local data = {}
+  if not exclude_mac then
+    exclude_mac = {}
+  end
   for mac, properties in pairs(clients) do
     if not exclude_mac[mac] then
       properties.mac = mac
@@ -39,6 +42,9 @@ end
 
 function wifi.parse_iwinfo_clients(clients,exclude_mac)
   local data = {}
+  if not exclude_mac then
+    exclude_mac = {}
+  end
   for _, p in pairs(clients) do
     if not exclude_mac[p.mac] then
       local client = {}
