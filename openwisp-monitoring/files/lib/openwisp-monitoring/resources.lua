@@ -13,7 +13,7 @@ function resources.parse_disk_usage()
     if line:sub(1, 10) ~= 'Filesystem' then
       local filesystem, size, used, available, percent, location = line:match(
         '(%S+)%s+(%S+)%s+(%S+)%s+(%S+)%s+(%S+)%s+(%S+)')
-      if filesystem ~= 'tmpfs' and not string.match(filesystem, 'overlayfs') then
+      if filesystem ~= 'tmpfs' and not string.match(filesystem, 'overlayfs') and not string.match(location, '/rom') then
         percent = percent:gsub('%W', '')
         -- available, size and used are in KiB
         table.insert(disk_usage_info, {
