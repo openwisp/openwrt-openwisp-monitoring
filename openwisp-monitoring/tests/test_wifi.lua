@@ -64,7 +64,7 @@ function TestWifi.test_parse_hostapd_clients()
   luaunit.assertEquals(wifi_functions.parse_hostapd_clients(wifi_data.wlan1_clients),
     wifi_data.parsed_clients)
   luaunit.assertEquals(wifi_functions.parse_hostapd_clients(wifi_data.wlan2_clients),
-    {})
+    nil)
 end
 
 function TestWifi.test_parse_iwinfo_clients()
@@ -79,7 +79,7 @@ function TestWifi.test_netjson_clients()
   luaunit.assertEquals(wifi_functions.netjson_clients(wifi_data.wlan1_clients, false),
     wifi_data.parsed_clients)
   luaunit.assertEquals(wifi_functions.netjson_clients(wifi_data.wlan2_clients, false),
-    {})
+    nil)
   -- testing iwinfo clients
   luaunit.assertEquals(
     wifi_functions.netjson_clients(wifi_data.mesh0_clients.results, true),
