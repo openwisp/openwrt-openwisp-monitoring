@@ -151,7 +151,7 @@ send_data() {
 			fi
 			filename="$TMP_DIR/$filename"
 			# check if the data file exist
-			if [ -f "$filename" ] ; then
+			if [ -f "$filename" ]; then
 				data=$(cat "$filename")
 			else
 				[ "$VERBOSE_MODE" -eq "1" ] && logger -s "data file $filename not found." \
