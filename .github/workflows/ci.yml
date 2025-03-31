@@ -100,19 +100,27 @@ jobs:
         with:
           project_id: ${{ secrets.GCS_PROJECT_ID }}
           credentials_json: ${{ secrets.GCS_DOWNLOADS_SERVICE_ACCOUNT_JSON }}
-
       - name: Google Cloud Setup
         if: ${{ github.event_name=='push' }}
         uses: google-github-actions/setup-gcloud@v2
         with:
           project_id: ${{ secrets.GCS_PROJECT_ID }}
+  
+      - name: Generate checksums for compiled packages
+        if: ${{ github.event_name=='push' }}
+        run: |
+          find ${{ env.DOWNLOADS_DIR }}/${{ env.START_TIME }}/openwisp_monitoring -type f -name "*.ipk" -exec sha256sum {} \; > ${{ env.DOWNLOADS_DIR }}/${{ env.START_TIME }}/openwisp_monitoring/sha256sums.txt
+  
+      - name: Define Storage Paths
+        run: |
+          echo "SRC_URL=${{ env.DOWNLOADS_DIR }}/${{ env.START_TIME }}/openwisp_monitoring" >> $GITHUB_ENV
+          echo "DST_URL=gs://${{ secrets.GCS_DOWNLOADS_BUCKET_NAME }}/openwisp-monitoring/${{ env.START_TIME }}-${{ env.COMMIT_SHA }}" >> $GITHUB_ENV
+          echo "LATEST_URL=gs://${{ secrets.GCS_DOWNLOADS_BUCKET_NAME }}/openwisp-monitoring/latest" >> $GITHUB_ENV
 
       - name: Upload compiled packages to downloads.openwisp.io
         if: ${{ github.event_name=='push' }}
         run: |
-          gsutil -m rsync -r ${{ env.SRC_URL }} ${{ env.DST_URL }}
-          gsutil -m rsync -r -d ${{ env.SRC_URL }} ${{ env.LATEST_URL }}
-        env:
-          SRC_URL: ${{ env.DOWNLOADS_DIR }}/${{ env.START_TIME }}/openwisp_monitoring
-          DST_URL: gs://${{ secrets.GCS_DOWNLOADS_BUCKET_NAME }}/openwisp-monitoring/${{ env.START_TIME }}-${{ env.COMMIT_SHA }}
-          LATEST_URL: gs://${{ secrets.GCS_DOWNLOADS_BUCKET_NAME }}/openwisp-monitoring/latest
+          gsutil -m rsync -r $SRC_URL $DST_URL
+          gsutil -m rsync -r -d $SRC_URL $LATEST_URL
+          gsutil cp $SRC_URL/sha256sums.txt $DST_URL/
+          gsutil cp $SRC_URL/sha256sums.txt $LATEST_URL/
