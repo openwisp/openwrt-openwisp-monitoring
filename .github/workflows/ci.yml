@@ -124,4 +124,3 @@ jobs:
           gsutil -m rsync -r -d $SRC_URL $LATEST_URL
           gsutil cp $SRC_URL/sha256sums.txt $DST_URL/
           gsutil cp $SRC_URL/sha256sums.txt $LATEST_URL/
-
