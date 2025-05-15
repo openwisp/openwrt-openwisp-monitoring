@@ -39,7 +39,7 @@ env.uci = {
 
 env.io = {
   popen = function(arg)
-    if arg == 'df' then
+    if arg == 'df -P' then
       return io.open(test_file_dir .. 'disk_usage.txt')
     elseif arg == 'cat /proc/cpuinfo | grep -c processor' then
       local f = assert(io.tmpfile())
