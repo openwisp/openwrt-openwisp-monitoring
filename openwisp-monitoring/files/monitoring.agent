@@ -109,8 +109,8 @@ save_data() {
 				-p daemon.info
 		fi
 		# get process id of the process sending data
-		pid=$(pgrep -f "openwisp-monitoring.*--mode send")
-		kill -SIGUSR1 "$pid"
+		pid=$(pgrep -P 1 -f "openwisp-monitoring.*--mode send")
+		kill -SIGUSR1 $pid
 		sleep "$INTERVAL"
 	done
 }
@@ -212,8 +212,8 @@ send_data() {
 								-t openwisp-monitoring \
 								-p daemon.err
 							# get process id of the process collecting data
-							pid=$(pgrep -f "openwisp-monitoring.*--mode collect")
-							kill -SIGKILL "$pid"
+							pid=$(pgrep -P 1 -f "openwisp-monitoring.*--mode collect")
+							kill -SIGKILL $pid
 							exit 2
 						fi
 					fi
