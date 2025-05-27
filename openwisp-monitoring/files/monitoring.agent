@@ -174,7 +174,13 @@ send_data() {
 					break
 				fi
 				# send data
+				if [ "$VERBOSE_MODE" -eq "1" ]; then
+					printf "data="
+					cat "$filename"
+					set -x
+				fi
 				response_code=$($CURL_COMMAND -H "Content-Type: application/json" -d "@$filename" "$url")
+				set +x
 				if [ "$response_code" = "200" ]; then
 					success=$((success + 1))
 					if [ "$VERBOSE_MODE" -eq "1" ]; then
