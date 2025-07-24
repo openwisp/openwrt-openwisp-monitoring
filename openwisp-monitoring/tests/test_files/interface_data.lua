@@ -80,6 +80,40 @@ test_data.interface_data = {
       up = true,
       updated = {"addresses"},
       uptime = 773875
+    },{
+      autostart = true,
+      available = true,
+      data = {leasetime = 600},
+      delegation = true,
+      device = "eth1",
+      ["dns-search"] = {},
+      ["dns-server"] = {"10.0.2.1"},
+      dns_metric = 0,
+      dynamic = false,
+      inactive = {
+        ["dns-search"] = {},
+        ["dns-server"] = {},
+        ["ipv4-address"] = {},
+        ["ipv6-address"] = {},
+        neighbors = {},
+        route = {}
+      },
+      interface = "mgmnt",
+      ["ipv4-address"] = {{address = "10.0.2.4", mask = 24}},
+      ["ipv6-address"] = {{address = "2001:0db8:85a3:0000:0000:8a2e:0370:7334"}},
+      ["ipv6-prefix"] = {},
+      ["ipv6-prefix-assignment"] = {},
+      l3_device = "eth1",
+      metric = 0,
+      neighbors = {},
+      pending = false,
+      proto = "dhcp",
+      route = {
+        {mask = 0, nexthop = "10.0.2.1", source = "10.0.2.4/32", target = "0.0.0.0"}
+      },
+      up = true,
+      updated = {"addresses", "routes", "data"},
+      uptime = 132
     }, {
       autostart = true,
       available = true,
