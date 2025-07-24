@@ -192,6 +192,85 @@ test_data.wlan1_clients = {
   }
 }
 
+test_data.exlude_wlan1_clients = {
+  ["98:3b:8f:98:b1:fb"] = {
+    aid = 1,
+    assoc = true,
+    auth = true,
+    authorized = true,
+    ht = true,
+    mfp = false,
+    preauth = false,
+    rrm = {0, 0, 0, 0, 0},
+    vht = true,
+    wds = false,
+    wmm = true,
+    wps = false
+  },
+  ["20:a6:0c:b2:da:10"] = {
+    aid = 2,
+    assoc = true,
+    auth = true,
+    authorized = true,
+    ht = true,
+    mfp = false,
+    preauth = false,
+    rrm = {0, 0, 0, 0, 0},
+    vht = true,
+    wds = false,
+    wmm = true,
+    wps = false
+  },
+  ["20:a6:0c:b2:da:11"] = {
+    aid = 3,
+    assoc = true,
+    auth = true,
+    authorized = true,
+    ht = true,
+    mfp = false,
+    preauth = false,
+    rrm = {0, 0, 0, 0, 0},
+    vht = true,
+    wds = false,
+    wmm = true,
+    wps = false
+  },
+  ["98:3b:8f:98:b1:fc"] = {
+    aid = 4,
+    assoc = true,
+    auth = true,
+    authorized = true,
+    ht = true,
+    mfp = false,
+    preauth = false,
+    rrm = {0, 0, 0, 0, 0},
+    vht = true,
+    wds = false,
+    wmm = true,
+    wps = false
+  },
+  ["00:30:04:1a:bf:44"] = {
+    aid = 5,
+    assoc = true,
+    auth = true,
+    authorized = true,
+    ht = true,
+    mfp = false,
+    preauth = false,
+    rrm = {0, 0, 0, 0, 0},
+    vht = true,
+    wds = false,
+    wmm = true,
+    wps = false
+  }
+}
+
+test_data.exclude_wifi_mac = {
+  ["98:3b:8f:98:b1:fc"] = true ,
+  ["20:a6:0c:b2:da:11"] = true ,
+  ["00:30:04"] = true
+}
+
 test_data.wlan2_clients = {}
 
 test_data.wlan0_iwinfo = {
@@ -415,6 +494,38 @@ test_data.parsed_clients = {
     authorized = true,
     ht = true,
     mac = "20:a6:0c:b2:da:10",
+    mfp = false,
+    preauth = false,
+    rrm = {0, 0, 0, 0, 0},
+    vht = true,
+    wds = false,
+    wmm = true,
+    wps = false
+  }
+}
+
+test_data.exclude_parsed_clients = {
+  {
+    aid = 2,
+    assoc = true,
+    auth = true,
+    authorized = true,
+    ht = true,
+    mac = "20:a6:0c:b2:da:10",
+    mfp = false,
+    preauth = false,
+    rrm = {0, 0, 0, 0, 0},
+    vht = true,
+    wds = false,
+    wmm = true,
+    wps = false
+  }, {
+    aid = 1,
+    assoc = true,
+    auth = true,
+    authorized = true,
+    ht = true,
+    mac = "98:3b:8f:98:b1:fb",
     mfp = false,
     preauth = false,
     rrm = {0, 0, 0, 0, 0},
