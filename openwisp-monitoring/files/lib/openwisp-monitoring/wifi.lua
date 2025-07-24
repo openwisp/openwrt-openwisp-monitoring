@@ -32,7 +32,13 @@ function wifi.parse_hostapd_clients(clients,exclude_mac)
     exclude_mac = {}
   end
   for mac, properties in pairs(clients) do
-    if not exclude_mac[mac] then
+    exclude_mac_b = false
+    for emac in pairs(exclude_mac) do
+      if string.find(mac,emac) == 1 then
+        exclude_mac_b = true
+      end
+    end
+    if not exclude_mac_b then
       properties.mac = mac
       table.insert(data, properties)
     end
@@ -46,7 +52,13 @@ function wifi.parse_iwinfo_clients(clients,exclude_mac)
     exclude_mac = {}
   end
   for _, p in pairs(clients) do
-    if not exclude_mac[p.mac] then
+    exclude_mac_b = false
+    for emac in pairs(exclude_mac) do
+      if string.find(p.mac,emac) == 1 then
+        exclude_mac_b = true
+      end
+    end
+    if not exclude_mac_b then
       local client = {}
       client.mac = p.mac
       client.ht = p.rx.ht
