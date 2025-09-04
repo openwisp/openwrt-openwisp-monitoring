@@ -12,6 +12,8 @@ PKG_BUILD_DIR:=$(BUILD_DIR)/$(PKG_NAME)/$(PKG_SOURCE_SUBDIR)
 PKG_MAINTAINER:=Federico Capoano <f.capoano@openwisp.io>
 PKG_LICENSE:=GPL-3.0-or-later
 
+PKG_CONFIG_DEPENDS:=CONFIG_NETJSON_MONITORING_IWINFO
+
 include $(INCLUDE_DIR)/package.mk
 
 define Package/openwisp-monitoring
