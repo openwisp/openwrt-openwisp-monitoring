@@ -14,7 +14,9 @@ UCI configuration options should be placed in
 - ``monitored_interfaces``: Specifies the interfaces to be monitored.
   Defaults to ``*``, meaning all interfaces.
 - ``interval``: Sets the interval in seconds for the agent to send data to
-  the server. The default is ``300`` seconds.
+  the server. The default is ``300`` seconds. If changed, it's **highly
+  advised** to update the :ref:`monitoring_tolerance_interval` setting on
+  the server as well.
 - ``verbose_mode``: Can be enabled by setting to ``1`` to assist in
   :doc:`debugging <debugging>`. The default is ``0`` (disabled).
 - ``required_memory``: Minimum available memory required to temporarily
