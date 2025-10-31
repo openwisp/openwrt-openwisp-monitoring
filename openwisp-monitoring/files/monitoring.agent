@@ -21,10 +21,10 @@ show_help() {
 	printf "  --capath <directory>\t\t\t: Value passed to curl --capath argument.\n"
 	printf "OpenWISP Monitoring Config options:\n"
 	printf "  --interval <time>\t\t\t: Time in seconds after which data should be sent/collected.\n"
-	printf "  --monitored-interfaces <interfaces>\t: Interfaces that needs to be monitored.\n"
-	printf "  --verbose-mode <0, 1>\t\t\t: Run agent in verbose mode.\n"
-	printf "  --required-memory <0-1>\t\t: Fraction of total memory that should be available to collect data.\n"
-	printf "  --max-retries <max-retries-count>\t: No. of time agent should retry to send data.\n"
+	printf "  --monitored_interfaces <interfaces>\t: Interfaces that needs to be monitored.\n"
+	printf "  --verbose_mode <0, 1>\t\t\t: Run agent in verbose mode.\n"
+	printf "  --required_memory <0-1>\t\t: Fraction of total memory that should be available to collect data.\n"
+	printf "  --max_retries <max-retries-count>\t: No. of time agent should retry to send data.\n"
 	exit 0
 }
 
@@ -150,7 +150,14 @@ send_data() {
 				gzip -d "$file"
 			fi
 			filename="$TMP_DIR/$filename"
-			data=$(cat "$filename")
+			# check if the data file exist
+			if [ -f "$filename" ]; then
+				data=$(cat "$filename")
+			else
+				[ "$VERBOSE_MODE" -eq "1" ] && logger -s "data file $filename not found." \
+					-p daemon.info
+				continue
+			fi
 			while true; do
 				if [ "$failures" -eq "$MAX_RETRIES" ]; then
 					[ -f "$RESPONSE_FILE" ] && error_message="\"$(cat "$RESPONSE_FILE")\"" || error_message='"".'

@@ -32,7 +32,7 @@ function wifi.parse_hostapd_clients(clients)
     properties.mac = mac
     table.insert(data, properties)
   end
-  return data
+  if #data > 0 then return data end
 end
 
 function wifi.parse_iwinfo_clients(clients)
@@ -62,7 +62,7 @@ function wifi.parse_iwinfo_clients(clients)
     end
     table.insert(data, client)
   end
-  return data
+  if #data > 0 then return data end
 end
 
 -- takes ubus wireless.status clients output and converts it to NetJSON

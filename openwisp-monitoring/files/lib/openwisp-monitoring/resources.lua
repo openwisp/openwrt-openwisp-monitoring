@@ -6,7 +6,7 @@ local resources = {}
 
 function resources.parse_disk_usage()
   local disk_usage_info = {}
-  local disk_usage_file = io.popen('df')
+  local disk_usage_file = io.popen('df -P')
   local disk_usage = disk_usage_file:read("*a")
   disk_usage_file:close()
   for _, line in ipairs(utils.split(disk_usage, "\n")) do

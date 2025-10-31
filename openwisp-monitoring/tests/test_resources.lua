@@ -43,7 +43,7 @@ function TestNetJSON.test_resources()
         f:write('0.37 0.95 1.23 2/873 56899\n')
         f:seek('set', 0)
         return f
-      elseif arg == 'df' then
+      elseif arg == 'df -P' then
         return io.open(test_file_dir .. 'disk_usage.txt')
       elseif arg == 'cat /proc/cpuinfo | grep -c processor' then
         f:write('8')

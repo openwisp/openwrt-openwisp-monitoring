@@ -104,14 +104,18 @@ function interfaces.get_addresses(name)
   for _, interface in pairs(interface_list) do
     if interface['l3_device'] == name then
       for _, address in pairs(interface['ipv4-address']) do
-        table.insert(addresses_list, address['address'])
-        local new_address = interfaces.new_address_array(address, interface, 'ipv4')
-        table.insert(addresses, new_address)
+        if not utils.has_value(addresses_list, address['address']) then
+          table.insert(addresses_list, address['address'])
+          local new_address = interfaces.new_address_array(address, interface, 'ipv4')
+          table.insert(addresses, new_address)
+        end
       end
       for _, address in pairs(interface['ipv6-address']) do
-        table.insert(addresses_list, address['address'])
-        local new_address = interfaces.new_address_array(address, interface, 'ipv6')
-        table.insert(addresses, new_address)
+        if not utils.has_value(addresses_list, address['address']) then
+          table.insert(addresses_list, address['address'])
+          local new_address = interfaces.new_address_array(address, interface, 'ipv6')
+          table.insert(addresses, new_address)
+        end
       end
     end
   end
