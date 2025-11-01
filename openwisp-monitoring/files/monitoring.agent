@@ -25,8 +25,8 @@ show_help() {
 	printf "  --verbose_mode <0, 1>\t\t\t: Run agent in verbose mode.\n"
 	printf "  --required_memory <0-1>\t\t: Fraction of total memory that should be available to collect data.\n"
 	printf "  --max_retries <max-retries-count>\t: No. of time agent should retry to send data.\n"
-	printf "  --ignore-wifi <interfaces>\t: Interfaces that ignored for wifi clients.\n"
-	printf "  --ignore-wifi-mac <mac>\t: Space seperated list off Client MAC addresses that will be ignored.\n"
+	printf "  --ignore_wifi <interfaces>\t: Interfaces that ignored for wifi clients.\n"
+	printf "  --ignore_wifi_mac <mac>\t: Space seperated list off Client MAC addresses that will be ignored.\n"
 	exit 0
 }
 
