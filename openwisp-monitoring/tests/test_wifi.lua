@@ -87,6 +87,8 @@ function TestWifi.test_netjson_clients()
   luaunit.assertEquals(
     wifi_functions.netjson_clients(wifi_data.mesh1_clients.results, true),
     wifi_data.mesh1_parsed_clients)
+  luaunit.assertEquals(wifi_functions.netjson_clients(wifi_data.exlude_wlan1_clients, false, wifi_data.exclude_wifi_mac),
+    wifi_data.exclude_parsed_clients)
 end
 
 function TestWifi.test_needs_inversion()
