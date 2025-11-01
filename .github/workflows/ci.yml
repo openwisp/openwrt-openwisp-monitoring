@@ -91,7 +91,7 @@ jobs:
 
       - name: Upload packages as artifacts
         if: ${{ github.event_name=='push' }}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: Packages
           path: "${{ env.DOWNLOADS_DIR }}/${{ env.START_TIME }}"
