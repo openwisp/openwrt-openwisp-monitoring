@@ -13,19 +13,21 @@ jobs:
     name: QA-Checks and Tests
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
         with:
           ref: ${{ github.event.pull_request.head.sha }}
 
       - name: Set up Python
         uses: actions/setup-python@v6
         with:
-          python-version: "3.x"
+          # This limitation can be removed once docstrfmt
+          # is upgraded to 2.0.0 or higher (in openwisp-utils).
+          python-version: "3.13"
 
       - name: Install dependencies
         id: deps
         run: |
-          pip install "openwisp-utils[qa]~=1.2.0"
+          pip install "openwisp-utils[qa]~=1.2.1"
           sudo ./install-dev.sh
 
       - name: QA-Checks
@@ -61,7 +63,7 @@ jobs:
       CORES: 2
 
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
         with:
           ref: ${{ github.event.pull_request.head.sha }}
 
@@ -89,7 +91,7 @@ jobs:
 
       - name: Upload packages as artifacts
         if: ${{ github.event_name=='push' }}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: Packages
           path: "${{ env.DOWNLOADS_DIR }}/${{ env.START_TIME }}"
