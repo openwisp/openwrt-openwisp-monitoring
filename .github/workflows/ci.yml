@@ -20,12 +20,14 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v6
         with:
-          python-version: "3.x"
+          # This limitation can be removed once docstrfmt
+          # is upgraded to 2.0.0 or higher (in openwisp-utils).
+          python-version: "3.13"
 
       - name: Install dependencies
         id: deps
         run: |
-          pip install "openwisp-utils[qa]~=1.2.0"
+          pip install "openwisp-utils[qa]~=1.2.1"
           sudo ./install-dev.sh
 
       - name: QA-Checks
