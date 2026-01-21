@@ -94,12 +94,72 @@ test_data.wireless_status = {
         },
         vlans = {},
         stations = {}
+      }, {
+        section = "wifi_wlan2",
+        ifname = "wlan2",
+        config = {
+          ifname = "wlan2",
+          encryption = "psk2",
+          key = "password",
+          ssid = "ssid",
+          ieee80211r = true,
+          ft_over_ds = true,
+          ft_psk_generate_local = true,
+          rsn_preauth = true,
+          mode = "ap",
+          network = {"lan"}
+        },
+        vlans = {},
+        stations = {}
       }
     }
   }
 }
 
-test_data.wlan0_clients = {}
+test_data.wlan0_clients = {
+  results = {
+    {
+      mac = "22:33:2F:9A:14:9D",
+      signal = -3,
+      signal_avg = -3,
+      noise = 0,
+      inactive = 12100,
+      connected_time = 1376,
+      thr = 4500,
+      authorized = true,
+      authenticated = true,
+      preamble = "long",
+      wme = true,
+      mfp = false,
+      tdls = false,
+      ["mesh llid"] = 0,
+      ["mesh plid"] = 0,
+      ["mesh plink"] = "",
+      ["mesh local PS"] = "",
+      ["mesh peer PS"] = "",
+      ["mesh non-peer PS"] = "",
+      rx = {
+        drop_misc = 64,
+        packets = 26932,
+        bytes = 2767915,
+        ht = false,
+        vht = false,
+        mhz = 20,
+        rate = 6000
+      },
+      tx = {
+        failed = 0,
+        retries = 0,
+        packets = 57,
+        bytes = 2582,
+        ht = false,
+        vht = false,
+        mhz = 20,
+        rate = 6000
+      }
+    }
+  }
+}
 
 test_data.wlan1_clients = {
   ["20:a6:0c:b2:da:10"] = {
@@ -132,6 +192,8 @@ test_data.wlan1_clients = {
   }
 }
 
+test_data.wlan2_clients = {}
+
 test_data.wlan0_iwinfo = {
   phy = "phy0",
   ssid = "OpenWRT",
@@ -154,6 +216,18 @@ test_data.wlan1_iwinfo = {
   noise = 0,
   frequency = 5180,
   signal = -33
+}
+
+test_data.wlan2_iwinfo = {
+  phy = "phy2",
+  ssid = "OpenWRT2",
+  mode = "Client",
+  channel = nil,
+  txpower = 20,
+  country = "00",
+  noise = 0,
+  frequency = 4472,
+  signal = -32
 }
 
 test_data.mesh0_iwinfo = {
@@ -242,6 +316,7 @@ test_data.mesh0_clients = {
         bytes = 280218466,
         ht = false,
         vht = true,
+        he = false,
         mhz = 80,
         rate = 195000,
         mcs = 1,
@@ -255,6 +330,7 @@ test_data.mesh0_clients = {
         bytes = 124429140,
         ht = false,
         vht = true,
+        he = false,
         mhz = 80,
         rate = 195000,
         mcs = 1,
@@ -293,6 +369,7 @@ test_data.mesh1_clients = {
         bytes = 445412093,
         ht = true,
         vht = false,
+        he = false,
         mhz = 20,
         rate = 6500,
         mcs = 0,
@@ -352,11 +429,20 @@ test_data.mesh0_parsed_clients = {
   {
     auth = true,
     authorized = true,
+    he = false,
     ht = false,
     mac = "00:00:00:00:00:00",
+    mesh_llid = 0,
+    mesh_local_ps = "ACTIVE",
+    mesh_non_peer_ps = "ACTIVE",
+    mesh_peer_ps = "ACTIVE",
+    mesh_plid = 0,
+    mesh_plink = "ESTAB",
     mfp = true,
     noise = -87,
     signal = -76,
+    signal_avg = -76,
+    throughput = 148687000,
     vht = true,
     wmm = true
   }
@@ -366,11 +452,20 @@ test_data.mesh1_parsed_clients = {
   {
     auth = true,
     authorized = true,
+    he = false,
     ht = true,
     mac = "00:00:00:00:00:00",
+    mesh_llid = 0,
+    mesh_local_ps = "ACTIVE",
+    mesh_non_peer_ps = "ACTIVE",
+    mesh_peer_ps = "ACTIVE",
+    mesh_plid = 0,
+    mesh_plink = "ESTAB",
     mfp = true,
     noise = 0,
     signal = -67,
+    signal_avg = -65,
+    throughput = 4500000,
     vht = false,
     wmm = true
   }
@@ -412,6 +507,26 @@ test_data.wlan1_interface = {
     noise = 0,
     signal = -33,
     ssid = "ssid",
+    tx_power = 20
+  }
+}
+
+test_data.wlan2_interface = {
+  mac = "00:00:00:00:00:00",
+  mtu = 1500,
+  multicast = true,
+  name = "wlan2",
+  txqueuelen = 1000,
+  type = "wireless",
+  up = true,
+  wireless = {
+    channel = nil,
+    country = "00",
+    frequency = 4472,
+    mode = "station",
+    noise = 0,
+    signal = -32,
+    ssid = "OpenWRT2",
     tx_power = 20
   }
 }

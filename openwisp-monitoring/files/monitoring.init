@@ -37,6 +37,8 @@ start_service() {
 	add_option "http" "--url" url
 	add_option "http" "--uuid" uuid
 	add_option "http" "--key" key
+	add_option "http" "--cacert" cacert
+	add_option "http" "--capath" capath
 	add_option "http" "--verify_ssl" verify_ssl "1"
 
 	config_load openwisp-monitoring

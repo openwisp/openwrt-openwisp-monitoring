@@ -17,17 +17,19 @@ show_help() {
 	printf "  --uuid <uuid>\t\t\t\t: UUID of the device.\n"
 	printf "  --key <key>\t\t\t\t: Key for the device.\n"
 	printf "  --verify_ssl <0, 1>\t\t\t: Whether SSL Authentication should be enabled or not.\n"
+	printf "  --cacert <file>\t\t\t: Value passed to curl --cacert argument.\n"
+	printf "  --capath <directory>\t\t\t: Value passed to curl --capath argument.\n"
 	printf "OpenWISP Monitoring Config options:\n"
 	printf "  --interval <time>\t\t\t: Time in seconds after which data should be sent/collected.\n"
-	printf "  --monitored-interfaces <interfaces>\t: Interfaces that needs to be monitored.\n"
-	printf "  --verbose-mode <0, 1>\t\t\t: Run agent in verbose mode.\n"
-	printf "  --required-memory <0-1>\t\t: Fraction of total memory that should be available to collect data.\n"
-	printf "  --max-retries <max-retries-count>\t: No. of time agent should retry to send data.\n"
+	printf "  --monitored_interfaces <interfaces>\t: Interfaces that needs to be monitored.\n"
+	printf "  --verbose_mode <0, 1>\t\t\t: Run agent in verbose mode.\n"
+	printf "  --required_memory <0-1>\t\t: Fraction of total memory that should be available to collect data.\n"
+	printf "  --max_retries <max-retries-count>\t: No. of time agent should retry to send data.\n"
 	exit 0
 }
 
 show_version() {
-	VERSION=$(cat /etc/openwisp-monitoring/VERSION)
+	VERSION=$(cat /usr/lib/openwisp-monitoring/VERSION)
 	echo "$(basename "$0") $VERSION"
 	exit 0
 }
@@ -64,7 +66,7 @@ time_to_seconds() {
 		|| { [ "${time%h}" -ge 1 ] 2>/dev/null && seconds=$((${time%h} * 3600)); } \
 		|| { [ "${time%d}" -ge 1 ] 2>/dev/null && seconds=$((${time%d} * 86400)); }
 
-	echo $seconds
+	echo "$seconds"
 	unset seconds
 	unset time
 }
@@ -116,6 +118,8 @@ set_url_and_curl() {
 	# shellcheck disable=SC1083
 	CURL_COMMAND="curl -s -w "%{http_code}" --output $RESPONSE_FILE"
 	[ "$VERIFY_SSL" -eq "0" ] && CURL_COMMAND="$CURL_COMMAND -k"
+	[ -n "$CACERT" ] && CURL_COMMAND="$CURL_COMMAND --cacert $CACERT"
+	[ -n "$CAPATH" ] && CURL_COMMAND="$CURL_COMMAND --capath $CAPATH"
 	[ "$VERBOSE_MODE" -eq "1" ] && CURL_COMMAND="$CURL_COMMAND -v"
 	MAX_RETRIES=${MAX_RETRIES:-5}
 	FAILING=0
@@ -146,6 +150,7 @@ handle_sigusr1() {
 }
 
 send_data() {
+	success=0
 	while true; do
 		for file in "$TMP_DIR"/*; do
 			if [ ! -f "$file" ]; then
@@ -172,7 +177,13 @@ send_data() {
 				gzip -d "$file"
 			fi
 			filename="$TMP_DIR/$filename"
-			data=$(cat "$filename")
+			# check if the data file exist
+			if [ -f "$filename" ]; then
+				data=$(cat "$filename")
+			else
+				log -i -v "data file $filename not found."
+				continue
+			fi
 			while true; do
 				if [ "$failures" -eq "$MAX_RETRIES" ]; then
 					[ -f "$RESPONSE_FILE" ] && error_message="\"$(cat "$RESPONSE_FILE")\"" || error_message='"".'
@@ -189,6 +200,7 @@ send_data() {
 				# send data
 				response_code=$($CURL_COMMAND -H "Content-Type: application/json" -d "$data" "$url")
 				if [ "$response_code" = "200" ]; then
+					success=$((success + 1))
 					log -i -v "Data sent successfully."
 					# check if agent was already failing or not to avoid repeating log messages
 					if [ "$FAILING" -eq "1" ]; then
@@ -207,11 +219,29 @@ send_data() {
 					timeout=$(/usr/sbin/openwisp-get-random-number 2 15)
 					log -w -v "Data not sent successfully. Retrying in $timeout seconds."
 					failures=$((failures + 1))
+					if [ "$response_code" = "404" ]; then
+						# If we get a HTTP 404 response, it could mean that the device has been deleted from OpenWISP
+						# Controller. We check if openwisp-config agent is running to determine if the device has been
+						# deleted. If openwisp-config agent is not running, the monitoring agent will also exit.
+						if ! pgrep -x "openwisp-config" >/dev/null; then
+							log -e -n "Giving up and shutting down: the device may have been deleted from OpenWISP Controller"
+							# get process id of the process collecting data
+							pid=$(pgrep -f "openwisp-monitoring.*--mode collect")
+							kill -SIGKILL "$pid"
+							exit 2
+						fi
+					fi
 					sleep "$timeout"
 				fi
 			done
 			# retry sending same data again in next cycle
 			[ "$failures" -eq "$MAX_RETRIES" ] && break
+			# pause for a random time between 1 and 5 seconds every
+			# 10 successful requests sent to avoid overload the server
+			if [ $((success % 10)) -eq 0 ]; then
+				pause_duration=$(/usr/sbin/openwisp-get-random-number 1 5)
+				sleep "$pause_duration"
+			fi
 		done
 	done
 }
@@ -268,6 +298,14 @@ main() {
 				;;
 			--verify_ssl)
 				export VERIFY_SSL="$2"
+				shift
+				;;
+			--capath)
+				export CAPATH="$2"
+				shift
+				;;
+			--cacert)
+				export CACERT="$2"
 				shift
 				;;
 			--interval)

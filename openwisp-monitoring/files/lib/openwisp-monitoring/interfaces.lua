@@ -67,6 +67,10 @@ local specialized_interfaces = {
       end
     end
 
+    if not utils.is_table_empty(info.signal.threshold) then
+      info.signal.threshold = nil
+    end
+
     return {type = 'modem-manager', mobile = info}
   end
 }
@@ -100,14 +104,18 @@ function interfaces.get_addresses(name)
   for _, interface in pairs(interface_list) do
     if interface['l3_device'] == name then
       for _, address in pairs(interface['ipv4-address']) do
-        table.insert(addresses_list, address['address'])
-        local new_address = interfaces.new_address_array(address, interface, 'ipv4')
-        table.insert(addresses, new_address)
+        if not utils.has_value(addresses_list, address['address']) then
+          table.insert(addresses_list, address['address'])
+          local new_address = interfaces.new_address_array(address, interface, 'ipv4')
+          table.insert(addresses, new_address)
+        end
       end
       for _, address in pairs(interface['ipv6-address']) do
-        table.insert(addresses_list, address['address'])
-        local new_address = interfaces.new_address_array(address, interface, 'ipv6')
-        table.insert(addresses, new_address)
+        if not utils.has_value(addresses_list, address['address']) then
+          table.insert(addresses_list, address['address'])
+          local new_address = interfaces.new_address_array(address, interface, 'ipv6')
+          table.insert(addresses, new_address)
+        end
       end
     end
   end
@@ -155,6 +163,20 @@ function interfaces.get_addresses(name)
   return addresses
 end
 
+function interfaces.get_network_devices()
+  local devices = {}
+  uci_cursor:foreach('network', 'device', function(uci_device)
+    local device = {}
+    for key, value in pairs(uci_device) do
+      if not string.match(key, '^%.') then device[key] = value end
+    end
+    devices[uci_device['name']] = device
+  end)
+  return devices
+end
+
+local network_devices = interfaces.get_network_devices()
+
 function interfaces.get_interface_info(name, netjson_interface)
   local info = {dns_search = nil, dns_servers = nil}
   for _, interface in pairs(interface_data['interface']) do
@@ -166,7 +188,14 @@ function interfaces.get_interface_info(name, netjson_interface)
         info.dns_servers = interface['dns-server']
       end
       if netjson_interface.type == 'bridge' then
-        info.stp = uci_cursor.get('network', interface['interface'], 'stp') == '1'
+        -- On OpenWrt > 21, "stp" is present in the "device" section
+        local device_name = interface['device']
+        if device_name and network_devices[device_name] then
+          info.stp = network_devices[device_name]['stp']
+        else
+          info.stp = uci_cursor.get('network', interface['interface'], 'stp')
+        end
+        info.stp = info.stp == '1'
       end
       -- collect specialized info if available
       local specialized_info = specialized_interfaces[interface.proto]

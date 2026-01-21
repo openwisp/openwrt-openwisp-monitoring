@@ -9,4 +9,13 @@ monitoring.resources = require('openwisp-monitoring.resources')
 monitoring.utils = require('openwisp-monitoring.utils')
 monitoring.wifi = require('openwisp-monitoring.wifi')
 
+local success, iwinfo = pcall(require, 'openwisp-monitoring.iwinfo')
+if success then
+  monitoring.iwinfo = iwinfo
+else
+  monitoring.iwinfo = {
+    enabled = false
+  }
+end
+
 return monitoring

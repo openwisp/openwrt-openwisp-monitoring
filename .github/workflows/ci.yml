@@ -1,4 +1,4 @@
-name: OpenWRT OPENWISP MONITORING CI Build
+name: OpenWrt OpenWISP Monitoring CI Build
 
 on:
   push:
@@ -11,22 +11,24 @@ on:
 jobs:
   tests:
     name: QA-Checks and Tests
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v6
         with:
           ref: ${{ github.event.pull_request.head.sha }}
 
       - name: Set up Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v6
         with:
-          python-version: 3.7
+          # This limitation can be removed once docstrfmt
+          # is upgraded to 2.0.0 or higher (in openwisp-utils).
+          python-version: "3.13"
 
-      - name: Install Python dependencies
-        run: pip install openwisp-utils[qa]>=0.7
-
-      - name: Install Development dependencies
-        run: sudo ./install-dev.sh
+      - name: Install dependencies
+        id: deps
+        run: |
+          pip install "openwisp-utils[qa]~=1.2.1"
+          sudo ./install-dev.sh
 
       - name: QA-Checks
         run: ./run-qa-checks
@@ -34,16 +36,18 @@ jobs:
           CI: 1
 
       - name: Run sh-checker
-        uses: luizm/action-sh-checker@master
+        uses: luizm/action-sh-checker@v0.9.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           sh_checker_comment: true
 
       - name: Tests
+        if: ${{ !cancelled() && steps.deps.conclusion == 'success' }}
         run: ./runtests
 
       - name: Upload Coverage
+        if: ${{ success() }}
         run: |
           cd openwisp-monitoring/tests
           luacov-coveralls -v
@@ -52,25 +56,24 @@ jobs:
 
   build:
     name: Build and upload package as artifacts
-    needs: tests
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
     env:
-      BUILD_DIR: '/home/runner/work/build'
-      DOWNLOADS_DIR: '/home/runner/work/downloads'
+      BUILD_DIR: "/home/runner/work/build"
+      DOWNLOADS_DIR: "/home/runner/work/downloads"
       CORES: 2
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v6
         with:
           ref: ${{ github.event.pull_request.head.sha }}
 
-      - name: Cache OpenWRT dependencies
+      - name: Cache OpenWrt dependencies
         id: cache
-        uses: actions/cache@v2
+        uses: actions/cache@v5
         env:
           cache-name: cache-openwrt-dependencies
         with:
-          path: '/home/runner/work/build'
+          path: "/home/runner/work/build"
           key: ${{ runner.os }}-build-${{ env.cache-name }}
 
       - name: Set Environment
@@ -87,17 +90,24 @@ jobs:
           CI_CACHE: ${{ steps.cache.outputs.cache-hit }}
 
       - name: Upload packages as artifacts
-        uses: actions/upload-artifact@v2
+        if: ${{ github.event_name=='push' }}
+        uses: actions/upload-artifact@v6
         with:
           name: Packages
           path: "${{ env.DOWNLOADS_DIR }}/${{ env.START_TIME }}"
 
-      - name: Setup Google Cloud
-        uses: google-github-actions/setup-gcloud@v0
+      - name: Google Cloud Auth
+        if: ${{ github.event_name=='push' }}
+        uses: "google-github-actions/auth@v3"
         with:
-          service_account_key: ${{ secrets.GCS_DOWNLOADS_SERVICE_ACCOUNT_JSON }}
           project_id: ${{ secrets.GCS_PROJECT_ID }}
-          export_default_credentials: true
+          credentials_json: ${{ secrets.GCS_DOWNLOADS_SERVICE_ACCOUNT_JSON }}
+
+      - name: Google Cloud Setup
+        if: ${{ github.event_name=='push' }}
+        uses: google-github-actions/setup-gcloud@v3
+        with:
+          project_id: ${{ secrets.GCS_PROJECT_ID }}
 
       - name: Upload compiled packages to downloads.openwisp.io
         if: ${{ github.event_name=='push' }}

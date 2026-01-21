@@ -261,6 +261,56 @@ test_data.wireless = {
       rx_fifo_errors = 0,
       tx_carrier_errors = 0
     }
+  },
+  wlan2 = {
+    external = true,
+    present = true,
+    type = "Network device",
+    up = true,
+    carrier = true,
+    mtu = 1500,
+    mtu6 = 1500,
+    macaddr = "00:00:00:00:00:00",
+    txqueuelen = 1000,
+    ipv6 = false,
+    promisc = false,
+    rpfilter = 0,
+    acceptlocal = false,
+    igmpversion = 0,
+    mldversion = 0,
+    neigh4reachabletime = 30000,
+    neigh6reachabletime = 30000,
+    neigh4gcstaletime = 60,
+    neigh6gcstaletime = 60,
+    neigh4locktime = 100,
+    dadtransmits = 1,
+    multicast = true,
+    sendredirects = true,
+    statistics = {
+      collisions = 0,
+      rx_frame_errors = 0,
+      tx_compressed = 0,
+      multicast = 0,
+      rx_length_errors = 0,
+      tx_dropped = 0,
+      rx_bytes = 25969,
+      rx_missed_errors = 0,
+      tx_errors = 0,
+      rx_compressed = 0,
+      rx_over_errors = 0,
+      tx_fifo_errors = 0,
+      rx_crc_errors = 0,
+      rx_packets = 0,
+      tx_heartbeat_errors = 0,
+      rx_dropped = 0,
+      tx_aborted_errors = 0,
+      tx_packets = 2367519,
+      rx_errors = 0,
+      tx_bytes = 531596852,
+      tx_window_errors = 0,
+      rx_fifo_errors = 0,
+      tx_carrier_errors = 0
+    }
   }
 }
 
@@ -271,7 +321,9 @@ test_data.devices = {
     type = "bridge",
     up = true,
     carrier = true,
-    ["bridge-members"] = {"lan1", "lan2", "mesh0", "mesh1", "wan", "wlan0", "wlan1"},
+    ["bridge-members"] = {
+      "lan1", "lan2", "mesh0", "mesh1", "wan", "wlan0", "wlan1", "wlan2"
+    },
     mtu = 1500,
     mtu6 = 1500,
     macaddr = "00:00:00:00:00:00",

@@ -37,7 +37,8 @@ env.uci = {
   cursor = function()
     return {
       get_all = function(...) return nil end,
-      get = function(...) return nil end
+      get = function(...) return nil end,
+      foreach = function(...) return nil end
     }
   end
 }
