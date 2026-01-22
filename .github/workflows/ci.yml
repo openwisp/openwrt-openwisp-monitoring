@@ -69,7 +69,7 @@ jobs:
 
       - name: Cache OpenWrt dependencies
         id: cache
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         env:
           cache-name: cache-openwrt-dependencies
         with:
@@ -91,7 +91,7 @@ jobs:
 
       - name: Upload packages as artifacts
         if: ${{ github.event_name=='push' }}
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: Packages
           path: "${{ env.DOWNLOADS_DIR }}/${{ env.START_TIME }}"
