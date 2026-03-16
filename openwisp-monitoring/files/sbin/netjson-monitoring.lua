@@ -60,6 +60,18 @@ if traffic_monitored and traffic_monitored ~= '*' then
   traffic_monitored = monitoring.utils.split(traffic_monitored, ' ')
   for _, name in pairs(traffic_monitored) do include_stats[name] = true end
 end
+local ignore_wifi = arg[2]
+local exclude_wifi = {}
+if ignore_wifi then
+  ignore_wifi = monitoring.utils.split(ignore_wifi, ' ')
+  for _, wifi_name in pairs(ignore_wifi) do exclude_wifi[wifi_name] = true end
+end
+local ignore_wifi_mac = arg[3]
+local exclude_wifi_mac = {}
+if ignore_wifi_mac then
+  ignore_wifi_mac = monitoring.utils.split(ignore_wifi_mac, ' ')
+  for _, wifi_mac in pairs(ignore_wifi_mac) do exclude_wifi_mac[wifi_mac] = true end
+end
 
 -- collect device data
 local network_status = ubus:call('network.device', 'status', {})
@@ -70,7 +82,7 @@ local host_interfaces = {}
 local dns_servers = {}
 local dns_search = {}
 
-local function get_wireless_netjson_interface(radio, name, iwinfo)
+local function get_wireless_netjson_interface(radio, name, iwinfo, no_clients, exclude_mac)
   local clients = nil
   local is_mesh = false
   local htmode = radio.config.htmode
@@ -99,17 +111,19 @@ local function get_wireless_netjson_interface(radio, name, iwinfo)
       bitrate = iwinfo.bitrate,
       htmode = htmode
     }
-    if iwinfo.mode == 'Ad-Hoc' or iwinfo.mode == 'Mesh Point' or iwinfo.mode ==
-      'Client' then
-      clients = ubus:call('iwinfo', 'assoclist', {device = name}).results
-      is_mesh = true
-    else
-      local hostapd_output = ubus:call('hostapd.' .. name, 'get_clients', {})
-      if hostapd_output then clients = hostapd_output.clients end
-    end
-    if not monitoring.utils.is_table_empty(clients) then
-      netjson_interface.wireless.clients = monitoring.wifi.netjson_clients(clients,
-        is_mesh)
+    if no_clients == false then
+      if iwinfo.mode == 'Ad-Hoc' or iwinfo.mode == 'Mesh Point' or iwinfo.mode ==
+        'Client' then
+        clients = ubus:call('iwinfo', 'assoclist', {device = name}).results
+        is_mesh = true
+      else
+        local hostapd_output = ubus:call('hostapd.' .. name, 'get_clients', {})
+        if hostapd_output then clients = hostapd_output.clients end
+      end
+      if not monitoring.utils.is_table_empty(clients) then
+        netjson_interface.wireless.clients = monitoring.wifi.netjson_clients(clients,
+          is_mesh, exclude_mac)
+      end
     end
   end
   return netjson_interface
@@ -125,7 +139,7 @@ for _, radio in pairs(wireless_status) do
       if monitoring.iwinfo.enabled then
         iwinfo = ubus:call('iwinfo', 'info', {device = name})
       end
-      wireless_interfaces[name] = get_wireless_netjson_interface(radio, name, iwinfo)
+      wireless_interfaces[name] = get_wireless_netjson_interface(radio, name, iwinfo, exclude_wifi[name] or false, exclude_wifi_mac)
     end
   end
 end
