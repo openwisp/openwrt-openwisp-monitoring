@@ -202,4 +202,33 @@ function TestNetJSON.test_virtual_interface_type()
   luaunit.assertEquals(netjson["interfaces"][4]["name"], "wg0")
 end
 
+function TestNetJSON.test_no_wireless_ubus_object()
+  -- simulate a container with no radios: network.wireless is not registered
+  package.loaded.ubus = {
+    connect = function()
+      return {
+        call = function(...)
+          local arg = {...}
+          if arg[2] == 'system' and arg[3] == 'board' then
+            return {hostname = "08-00-27-56-92-F5"}
+          elseif arg[2] == 'system' and arg[3] == 'info' then
+            return {memory = nil, local_time = nil, uptime = nil, swap = nil}
+          elseif arg[2] == 'network.device' and arg[3] == 'status' then
+            return require('test_files/network_data').devices
+          elseif arg[2] == 'network.interface' and arg[3] == 'dump' then
+            return require('test_files/interface_data').interface_data
+          elseif arg[2] == 'network.wireless' then
+            return nil
+          else
+            return {}
+          end
+        end
+      }
+    end
+  }
+  local netjson_file = assert(loadfile('../files/sbin/netjson-monitoring.lua'))
+  local netjson = cjson.decode(netjson_file('*'))
+  luaunit.assertNotNil(netjson["interfaces"])
+end
+
 os.exit(luaunit.LuaUnit.run())
