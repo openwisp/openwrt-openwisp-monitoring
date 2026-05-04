@@ -1,6 +1,18 @@
 Change log
 ==========
 
+0.3.1 [2026-05-04]
+------------------
+
+Bugfixes
+~~~~~~~~
+
+- Avoid failure if ubus objects not registered
+- Fixed pgrep returning multiple process IDs `#157
+  <https://github.com/openwisp/openwrt-openwisp-monitoring/issues/157>`_
+- Fixed cmd line too long: pass file path to curl `#159
+  <https://github.com/openwisp/openwrt-openwisp-monitoring/issues/159>`_
+
 0.3.0 [2025-10-27]
 ------------------
 
