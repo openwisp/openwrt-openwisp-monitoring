@@ -101,7 +101,8 @@ local function get_wireless_netjson_interface(radio, name, iwinfo)
     }
     if iwinfo.mode == 'Ad-Hoc' or iwinfo.mode == 'Mesh Point' or iwinfo.mode ==
       'Client' then
-      clients = ubus:call('iwinfo', 'assoclist', {device = name}).results
+      local assoclist = ubus:call('iwinfo', 'assoclist', {device = name})
+      clients = assoclist and assoclist.results
       is_mesh = true
     else
       local hostapd_output = ubus:call('hostapd.' .. name, 'get_clients', {})
@@ -117,7 +118,7 @@ end
 
 -- collect relevant wireless interface stats
 -- (traffic and connected clients)
-for _, radio in pairs(wireless_status) do
+for _, radio in pairs(wireless_status or {}) do
   for _, interface in ipairs(radio.interfaces) do
     local name = interface.ifname
     if name and not monitoring.utils.is_excluded(name) then
@@ -131,7 +132,7 @@ for _, radio in pairs(wireless_status) do
 end
 
 -- collect interface stats
-for name, interface in pairs(network_status) do
+for name, interface in pairs(network_status or {}) do
   -- only collect data from iterfaces which have not been excluded
   if not monitoring.utils.is_excluded(name) then
     local netjson_interface = {
