@@ -54,7 +54,11 @@ log() {
 			;;
 	esac
 
-	logger -s "$@" -p "$level" -t openwisp-monitoring
+	if [ "$VERBOSE_MODE" -eq "1" ]; then
+		logger "$@" -p "$level" -t openwisp-monitoring
+	else
+		logger -s "$@" -p "$level" -t openwisp-monitoring
+	fi
 }
 
 time_to_seconds() {
@@ -208,9 +212,15 @@ send_data() {
 					fi
 					# remove saved data
 					rm -f "$filename"
+					# pause for a random time between 1 and 5 seconds every
+					# 10 successful requests sent to avoid overload the server
+					if [ $((success % 10)) -eq 0 ]; then
+						pause_duration=$(/usr/sbin/openwisp-get-random-number 1 5)
+						sleep "$pause_duration"
+					fi
 					break
 				elif [ "$response_code" = "400" ]; then
-					log -i -n "Data not sent successfully (HTTP status $response_code), discarding data."
+					log -e -n "Data not sent successfully (HTTP status $response_code), discarding data."
 					rm -f "$filename"
 					break
 				else
@@ -234,12 +244,6 @@ send_data() {
 			done
 			# retry sending same data again in next cycle
 			[ "$failures" -eq "$MAX_RETRIES" ] && break
-			# pause for a random time between 1 and 5 seconds every
-			# 10 successful requests sent to avoid overload the server
-			if [ $((success % 10)) -eq 0 ]; then
-				pause_duration=$(/usr/sbin/openwisp-get-random-number 1 5)
-				sleep "$pause_duration"
-			fi
 		done
 	done
 }
