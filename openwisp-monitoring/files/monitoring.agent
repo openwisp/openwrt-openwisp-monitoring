@@ -138,7 +138,7 @@ save_data() {
 			log -i -v "Data saved temporarily."
 		fi
 		# get process id of the process sending data
-		pid=$(pgrep -f "openwisp-monitoring.*--mode send")
+		pid=$(pgrep -P 1 -f "openwisp-monitoring.*--mode send")
 		kill -SIGUSR1 "$pid"
 		sleep "$INTERVAL"
 	done
@@ -178,9 +178,7 @@ send_data() {
 			fi
 			filename="$TMP_DIR/$filename"
 			# check if the data file exist
-			if [ -f "$filename" ]; then
-				data=$(cat "$filename")
-			else
+			if ! [ -f "$filename" ]; then
 				log -i -v "data file $filename not found."
 				continue
 			fi
@@ -198,7 +196,7 @@ send_data() {
 					break
 				fi
 				# send data
-				response_code=$($CURL_COMMAND -H "Content-Type: application/json" -d "$data" "$url")
+				response_code=$($CURL_COMMAND -H "Content-Type: application/json" -d "@$filename" "$url")
 				if [ "$response_code" = "200" ]; then
 					success=$((success + 1))
 					log -i -v "Data sent successfully."
@@ -226,7 +224,7 @@ send_data() {
 						if ! pgrep -x "openwisp-config" >/dev/null; then
 							log -e -n "Giving up and shutting down: the device may have been deleted from OpenWISP Controller"
 							# get process id of the process collecting data
-							pid=$(pgrep -f "openwisp-monitoring.*--mode collect")
+							pid=$(pgrep -P 1 -f "openwisp-monitoring.*--mode collect")
 							kill -SIGKILL "$pid"
 							exit 2
 						fi
