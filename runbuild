@@ -58,16 +58,19 @@ fi
 make -j"$CORES" package/openwisp-monitoring/compile \
 	|| make -j1 V=s package/openwisp-monitoring/compile || exit 1
 
-# generate package index and publish checksum for package verification
+# Publish sha256.manifest (renamed from Package.manifest) for integrity verification
 make package/index V=s
-PACKAGES_FILE="$BUILD_DIR/openwrt/bin/packages/$COMPILE_TARGET/openwisp_monitoring/Packages"
-
-if [ ! -f "$PACKAGES_FILE" ]; then
-	echo "ERROR: Packages file not found at $PACKAGES_FILE"
+PACKAGES_DIR="$BUILD_DIR/openwrt/bin/packages/$COMPILE_TARGET/openwisp_monitoring"
+MANIFEST_FILE="$PACKAGES_DIR/Packages.manifest"
+if [ ! -f "$MANIFEST_FILE" ]; then
+	echo "ERROR: Package manifest file not found at $MANIFEST_FILE"
 	exit 1
 fi
-cp "$PACKAGES_FILE" "$BUILD_DIR/openwrt/bin/packages/$COMPILE_TARGET/openwisp_monitoring/Packages.sha256.checksum"
+mv "$MANIFEST_FILE" "$PACKAGES_DIR/sha256.manifest"
+rm "$BUILD_DIR"/openwrt/bin/packages/"$COMPILE_TARGET"/openwisp_monitoring/*.json
+rm "$BUILD_DIR"/openwrt/bin/packages/"$COMPILE_TARGET"/openwisp_monitoring/Packages*
 
+# Move artifacts
 mv "$BUILD_DIR/openwrt/bin/packages/$COMPILE_TARGET/openwisp_monitoring" "$VERSIONED_DIR"
 
 rm "$LATEST_LINK" || true
