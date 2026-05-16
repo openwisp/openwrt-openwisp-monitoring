@@ -46,6 +46,10 @@ sed -i '/routing/d' feeds.conf
 } >>.config
 make defconfig
 
+# disable package signing: make defconfig sets CONFIG_SIGNED_PACKAGES=y by default
+# but usign is not available in CI, so we disable it to allow index generation
+sed -i 's/^CONFIG_SIGNED_PACKAGES=y$/CONFIG_SIGNED_PACKAGES=/' .config
+
 if [ ! "$CI_CACHE" ]; then
 	make -j"$CORES" tools/install
 	make -j"$CORES" toolchain/install
@@ -53,6 +57,16 @@ fi
 
 make -j"$CORES" package/openwisp-monitoring/compile \
 	|| make -j1 V=s package/openwisp-monitoring/compile || exit 1
+
+# generate package index and publish checksum for package verification
+make package/index V=s
+PACKAGES_FILE="$BUILD_DIR/openwrt/bin/packages/$COMPILE_TARGET/openwisp_monitoring/Packages"
+
+if [ ! -f "$PACKAGES_FILE" ]; then
+	echo "ERROR: Packages file not found at $PACKAGES_FILE"
+	exit 1
+fi
+cp "$PACKAGES_FILE" "$BUILD_DIR/openwrt/bin/packages/$COMPILE_TARGET/openwisp_monitoring/Packages.sha256.checksum"
 
 mv "$BUILD_DIR/openwrt/bin/packages/$COMPILE_TARGET/openwisp_monitoring" "$VERSIONED_DIR"
 
