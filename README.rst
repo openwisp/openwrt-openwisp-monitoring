@@ -9,11 +9,11 @@ OpenWISP Monitoring OpenWrt package
     :target: https://coveralls.io/github/openwisp/openwrt-openwisp-monitoring
     :alt: Test Coverage
 
-.. image:: http://img.shields.io/github/release/openwisp/openwrt-openwisp-monitoring.svg
+.. image:: https://img.shields.io/github/v/release/openwisp/openwrt-openwisp-monitoring.svg
     :target: https://github.com/openwisp/openwrt-openwisp-monitoring/releases
 
 .. image:: https://img.shields.io/gitter/room/nwjs/nw.js.svg?style=flat-square
-    :target: https://gitter.im/openwisp/general
+    :target: https://app.gitter.im/#/room/#openwisp_general:gitter.im
     :alt: support chat
 
 ----
@@ -21,7 +21,7 @@ OpenWISP Monitoring OpenWrt package
 The `OpenWISP Monitoring <https://openwisp.io/docs/stable/monitoring/>`_
 agent for `OpenWrt <https://openwrt.org/>`_.
 
-.. image:: http://netjsonconfig.openwisp.org/en/latest/_images/openwisp.org.svg
+.. image:: https://openwisp.io/docs/dev/_images/openwisp-logo-black.svg
     :target: http://openwisp.org
 
 ----
@@ -38,7 +38,7 @@ Contributing
 ------------
 
 Please read the `OpenWISP contributing guidelines
-<http://openwisp.io/docs/stable/developer/contributing.html>`_.
+<https://openwisp.io/docs/dev/developer/contributing.html>`_.
 
 Changelog
 ---------
@@ -55,4 +55,4 @@ See `LICENSE
 Support
 -------
 
-See `OpenWISP Support Channels <http://openwisp.org/support.html>`_.
+See `OpenWISP Support Channels <https://openwisp.org/support/>`_.
