@@ -42,9 +42,6 @@ If instructions conflict, repository config and CI workflows win first, docs nex
 - Review documentation examples and references when behavior changes.
 - Preserve public documentation anchors, URLs, include directives, and versioned links unless explicitly required.
 
-## Testing and QA
-
-
 ## Security Notes
 
 - Watch for command injection, unsafe shell expansion, leaked credentials, unsafe file permissions, excessive data collection, and broken auth flows.
