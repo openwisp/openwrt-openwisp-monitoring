@@ -35,6 +35,7 @@ If instructions conflict, repository config and CI workflows win first, docs nex
 
 ## Development Rules
 
+- Follow the DRY principle: do not duplicate information or code across files.
 - Preserve UCI configuration compatibility, metric names, payload formats, package file paths, service behavior, and Monitoring API contracts unless explicitly required.
 - Edit `openwisp-monitoring/Makefile`, `openwisp-monitoring/files/`, and `VERSION`; regenerate `build/` and `downloads/` instead of editing their contents directly.
 - Be careful with Lua code, shell scripts, network interfaces, metric collection, retry logic, buffering, and OpenWrt compatibility.
