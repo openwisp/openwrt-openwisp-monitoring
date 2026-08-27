@@ -25,23 +25,6 @@ By collecting this data, administrators gain valuable insights into
 network health and performance, facilitating proactive troubleshooting of
 potential issues.
 
-The following diagram illustrates the role of OpenWrt Monitoring Agent
-within the OpenWISP architecture.
-
-.. figure:: images/architecture-v2-openwrt-monitoring-agent.png
-    :target: ../_images/architecture-v2-openwrt-monitoring-agent.png
-    :align: center
-    :alt: OpenWISP Architecture: OpenWrt Monitoring Agent
-
-    **OpenWISP Architecture: highlighted OpenWrt Monitoring Agent**
-
-.. important::
-
-    For an enhanced viewing experience, open the image above in a new
-    browser tab.
-
-    Refer to :doc:`/general/architecture` for more information.
-
 .. toctree::
     :caption: User Docs
     :maxdepth: 1
