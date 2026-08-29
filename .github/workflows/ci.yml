@@ -18,7 +18,7 @@ jobs:
           ref: ${{ github.event.pull_request.head.sha }}
 
       - name: Set up Python
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@v7
         with:
           # This limitation can be removed once docstrfmt
           # is upgraded to 2.0.0 or higher (in openwisp-utils).
