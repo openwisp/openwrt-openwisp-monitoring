@@ -101,9 +101,8 @@ end
 
 function TestInterface.test_new_address_array()
   local interface_functions = require('interfaces')
-  luaunit.assertEquals(interface_functions.new_address_array(
-    address_data.ipv4_address, address_data.eth2_interface, 'ipv4'),
-    address_data.address_array)
+  luaunit.assertEquals(interface_functions.new_address_array(address_data.ipv4_address,
+    address_data.eth2_interface, 'ipv4'), address_data.address_array)
 end
 
 function TestInterface.test_get_vpn_interfaces()
@@ -172,13 +171,10 @@ function TestNetJSON.test_interfaces()
   luaunit.assertEquals(netjson["interfaces"][3]["addresses"][1]["address"],
     "192.168.1.41")
   luaunit.assertEquals(netjson["interfaces"][3]["stp"], true)
-  luaunit.assertEquals(netjson["interfaces"][2]["mobile"]["signal"]["lte"]["snr"],
-    19.2)
-  luaunit.assertEquals(netjson["interfaces"][2]["mobile"]["signal"]["lte"]["rssi"],
-    -64)
+  luaunit.assertEquals(netjson["interfaces"][2]["mobile"]["signal"]["lte"]["snr"], 19.2)
+  luaunit.assertEquals(netjson["interfaces"][2]["mobile"]["signal"]["lte"]["rssi"], -64)
   luaunit.assertEquals(netjson["interfaces"][2]["mobile"]["signal"]["lte"]["rsrq"], -9)
-  luaunit.assertEquals(netjson["interfaces"][2]["mobile"]["signal"]["lte"]["rsrp"],
-    -92)
+  luaunit.assertEquals(netjson["interfaces"][2]["mobile"]["signal"]["lte"]["rsrp"], -92)
   luaunit.assertEquals(netjson["dns_servers"][1], "8.8.8.8")
   luaunit.assertEquals(netjson["dns_servers"][2], "8.8.4.4")
 end

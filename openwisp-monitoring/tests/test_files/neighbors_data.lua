@@ -7,12 +7,8 @@ test_data.sample_parse_arp = {
 }
 
 test_data.sample_ip_neigh = {
+  {interface = "eth1", ip = "10.0.2.1", mac = "52:54:00:12:35:00", state = "REACHABLE"},
   {
-    interface = "eth1",
-    ip = "10.0.2.1",
-    mac = "52:54:00:12:35:00",
-    state = "REACHABLE"
-  }, {
     interface = "br-mng",
     ip = "192.168.56.1",
     mac = "0a:00:27:00:00:00",

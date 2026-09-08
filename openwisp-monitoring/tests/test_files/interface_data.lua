@@ -80,7 +80,7 @@ test_data.interface_data = {
       up = true,
       updated = {"addresses"},
       uptime = 773875
-    },{
+    }, {
       autostart = true,
       available = true,
       data = {leasetime = 600},
@@ -404,9 +404,7 @@ test_data.br_lan_interface = {
       proto = "dhcp"
     }
   },
-  bridge_members = {
-    "lan1", "lan2", "mesh0", "mesh1", "wan", "wlan0", "wlan1", "wlan2"
-  },
+  bridge_members = {"lan1", "lan2", "mesh0", "mesh1", "wan", "wlan0", "wlan1", "wlan2"},
   mac = "00:00:00:00:00:00",
   mtu = 1500,
   multicast = true,
@@ -417,9 +415,7 @@ test_data.br_lan_interface = {
 }
 
 test_data.br_lan2_interface = {
-  bridge_members = {
-    "lan1", "lan2", "mesh0", "mesh1", "wan", "wlan0", "wlan1", "wlan2"
-  },
+  bridge_members = {"lan1", "lan2", "mesh0", "mesh1", "wan", "wlan0", "wlan1", "wlan2"},
   mac = "00:00:00:00:00:00",
   mtu = 1500,
   multicast = true,
@@ -441,9 +437,7 @@ test_data.br_lan3_interface = {
 }
 
 test_data.lan2_interface = {
-  link_supported = {
-    "10baseT-H", "10baseT-F", "100baseT-H", "100baseT-F", "1000baseT-F"
-  },
+  link_supported = {"10baseT-H", "10baseT-F", "100baseT-H", "100baseT-F", "1000baseT-F"},
   mac = "00:00:00:00:00:00",
   mtu = 1500,
   multicast = true,

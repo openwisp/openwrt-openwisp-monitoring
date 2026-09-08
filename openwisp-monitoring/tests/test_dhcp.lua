@@ -70,8 +70,8 @@ function TestDhcp.test_dhcp_leases()
   luaunit.assertEquals(dhcp_functions.get_dhcp_leases(), dhcp_data.leases)
   luaunit.assertEquals(dhcp_functions.parse_dhcp_lease_file('/tmp/dhcp.leases', {}),
     dhcp_data.leases)
-  luaunit.assertEquals(
-    dhcp_functions.parse_dhcp_lease_file('/tmp/no_dhcp.leases', {}), {})
+  luaunit.assertEquals(dhcp_functions.parse_dhcp_lease_file('/tmp/no_dhcp.leases', {}),
+    {})
 end
 
 function TestNetJSON.test_dhcp()

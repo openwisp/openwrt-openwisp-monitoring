@@ -1,8 +1,8 @@
 # config file for shell formatter
 
 [*]
-binary_next_line = true
-switch_case_indent = true
+binary_next_line   = true  # like -bn
+switch_case_indent = true  # like -ci
 
 [build/**]
 ignore = true

@@ -21,8 +21,7 @@ local loadavg_output = loadavg_file:read()
 loadavg_file:close()
 loadavg_output = monitoring.utils.split(loadavg_output, ' ')
 local load_average = {
-  tonumber(loadavg_output[1]), tonumber(loadavg_output[2]),
-  tonumber(loadavg_output[3])
+  tonumber(loadavg_output[1]), tonumber(loadavg_output[2]), tonumber(loadavg_output[3])
 }
 
 -- init netjson data structure
@@ -74,14 +73,9 @@ local function get_wireless_netjson_interface(radio, name, iwinfo)
   local clients = nil
   local is_mesh = false
   local htmode = radio.config.htmode
-  local netjson_interface = {
-    name = name,
-    type = 'wireless',
-  }
+  local netjson_interface = {name = name, type = 'wireless'}
   -- iwinfo disabled
-  if iwinfo == nil then
-    return netjson_interface
-  end
+  if iwinfo == nil then return netjson_interface end
   -- if channel is missing the WiFi interface is not fully up
   -- and hence we avoid including its info because it will be rejected
   if monitoring.utils.is_empty(iwinfo.channel) == false then
@@ -99,8 +93,7 @@ local function get_wireless_netjson_interface(radio, name, iwinfo)
       bitrate = iwinfo.bitrate,
       htmode = htmode
     }
-    if iwinfo.mode == 'Ad-Hoc' or iwinfo.mode == 'Mesh Point' or iwinfo.mode ==
-      'Client' then
+    if iwinfo.mode == 'Ad-Hoc' or iwinfo.mode == 'Mesh Point' or iwinfo.mode == 'Client' then
       local assoclist = ubus:call('iwinfo', 'assoclist', {device = name})
       clients = assoclist and assoclist.results
       is_mesh = true

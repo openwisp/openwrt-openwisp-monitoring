@@ -1,3 +1,1 @@
-return {
-  enabled = true
-}
+return {enabled = true}

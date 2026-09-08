@@ -41,8 +41,7 @@ local specialized_interfaces = {
       end
     end
 
-    local signal_file =
-      io.popen('mmcli --output-json -m ' .. modem .. ' --signal-get')
+    local signal_file = io.popen('mmcli --output-json -m ' .. modem .. ' --signal-get')
     local signal = signal_file:read("*a")
     signal_file:close()
     if signal and pcall(cjson.decode, signal) then
@@ -199,9 +198,7 @@ function interfaces.get_interface_info(name, netjson_interface)
       end
       -- collect specialized info if available
       local specialized_info = specialized_interfaces[interface.proto]
-      if specialized_info then
-        info.specialized = specialized_info(name, interface)
-      end
+      if specialized_info then info.specialized = specialized_info(name, interface) end
     end
   end
   return info

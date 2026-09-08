@@ -9,8 +9,8 @@ function dhcp.parse_dhcp_lease_file(path, leases)
   local f = io.open(path, 'r')
   if not f then return leases end
   for line in f:lines() do
-    local expiry, mac, ip, name, id = line:match(
-      '(%S+)%s+(%S+)%s+(%S+)%s+(%S+)%s+(%S+)')
+    local expiry, mac, ip, name, id =
+      line:match('(%S+)%s+(%S+)%s+(%S+)%s+(%S+)%s+(%S+)')
     local lease = {
       expiry = tonumber(expiry),
       mac = mac,
@@ -18,9 +18,7 @@ function dhcp.parse_dhcp_lease_file(path, leases)
       client_name = name,
       client_id = id
     }
-    if not utils.is_table_empty(lease) then
-      table.insert(leases, lease)
-    end
+    if not utils.is_table_empty(lease) then table.insert(leases, lease) end
   end
 
   return leases

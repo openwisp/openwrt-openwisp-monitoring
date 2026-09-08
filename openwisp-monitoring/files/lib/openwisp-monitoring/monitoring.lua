@@ -13,9 +13,7 @@ local success, iwinfo = pcall(require, 'openwisp-monitoring.iwinfo')
 if success then
   monitoring.iwinfo = iwinfo
 else
-  monitoring.iwinfo = {
-    enabled = false
-  }
+  monitoring.iwinfo = {enabled = false}
 end
 
 return monitoring
