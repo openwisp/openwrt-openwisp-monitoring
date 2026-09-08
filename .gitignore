@@ -2,6 +2,9 @@
 openwisp-monitoring/tests/luacov.stats.out
 openwisp-monitoring/tests/luacov.report.out
 
+# OpenWrt build workspace
+build/
+
 # Compiled Lua sources
 luac.out
 
