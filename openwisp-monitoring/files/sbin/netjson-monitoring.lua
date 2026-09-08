@@ -21,7 +21,8 @@ local loadavg_output = loadavg_file:read()
 loadavg_file:close()
 loadavg_output = monitoring.utils.split(loadavg_output, ' ')
 local load_average = {
-  tonumber(loadavg_output[1]), tonumber(loadavg_output[2]), tonumber(loadavg_output[3])
+  tonumber(loadavg_output[1]), tonumber(loadavg_output[2]),
+  tonumber(loadavg_output[3])
 }
 
 -- init netjson data structure
@@ -93,7 +94,8 @@ local function get_wireless_netjson_interface(radio, name, iwinfo)
       bitrate = iwinfo.bitrate,
       htmode = htmode
     }
-    if iwinfo.mode == 'Ad-Hoc' or iwinfo.mode == 'Mesh Point' or iwinfo.mode == 'Client' then
+    if iwinfo.mode == 'Ad-Hoc' or iwinfo.mode == 'Mesh Point' or iwinfo.mode ==
+      'Client' then
       local assoclist = ubus:call('iwinfo', 'assoclist', {device = name})
       clients = assoclist and assoclist.results
       is_mesh = true
@@ -102,8 +104,8 @@ local function get_wireless_netjson_interface(radio, name, iwinfo)
       if hostapd_output then clients = hostapd_output.clients end
     end
     if not monitoring.utils.is_table_empty(clients) then
-      netjson_interface.wireless.clients = monitoring.wifi.netjson_clients(clients,
-        is_mesh)
+      netjson_interface.wireless.clients =
+        monitoring.wifi.netjson_clients(clients, is_mesh)
     end
   end
   return netjson_interface
@@ -119,7 +121,8 @@ for _, radio in pairs(wireless_status or {}) do
       if monitoring.iwinfo.enabled then
         iwinfo = ubus:call('iwinfo', 'info', {device = name})
       end
-      wireless_interfaces[name] = get_wireless_netjson_interface(radio, name, iwinfo)
+      wireless_interfaces[name] = get_wireless_netjson_interface(radio, name,
+        iwinfo)
     end
   end
 end
@@ -189,7 +192,9 @@ for name, interface in pairs(network_status or {}) do
     local info = monitoring.interfaces.get_interface_info(name, netjson_interface)
     if info.stp ~= nil then netjson_interface.stp = info.stp end
     if info.specialized then
-      for key, value in pairs(info.specialized) do netjson_interface[key] = value end
+      for key, value in pairs(info.specialized) do
+        netjson_interface[key] = value
+      end
     end
     table.insert(host_interfaces, netjson_interface)
     -- DNS info is independent from interface

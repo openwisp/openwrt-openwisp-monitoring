@@ -41,7 +41,8 @@ local specialized_interfaces = {
       end
     end
 
-    local signal_file = io.popen('mmcli --output-json -m ' .. modem .. ' --signal-get')
+    local signal_file = io.popen('mmcli --output-json -m ' .. modem ..
+                                   ' --signal-get')
     local signal = signal_file:read("*a")
     signal_file:close()
     if signal and pcall(cjson.decode, signal) then
@@ -105,14 +106,16 @@ function interfaces.get_addresses(name)
       for _, address in pairs(interface['ipv4-address']) do
         if not utils.has_value(addresses_list, address['address']) then
           table.insert(addresses_list, address['address'])
-          local new_address = interfaces.new_address_array(address, interface, 'ipv4')
+          local new_address = interfaces.new_address_array(address, interface,
+            'ipv4')
           table.insert(addresses, new_address)
         end
       end
       for _, address in pairs(interface['ipv6-address']) do
         if not utils.has_value(addresses_list, address['address']) then
           table.insert(addresses_list, address['address'])
-          local new_address = interfaces.new_address_array(address, interface, 'ipv6')
+          local new_address = interfaces.new_address_array(address, interface,
+            'ipv6')
           table.insert(addresses, new_address)
         end
       end
@@ -198,7 +201,9 @@ function interfaces.get_interface_info(name, netjson_interface)
       end
       -- collect specialized info if available
       local specialized_info = specialized_interfaces[interface.proto]
-      if specialized_info then info.specialized = specialized_info(name, interface) end
+      if specialized_info then
+        info.specialized = specialized_info(name, interface)
+      end
     end
   end
   return info

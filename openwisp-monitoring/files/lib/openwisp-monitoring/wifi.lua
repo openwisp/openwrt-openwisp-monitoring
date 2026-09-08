@@ -10,7 +10,8 @@ wifi.iwinfo_modes = {
 
 function wifi.needs_inversion(interface)
   if interface.wireless then
-    return interface.type == 'wireless' and interface.wireless.mode == 'access_point'
+    return interface.type == 'wireless' and interface.wireless.mode ==
+             'access_point'
   end
 end
 

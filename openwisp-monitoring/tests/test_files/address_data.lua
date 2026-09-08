@@ -29,7 +29,12 @@ test_data.eth2_interface = {
   pending = false,
   proto = "dhcp",
   route = {
-    {mask = 0, nexthop = "192.168.0.1", source = "192.168.0.144/32", target = "0.0.0.0"}
+    {
+      mask = 0,
+      nexthop = "192.168.0.1",
+      source = "192.168.0.144/32",
+      target = "0.0.0.0"
+    }
   },
   up = true,
   updated = {"addresses", "routes", "data"},

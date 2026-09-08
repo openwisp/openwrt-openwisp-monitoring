@@ -109,7 +109,12 @@ test_data.interface_data = {
       pending = false,
       proto = "dhcp",
       route = {
-        {mask = 0, nexthop = "10.0.2.1", source = "10.0.2.4/32", target = "0.0.0.0"}
+        {
+          mask = 0,
+          nexthop = "10.0.2.1",
+          source = "10.0.2.4/32",
+          target = "0.0.0.0"
+        }
       },
       up = true,
       updated = {"addresses", "routes", "data"},
@@ -317,7 +322,12 @@ test_data.interface_data = {
       pending = false,
       proto = "dhcp",
       route = {
-        {mask = 0, nexthop = "10.0.2.1", source = "10.0.2.4/32", target = "0.0.0.0"}
+        {
+          mask = 0,
+          nexthop = "10.0.2.1",
+          source = "10.0.2.4/32",
+          target = "0.0.0.0"
+        }
       },
       up = true,
       updated = {"addresses", "routes", "data"},
@@ -351,7 +361,12 @@ test_data.interface_data = {
       pending = false,
       proto = "wireguard",
       route = {
-        {target = "172.16.0.1", mask = 32, nexthop = "0.0.0.0", source = "0.0.0.0/0"}
+        {
+          target = "172.16.0.1",
+          mask = 32,
+          nexthop = "0.0.0.0",
+          source = "0.0.0.0/0"
+        }
       },
       up = true,
       updated = {"addresses", "routes"},
@@ -374,8 +389,12 @@ test_data.eth1_addresses = {
     family = "ipv6",
     gateway = "10.0.2.1",
     proto = "dhcp"
-  }, {address = "10.0.3.15", family = "ipv4", mask = 24, proto = "dhcp"},
-  {address = "fe80::a00:27ff:fe71:2291", family = "ipv6", mask = 64, proto = "static"}
+  }, {address = "10.0.3.15", family = "ipv4", mask = 24, proto = "dhcp"}, {
+    address = "fe80::a00:27ff:fe71:2291",
+    family = "ipv6",
+    mask = 64,
+    proto = "static"
+  }
 }
 
 test_data.eth2_addresses = {
@@ -385,13 +404,22 @@ test_data.eth2_addresses = {
     gateway = "192.168.0.1",
     mask = 24,
     proto = "dhcp"
-  }, {address = "192.168.0.146", family = "ipv4", mask = 24, proto = "dhcp"},
-  {address = "fdf7:0c44:27ae:fe48:be0a", family = "ipv6", mask = 64, proto = "static"}
+  }, {address = "192.168.0.146", family = "ipv4", mask = 24, proto = "dhcp"}, {
+    address = "fdf7:0c44:27ae:fe48:be0a",
+    family = "ipv6",
+    mask = 64,
+    proto = "static"
+  }
 }
 
 test_data.br_mng_addresses = {
   {address = "192.168.56.2", family = "ipv4", mask = 24, proto = "static"},
-  {address = "fe81::a00:27ff:fed1:90b0", family = "ipv6", mask = 64, proto = "dhcp"}
+  {
+    address = "fe81::a00:27ff:fed1:90b0",
+    family = "ipv6",
+    mask = 64,
+    proto = "dhcp"
+  }
 }
 
 test_data.br_lan_interface = {
@@ -404,7 +432,9 @@ test_data.br_lan_interface = {
       proto = "dhcp"
     }
   },
-  bridge_members = {"lan1", "lan2", "mesh0", "mesh1", "wan", "wlan0", "wlan1", "wlan2"},
+  bridge_members = {
+    "lan1", "lan2", "mesh0", "mesh1", "wan", "wlan0", "wlan1", "wlan2"
+  },
   mac = "00:00:00:00:00:00",
   mtu = 1500,
   multicast = true,
@@ -415,7 +445,9 @@ test_data.br_lan_interface = {
 }
 
 test_data.br_lan2_interface = {
-  bridge_members = {"lan1", "lan2", "mesh0", "mesh1", "wan", "wlan0", "wlan1", "wlan2"},
+  bridge_members = {
+    "lan1", "lan2", "mesh0", "mesh1", "wan", "wlan0", "wlan1", "wlan2"
+  },
   mac = "00:00:00:00:00:00",
   mtu = 1500,
   multicast = true,
@@ -437,7 +469,9 @@ test_data.br_lan3_interface = {
 }
 
 test_data.lan2_interface = {
-  link_supported = {"10baseT-H", "10baseT-F", "100baseT-H", "100baseT-F", "1000baseT-F"},
+  link_supported = {
+    "10baseT-H", "10baseT-F", "100baseT-H", "100baseT-F", "1000baseT-F"
+  },
   mac = "00:00:00:00:00:00",
   mtu = 1500,
   multicast = true,

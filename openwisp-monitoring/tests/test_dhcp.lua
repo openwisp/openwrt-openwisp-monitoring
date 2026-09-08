@@ -68,17 +68,18 @@ function TestDhcp.test_dhcp_leases()
   local dhcp_functions = require('dhcp')
 
   luaunit.assertEquals(dhcp_functions.get_dhcp_leases(), dhcp_data.leases)
-  luaunit.assertEquals(dhcp_functions.parse_dhcp_lease_file('/tmp/dhcp.leases', {}),
-    dhcp_data.leases)
-  luaunit.assertEquals(dhcp_functions.parse_dhcp_lease_file('/tmp/no_dhcp.leases', {}),
-    {})
+  luaunit.assertEquals(
+    dhcp_functions.parse_dhcp_lease_file('/tmp/dhcp.leases', {}), dhcp_data.leases)
+  luaunit.assertEquals(dhcp_functions.parse_dhcp_lease_file('/tmp/no_dhcp.leases',
+    {}), {})
 end
 
 function TestNetJSON.test_dhcp()
   local netjson_string = require('netjson-monitoring')
   local netjson = cjson.decode(netjson_string)
   luaunit.assertEquals(netjson["dhcp_leases"][1]["mac"], "e8:6a:64:3e:4a:3c")
-  luaunit.assertEquals(netjson["dhcp_leases"][1]["client_id"], "01:e8:6a:64:3e:4a:3c")
+  luaunit.assertEquals(netjson["dhcp_leases"][1]["client_id"],
+    "01:e8:6a:64:3e:4a:3c")
   luaunit.assertEquals(netjson["dhcp_leases"][1]["ip"], "192.168.1.136")
   luaunit.assertEquals(netjson["dhcp_leases"][1]["expiry"], 1620788343)
 end
@@ -94,7 +95,8 @@ function TestDhcp.test_dhcp_leases_irregular()
       mac = "c6:df:44:00:00:00"
     }
   }
-  local parsed = dhcp_functions.parse_dhcp_lease_file('/tmp/dhcp.leases.irregular', {})
+  local parsed = dhcp_functions.parse_dhcp_lease_file('/tmp/dhcp.leases.irregular',
+    {})
   luaunit.assertEquals(parsed, expected)
 end
 
