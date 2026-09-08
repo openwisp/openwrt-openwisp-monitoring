@@ -47,6 +47,7 @@ sed -i '/routing/d' feeds.conf
 ./scripts/feeds install -a
 # add required packages
 {
+	echo "CONFIG_SIGNED_PACKAGES=y"
 	echo "CONFIG_PACKAGE_netjson-monitoring=y"
 	echo "CONFIG_PACKAGE_openwisp-monitoring=y"
 } >>.config
