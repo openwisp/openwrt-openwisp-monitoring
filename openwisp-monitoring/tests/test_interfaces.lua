@@ -12,9 +12,7 @@ TestInterface = {
     package.loaded.uci = env.uci
     package.loaded.ubus = env.ubus
     package.loaded.io = env.io
-    package.loaded.nixio = {
-      getifaddrs = function() return require('test_files/nixio_data') end
-    }
+    package.loaded.nixio = {getifaddrs = function() return require('test_files/nixio_data') end}
   end,
   tearDown = function() end
 }
@@ -30,8 +28,7 @@ TestNetJSON = {
           f:seek('set', 0)
           return f
         else
-          local modem = '/sys/devices/platform/soc/8af8800.usb3/8a00000.dwc3/' ..
-                          'xhci-hcd.0.auto/usb2/2-1'
+          local modem = '/sys/devices/platform/soc/8af8800.usb3/8a00000.dwc3/' .. 'xhci-hcd.0.auto/usb2/2-1'
           if arg == 'mmcli --output-json -m ' .. modem then
             return io.open(test_file_dir .. 'modem_data.txt')
           elseif arg == 'mmcli --output-json -m ' .. modem .. ' --signal-get' then
@@ -55,8 +52,7 @@ TestNetJSON = {
             if arg[1] == 'network' and arg[3] == 'stp' then
               return '1'
             elseif arg[1] == 'network' and arg[3] == 'device' then
-              return '/sys/devices/platform/soc/8af8800.usb3/8a00000.dwc3/' ..
-                       'xhci-hcd.0.auto/usb2/2-1'
+              return '/sys/devices/platform/soc/8af8800.usb3/8a00000.dwc3/' .. 'xhci-hcd.0.auto/usb2/2-1'
             end
             return nil
           end,
@@ -86,24 +82,20 @@ TestNetJSON = {
         }
       end
     }
-    package.loaded.nixio = {
-      getifaddrs = function() return require('test_files/nixio_data') end
-    }
+    package.loaded.nixio = {getifaddrs = function() return require('test_files/nixio_data') end}
   end,
   tearDown = function() end
 }
 
 function TestInterface.test_find_default_gateway()
   local interface_functions = require('interfaces')
-  luaunit.assertEquals(interface_functions.find_default_gateway(address_data.routes),
-    "192.168.0.1")
+  luaunit.assertEquals(interface_functions.find_default_gateway(address_data.routes), "192.168.0.1")
 end
 
 function TestInterface.test_new_address_array()
   local interface_functions = require('interfaces')
-  luaunit.assertEquals(interface_functions.new_address_array(
-    address_data.ipv4_address, address_data.eth2_interface, 'ipv4'),
-    address_data.address_array)
+  luaunit.assertEquals(interface_functions.new_address_array(address_data.ipv4_address,
+    address_data.eth2_interface, 'ipv4'), address_data.address_array)
 end
 
 function TestInterface.test_get_vpn_interfaces()
@@ -113,41 +105,30 @@ end
 
 function TestInterface.test_get_addresses()
   local interface_functions = require('interfaces')
-  luaunit.assertEquals(interface_functions.get_addresses('random'),
-    interface_data.random_interface_address)
-  luaunit.assertEquals(interface_functions.get_addresses('eth1'),
-    interface_data.eth1_addresses)
-  luaunit.assertEquals(interface_functions.get_addresses('eth2'),
-    interface_data.eth2_addresses)
-  luaunit.assertEquals(interface_functions.get_addresses('br-mng'),
-    interface_data.br_mng_addresses)
+  luaunit.assertEquals(interface_functions.get_addresses('random'), interface_data.random_interface_address)
+  luaunit.assertEquals(interface_functions.get_addresses('eth1'), interface_data.eth1_addresses)
+  luaunit.assertEquals(interface_functions.get_addresses('eth2'), interface_data.eth2_addresses)
+  luaunit.assertEquals(interface_functions.get_addresses('br-mng'), interface_data.br_mng_addresses)
 end
 
 function TestInterface.test_get_interface_info()
   -- For OpenWrt < 21
   local interface_functions = require('interfaces')
-  local interface_info = interface_functions.get_interface_info('br-lan',
-    interface_data.br_lan_interface)
-  luaunit.assertEquals(interface_info,
-    {dns_servers = {"8.8.8.8", "8.8.4.4"}, stp = true})
+  local interface_info = interface_functions.get_interface_info('br-lan', interface_data.br_lan_interface)
+  luaunit.assertEquals(interface_info, {dns_servers = {"8.8.8.8", "8.8.4.4"}, stp = true})
   -- For OpenWrt >= 21
   -- Test STP is set to true
-  interface_info = interface_functions.get_interface_info('br-lan2',
-    interface_data.br_lan2_interface)
-  luaunit.assertEquals(interface_info,
-    {dns_servers = {"8.8.8.8", "8.8.4.4"}, stp = true})
+  interface_info = interface_functions.get_interface_info('br-lan2', interface_data.br_lan2_interface)
+  luaunit.assertEquals(interface_info, {dns_servers = {"8.8.8.8", "8.8.4.4"}, stp = true})
   -- Test STP is set false
-  interface_info = interface_functions.get_interface_info('br-lan3',
-    interface_data.br_lan3_interface)
-  luaunit.assertEquals(interface_info,
-    {dns_servers = {"8.8.8.8", "8.8.4.4"}, stp = false})
+  interface_info = interface_functions.get_interface_info('br-lan3', interface_data.br_lan3_interface)
+  luaunit.assertEquals(interface_info, {dns_servers = {"8.8.8.8", "8.8.4.4"}, stp = false})
 
 end
 
 function TestInterface.test_specialized_info()
   local interface_functions = require('interfaces')
-  local interface_info = interface_functions.get_interface_info('lan2',
-    interface_data.lan2_interface)
+  local interface_info = interface_functions.get_interface_info('lan2', interface_data.lan2_interface)
   luaunit.assertNotNil(interface_info)
   luaunit.assertNotNil(interface_info.specialized)
   local specialized_info = interface_info.specialized.mobile
@@ -169,16 +150,12 @@ function TestNetJSON.test_interfaces()
   local netjson_file = assert(loadfile('../files/sbin/netjson-monitoring.lua'))
   local netjson = cjson.decode(netjson_file('*'))
   luaunit.assertEquals(netjson["interfaces"][2]["mobile"]["signal"]["umts"], nil)
-  luaunit.assertEquals(netjson["interfaces"][3]["addresses"][1]["address"],
-    "192.168.1.41")
+  luaunit.assertEquals(netjson["interfaces"][3]["addresses"][1]["address"], "192.168.1.41")
   luaunit.assertEquals(netjson["interfaces"][3]["stp"], true)
-  luaunit.assertEquals(netjson["interfaces"][2]["mobile"]["signal"]["lte"]["snr"],
-    19.2)
-  luaunit.assertEquals(netjson["interfaces"][2]["mobile"]["signal"]["lte"]["rssi"],
-    -64)
+  luaunit.assertEquals(netjson["interfaces"][2]["mobile"]["signal"]["lte"]["snr"], 19.2)
+  luaunit.assertEquals(netjson["interfaces"][2]["mobile"]["signal"]["lte"]["rssi"], -64)
   luaunit.assertEquals(netjson["interfaces"][2]["mobile"]["signal"]["lte"]["rsrq"], -9)
-  luaunit.assertEquals(netjson["interfaces"][2]["mobile"]["signal"]["lte"]["rsrp"],
-    -92)
+  luaunit.assertEquals(netjson["interfaces"][2]["mobile"]["signal"]["lte"]["rsrp"], -92)
   luaunit.assertEquals(netjson["dns_servers"][1], "8.8.8.8")
   luaunit.assertEquals(netjson["dns_servers"][2], "8.8.4.4")
 end

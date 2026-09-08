@@ -3,3 +3,6 @@
 [*]
 binary_next_line   = true  # like -bn
 switch_case_indent = true  # like -ci
+
+[build/**]
+ignore = true

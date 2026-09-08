@@ -3,6 +3,15 @@ set -e
 
 luacheck ./openwisp-monitoring/ -a
 
+(
+	cd openwisp-monitoring/
+	lua-format --check --config=luaformat.config \
+		files/sbin/*.lua \
+		files/lib/openwisp-monitoring/*.lua \
+		tests/*.lua \
+		tests/test_files/*.lua
+)
+
 # will be 1 by default when run through github actions
 CI=${CI:-0}
 

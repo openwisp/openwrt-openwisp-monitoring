@@ -2,7 +2,7 @@
 set -e
 
 # format shell scripts
-shfmt -w -l .
+shfmt -w -l --apply-ignore .
 shfmt -w -l openwisp-monitoring/files/monitoring.agent
 shfmt -w -l openwisp-monitoring/files/monitoring.init
 shfmt -w -l openwisp-monitoring/files/openwisp-monitoring.hotplug
