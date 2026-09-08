@@ -30,10 +30,10 @@ git checkout $OPENWRT_BRANCH
 git reset --hard origin/$OPENWRT_BRANCH
 
 # OpenWrt generates a local key when CI does not provide the release key.
+trap 'rm -f private-key.pem' EXIT
 if [ -n "${OPENWRT_APK_PRIVATE_KEY:-}" ]; then
 	printf '%s\n' "$OPENWRT_APK_PRIVATE_KEY" >private-key.pem
 	chmod 600 private-key.pem
-	trap 'rm -f private-key.pem' EXIT
 fi
 
 # configure feeds
@@ -51,8 +51,8 @@ sed -i '/routing/d' feeds.conf
 	echo "CONFIG_PACKAGE_openwisp-monitoring=y"
 } >>.config
 make defconfig
-COMPILE_TARGET=${COMPILE_TARGET:-$(grep '^CONFIG_TARGET_ARCH_PACKAGES=' .config | cut -d '"' -f 2)}
-if [ -z "$COMPILE_TARGET" ]; then
+COMPILE_TARGET=$(grep -E '^CONFIG_TARGET_ARCH_PACKAGES="[^"]+"$' .config | cut -d '"' -f 2)
+if [ -z "$COMPILE_TARGET" ] || [ "$(printf '%s\n' "$COMPILE_TARGET" | wc -l)" -ne 1 ]; then
 	echo "ERROR: OpenWrt package architecture not found in .config"
 	exit 1
 fi
