@@ -30,6 +30,12 @@ git fetch origin
 git checkout $OPENWRT_BRANCH
 git reset --hard origin/$OPENWRT_BRANCH
 
+# OpenWrt generates a local key when CI does not provide the release key.
+if [ -n "${OPENWRT_APK_PRIVATE_KEY:-}" ]; then
+	printf '%s\n' "$OPENWRT_APK_PRIVATE_KEY" >private-key.pem
+	chmod 600 private-key.pem
+fi
+
 # configure feeds
 echo "src-git openwisp_config https://github.com/openwisp/openwisp-config.git" >feeds.conf
 echo "src-link openwisp_monitoring $CURRENT_DIR" >>feeds.conf

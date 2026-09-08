@@ -88,6 +88,7 @@ jobs:
         run: ./runbuild
         env:
           CI_CACHE: ${{ steps.cache.outputs.cache-hit }}
+          OPENWRT_APK_PRIVATE_KEY: ${{ secrets.OPENWRT_APK_PRIVATE_KEY }}
 
       - name: Upload packages as artifacts
         if: ${{ github.event_name=='push' }}
