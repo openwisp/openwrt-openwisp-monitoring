@@ -63,17 +63,6 @@ The following procedure illustrates how to compile *openwisp-monitoring*,
 
 The compiled packages will go in ``bin/packages/*/openwisp_monitoring``.
 
-Build Artifacts
----------------
-
-``runbuild`` builds against OpenWrt 25.12 and publishes an APK package feed
-at ``downloads/latest/openwisp_monitoring``. The directory contains the
-``*.apk`` packages, the ``packages.adb`` APK repository index, ``index.json``
-metadata, and the matching ``public-key.pem``. Downstream consumers must
-preserve all these files. To use the feed with signature verification, copy
-``public-key.pem`` to ``/etc/apk/keys/`` before adding the feed URL to the
-APK repository configuration.
-
 Alternatively, you can configure your build interactively with ``make
 menuconfig``, in this case you will need to select the
 *openwisp-monitoring* and *netjson-monitoring* by going to

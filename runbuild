@@ -57,7 +57,6 @@ make -j"$CORES" package/openwisp-monitoring/compile \
 # package/index creates packages.adb and index.json for APK clients.
 make package/index V=s
 PACKAGES_DIR="$BUILD_DIR/openwrt/bin/packages/$COMPILE_TARGET/openwisp_monitoring"
-PUBLIC_KEY_FILE="$BUILD_DIR/openwrt/public-key.pem"
 if ! compgen -G "$PACKAGES_DIR/*.apk" >/dev/null; then
 	echo "ERROR: APK package files not found at $PACKAGES_DIR"
 	exit 1
@@ -68,11 +67,6 @@ for index_file in packages.adb index.json; do
 		exit 1
 	fi
 done
-if [ ! -f "$PUBLIC_KEY_FILE" ]; then
-	echo "ERROR: APK repository public key not found at $PUBLIC_KEY_FILE"
-	exit 1
-fi
-cp "$PUBLIC_KEY_FILE" "$PACKAGES_DIR"
 
 # Move artifacts
 mv "$BUILD_DIR/openwrt/bin/packages/$COMPILE_TARGET/openwisp_monitoring" "$VERSIONED_DIR"
