@@ -15,7 +15,7 @@ COMPILE_TARGET=${COMPILE_TARGET-mips_24kc}
 LATEST_LINK="$DOWNLOADS_DIR/latest"
 CORES=${CORES:-$(nproc)}
 CURRENT_DIR=$(pwd)
-OPENWRT_BRANCH="openwrt-24.10"
+OPENWRT_BRANCH="openwrt-25.12"
 
 mkdir -p "$BUILD_DIR"
 mkdir -p "$VERSIONED_DIR"
@@ -46,10 +46,6 @@ sed -i '/routing/d' feeds.conf
 } >>.config
 make defconfig
 
-# disable package signing: make defconfig sets CONFIG_SIGNED_PACKAGES=y by default
-# but usign is not available in CI, so we disable it to allow index generation
-sed -i 's/^CONFIG_SIGNED_PACKAGES=y$/CONFIG_SIGNED_PACKAGES=/' .config
-
 if [ ! "$CI_CACHE" ]; then
 	make -j"$CORES" tools/install
 	make -j"$CORES" toolchain/install
@@ -58,17 +54,25 @@ fi
 make -j"$CORES" package/openwisp-monitoring/compile \
 	|| make -j1 V=s package/openwisp-monitoring/compile || exit 1
 
-# Publish sha256.manifest (renamed from Package.manifest) for integrity verification
+# package/index creates packages.adb and index.json for APK clients.
 make package/index V=s
 PACKAGES_DIR="$BUILD_DIR/openwrt/bin/packages/$COMPILE_TARGET/openwisp_monitoring"
-MANIFEST_FILE="$PACKAGES_DIR/Packages.manifest"
-if [ ! -f "$MANIFEST_FILE" ]; then
-	echo "ERROR: Package manifest file not found at $MANIFEST_FILE"
+PUBLIC_KEY_FILE="$BUILD_DIR/openwrt/public-key.pem"
+if ! compgen -G "$PACKAGES_DIR/*.apk" >/dev/null; then
+	echo "ERROR: APK package files not found at $PACKAGES_DIR"
 	exit 1
 fi
-mv "$MANIFEST_FILE" "$PACKAGES_DIR/sha256.manifest"
-rm "$BUILD_DIR"/openwrt/bin/packages/"$COMPILE_TARGET"/openwisp_monitoring/*.json
-rm "$BUILD_DIR"/openwrt/bin/packages/"$COMPILE_TARGET"/openwisp_monitoring/Packages*
+for index_file in packages.adb index.json; do
+	if [ ! -f "$PACKAGES_DIR/$index_file" ]; then
+		echo "ERROR: APK repository metadata not found at $PACKAGES_DIR/$index_file"
+		exit 1
+	fi
+done
+if [ ! -f "$PUBLIC_KEY_FILE" ]; then
+	echo "ERROR: APK repository public key not found at $PUBLIC_KEY_FILE"
+	exit 1
+fi
+cp "$PUBLIC_KEY_FILE" "$PACKAGES_DIR"
 
 # Move artifacts
 mv "$BUILD_DIR/openwrt/bin/packages/$COMPILE_TARGET/openwisp_monitoring" "$VERSIONED_DIR"
