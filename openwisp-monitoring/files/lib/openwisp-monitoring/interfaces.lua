@@ -41,15 +41,13 @@ local specialized_interfaces = {
       end
     end
 
-    local signal_file = io.popen('mmcli --output-json -m ' .. modem ..
-                                   ' --signal-get')
+    local signal_file = io.popen('mmcli --output-json -m ' .. modem .. ' --signal-get')
     local signal = signal_file:read("*a")
     signal_file:close()
     if signal and pcall(cjson.decode, signal) then
       signal = cjson.decode(signal)
       -- only send data if not empty to avoid generating too much traffic
-      if not utils.is_table_empty(signal.modem) and
-        not utils.is_table_empty(signal.modem.signal) then
+      if not utils.is_table_empty(signal.modem) and not utils.is_table_empty(signal.modem.signal) then
         -- omit refresh rate
         signal.modem.signal.refresh = nil
         info.signal = {}
@@ -67,18 +65,14 @@ local specialized_interfaces = {
       end
     end
 
-    if not utils.is_table_empty(info.signal.threshold) then
-      info.signal.threshold = nil
-    end
+    if not utils.is_table_empty(info.signal.threshold) then info.signal.threshold = nil end
 
     return {type = 'modem-manager', mobile = info}
   end
 }
 
 function interfaces.find_default_gateway(routes)
-  for i = 1, #routes do
-    if routes[i].target == '0.0.0.0' then return routes[i].nexthop end
-  end
+  for i = 1, #routes do if routes[i].target == '0.0.0.0' then return routes[i].nexthop end end
   return nil
 end
 
@@ -106,16 +100,14 @@ function interfaces.get_addresses(name)
       for _, address in pairs(interface['ipv4-address']) do
         if not utils.has_value(addresses_list, address['address']) then
           table.insert(addresses_list, address['address'])
-          local new_address = interfaces.new_address_array(address, interface,
-            'ipv4')
+          local new_address = interfaces.new_address_array(address, interface, 'ipv4')
           table.insert(addresses, new_address)
         end
       end
       for _, address in pairs(interface['ipv6-address']) do
         if not utils.has_value(addresses_list, address['address']) then
           table.insert(addresses_list, address['address'])
-          local new_address = interfaces.new_address_array(address, interface,
-            'ipv6')
+          local new_address = interfaces.new_address_array(address, interface, 'ipv6')
           table.insert(addresses, new_address)
         end
       end
@@ -151,12 +143,8 @@ function interfaces.get_addresses(name)
         end
         if family == 'ipv4' or family == 'ipv6' then
           if not utils.has_value(addresses_list, addr) then
-            table.insert(addresses, {
-              address = addr,
-              mask = nixio_data[i].prefix,
-              proto = proto,
-              family = family
-            })
+            table.insert(addresses,
+              {address = addr, mask = nixio_data[i].prefix, proto = proto, family = family})
           end
         end
       end
@@ -169,9 +157,7 @@ function interfaces.get_network_devices()
   local devices = {}
   uci_cursor:foreach('network', 'device', function(uci_device)
     local device = {}
-    for key, value in pairs(uci_device) do
-      if not string.match(key, '^%.') then device[key] = value end
-    end
+    for key, value in pairs(uci_device) do if not string.match(key, '^%.') then device[key] = value end end
     devices[uci_device['name']] = device
   end)
   return devices
@@ -183,12 +169,8 @@ function interfaces.get_interface_info(name, netjson_interface)
   local info = {dns_search = nil, dns_servers = nil}
   for _, interface in pairs(interface_data['interface']) do
     if interface['l3_device'] == name then
-      if next(interface['dns-search']) then
-        info.dns_search = interface['dns-search']
-      end
-      if next(interface['dns-server']) then
-        info.dns_servers = interface['dns-server']
-      end
+      if next(interface['dns-search']) then info.dns_search = interface['dns-search'] end
+      if next(interface['dns-server']) then info.dns_servers = interface['dns-server'] end
       if netjson_interface.type == 'bridge' then
         -- On OpenWrt > 21, "stp" is present in the "device" section
         local device_name = interface['device']
@@ -201,9 +183,7 @@ function interfaces.get_interface_info(name, netjson_interface)
       end
       -- collect specialized info if available
       local specialized_info = specialized_interfaces[interface.proto]
-      if specialized_info then
-        info.specialized = specialized_info(name, interface)
-      end
+      if specialized_info then info.specialized = specialized_info(name, interface) end
     end
   end
   return info
@@ -216,9 +196,7 @@ function interfaces.get_vpn_interfaces()
 
   if utils.is_table_empty(items) then return {} end
 
-  for _, config in pairs(items) do
-    if config and config.dev then vpn_interfaces[config.dev] = true end
-  end
+  for _, config in pairs(items) do if config and config.dev then vpn_interfaces[config.dev] = true end end
   return vpn_interfaces
 end
 

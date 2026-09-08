@@ -47,8 +47,7 @@ end
 
 function TestUtils.testArrayConcat()
   luaunit.assertEquals(utils.array_concat({4, 5, 6}, {1, 2, 3}), {1, 2, 3, 4, 5, 6})
-  luaunit.assertEquals(utils.array_concat({"wireless"}, {"wired"}),
-    {"wired", "wireless"})
+  luaunit.assertEquals(utils.array_concat({"wireless"}, {"wired"}), {"wired", "wireless"})
   luaunit.assertEquals(utils.array_concat({"system", "network"}, {"firewall"}),
     {"firewall", "system", "network"})
 end
@@ -56,8 +55,7 @@ end
 function TestUtils.testDictMerge()
   luaunit.assertEquals(utils.dict_merge({['1'] = 'OpenWISP'}, {['3'] = 'NetJSON'}),
     {["1"] = "OpenWISP", ["3"] = "NetJSON"})
-  luaunit.assertEquals(utils.dict_merge({['1'] = 'OpenWISP'}, {['1'] = 'NetJSON'}),
-    {["1"] = "OpenWISP"})
+  luaunit.assertEquals(utils.dict_merge({['1'] = 'OpenWISP'}, {['1'] = 'NetJSON'}), {["1"] = "OpenWISP"})
 end
 
 function TestUtils.testIsExcluded()

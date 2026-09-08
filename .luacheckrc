@@ -2,4 +2,4 @@ files["openwisp-monitoring/tests"]={
 	ignore={"Test.*"}
 }
 
-max_line_length=88
+max_line_length=110

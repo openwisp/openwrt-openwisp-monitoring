@@ -10,8 +10,7 @@ wifi.iwinfo_modes = {
 
 function wifi.needs_inversion(interface)
   if interface.wireless then
-    return interface.type == 'wireless' and interface.wireless.mode ==
-             'access_point'
+    return interface.type == 'wireless' and interface.wireless.mode == 'access_point'
   end
 end
 
@@ -68,8 +67,7 @@ end
 
 -- takes ubus wireless.status clients output and converts it to NetJSON
 function wifi.netjson_clients(clients, is_mesh)
-  return (is_mesh and wifi.parse_iwinfo_clients(clients) or
-           wifi.parse_hostapd_clients(clients))
+  return (is_mesh and wifi.parse_iwinfo_clients(clients) or wifi.parse_hostapd_clients(clients))
 end
 
 return wifi

@@ -107,15 +107,9 @@ test_data.wireless = {
     type = "Network device",
     up = true,
     carrier = true,
-    ["link-advertising"] = {
-      "10baseT-H", "10baseT-F", "100baseT-H", "100baseT-F", "1000baseT-F"
-    },
-    ["link-partner-advertising"] = {
-      "10baseT-H", "10baseT-F", "100baseT-H", "100baseT-F", "1000baseT-F"
-    },
-    ["link-supported"] = {
-      "10baseT-H", "10baseT-F", "100baseT-H", "100baseT-F", "1000baseT-F"
-    },
+    ["link-advertising"] = {"10baseT-H", "10baseT-F", "100baseT-H", "100baseT-F", "1000baseT-F"},
+    ["link-partner-advertising"] = {"10baseT-H", "10baseT-F", "100baseT-H", "100baseT-F", "1000baseT-F"},
+    ["link-supported"] = {"10baseT-H", "10baseT-F", "100baseT-H", "100baseT-F", "1000baseT-F"},
     speed = "1000F",
     autoneg = true,
     mtu = 1500,
@@ -321,9 +315,7 @@ test_data.devices = {
     type = "bridge",
     up = true,
     carrier = true,
-    ["bridge-members"] = {
-      "lan1", "lan2", "mesh0", "mesh1", "wan", "wlan0", "wlan1", "wlan2"
-    },
+    ["bridge-members"] = {"lan1", "lan2", "mesh0", "mesh1", "wan", "wlan0", "wlan1", "wlan2"},
     mtu = 1500,
     mtu6 = 1500,
     macaddr = "00:00:00:00:00:00",
@@ -429,13 +421,9 @@ test_data.devices = {
     type = "Network device",
     up = true,
     carrier = false,
-    ["link-advertising"] = {
-      "10baseT-H", "10baseT-F", "100baseT-H", "100baseT-F", "1000baseT-F"
-    },
+    ["link-advertising"] = {"10baseT-H", "10baseT-F", "100baseT-H", "100baseT-F", "1000baseT-F"},
     ["link-partner-advertising"] = {},
-    ["link-supported"] = {
-      "10baseT-H", "10baseT-F", "100baseT-H", "100baseT-F", "1000baseT-F"
-    },
+    ["link-supported"] = {"10baseT-H", "10baseT-F", "100baseT-H", "100baseT-F", "1000baseT-F"},
     speed = "-1F",
     autoneg = true,
     mtu = 1500,
@@ -488,13 +476,9 @@ test_data.devices = {
     type = "Network device",
     up = true,
     carrier = false,
-    ["link-advertising"] = {
-      "10baseT-H", "10baseT-F", "100baseT-H", "100baseT-F", "1000baseT-F"
-    },
+    ["link-advertising"] = {"10baseT-H", "10baseT-F", "100baseT-H", "100baseT-F", "1000baseT-F"},
     ["link-partner-advertising"] = {},
-    ["link-supported"] = {
-      "10baseT-H", "10baseT-F", "100baseT-H", "100baseT-F", "1000baseT-F"
-    },
+    ["link-supported"] = {"10baseT-H", "10baseT-F", "100baseT-H", "100baseT-F", "1000baseT-F"},
     speed = "-1F",
     autoneg = true,
     mtu = 1500,

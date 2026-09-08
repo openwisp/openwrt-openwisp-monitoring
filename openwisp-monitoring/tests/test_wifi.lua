@@ -1,5 +1,4 @@
-package.path = package.path ..
-                 ";../files/lib/openwisp-monitoring/?.lua;../files/sbin/?.lua"
+package.path = package.path .. ";../files/lib/openwisp-monitoring/?.lua;../files/sbin/?.lua"
 
 local cjson = require("cjson")
 local luaunit = require('luaunit')
@@ -61,31 +60,28 @@ TestNetJSON = {
 }
 
 function TestWifi.test_parse_hostapd_clients()
-  luaunit.assertEquals(
-    wifi_functions.parse_hostapd_clients(wifi_data.wlan1_clients),
+  luaunit.assertEquals(wifi_functions.parse_hostapd_clients(wifi_data.wlan1_clients),
     wifi_data.parsed_clients)
-  luaunit.assertEquals(
-    wifi_functions.parse_hostapd_clients(wifi_data.wlan2_clients), nil)
+  luaunit.assertEquals(wifi_functions.parse_hostapd_clients(wifi_data.wlan2_clients), nil)
 end
 
 function TestWifi.test_parse_iwinfo_clients()
-  luaunit.assertEquals(wifi_functions.parse_iwinfo_clients(
-    wifi_data.mesh0_clients.results), wifi_data.mesh0_parsed_clients)
-  luaunit.assertEquals(wifi_functions.parse_iwinfo_clients(
-    wifi_data.mesh1_clients.results), wifi_data.mesh1_parsed_clients)
+  luaunit.assertEquals(wifi_functions.parse_iwinfo_clients(wifi_data.mesh0_clients.results),
+    wifi_data.mesh0_parsed_clients)
+  luaunit.assertEquals(wifi_functions.parse_iwinfo_clients(wifi_data.mesh1_clients.results),
+    wifi_data.mesh1_parsed_clients)
 end
 
 function TestWifi.test_netjson_clients()
   -- testing hostapd clients
-  luaunit.assertEquals(wifi_functions.netjson_clients(wifi_data.wlan1_clients,
-    false), wifi_data.parsed_clients)
-  luaunit.assertEquals(wifi_functions.netjson_clients(wifi_data.wlan2_clients,
-    false), nil)
+  luaunit.assertEquals(wifi_functions.netjson_clients(wifi_data.wlan1_clients, false),
+    wifi_data.parsed_clients)
+  luaunit.assertEquals(wifi_functions.netjson_clients(wifi_data.wlan2_clients, false), nil)
   -- testing iwinfo clients
-  luaunit.assertEquals(wifi_functions.netjson_clients(
-    wifi_data.mesh0_clients.results, true), wifi_data.mesh0_parsed_clients)
-  luaunit.assertEquals(wifi_functions.netjson_clients(
-    wifi_data.mesh1_clients.results, true), wifi_data.mesh1_parsed_clients)
+  luaunit.assertEquals(wifi_functions.netjson_clients(wifi_data.mesh0_clients.results, true),
+    wifi_data.mesh0_parsed_clients)
+  luaunit.assertEquals(wifi_functions.netjson_clients(wifi_data.mesh1_clients.results, true),
+    wifi_data.mesh1_parsed_clients)
 end
 
 function TestWifi.test_needs_inversion()
@@ -114,15 +110,12 @@ function TestNetJSON.test_wifi_interfaces()
   luaunit.assertEquals(netjson["interfaces"][4]["wireless"]["tx_power"], 20)
   luaunit.assertEquals(netjson["interfaces"][5]["wireless"]["tx_power"], 20)
   luaunit.assertEquals(netjson["interfaces"][6]["wireless"]["tx_power"], 20)
-  luaunit.assertEquals(netjson["interfaces"][5]["wireless"]["clients"][1]["vht"],
-    true)
-  luaunit.assertEquals(netjson["interfaces"][2]["wireless"]["clients"][1]["vht"],
-    false)
+  luaunit.assertEquals(netjson["interfaces"][5]["wireless"]["clients"][1]["vht"], true)
+  luaunit.assertEquals(netjson["interfaces"][2]["wireless"]["clients"][1]["vht"], false)
   luaunit.assertEquals(netjson["interfaces"][2]["wireless"]["frequency"], 5200)
   luaunit.assertEquals(netjson["interfaces"][4]["wireless"]["mode"], "access_point")
   luaunit.assertEquals(netjson["interfaces"][6]["wireless"]["mode"], "station")
-  luaunit.assertEquals(netjson["interfaces"][6]["wireless"]["clients"][1]["mac"],
-    "22:33:2F:9A:14:9D")
+  luaunit.assertEquals(netjson["interfaces"][6]["wireless"]["clients"][1]["mac"], "22:33:2F:9A:14:9D")
 end
 
 function TestNetJSON.test_wifi_interfaces_stats_include()
@@ -131,15 +124,11 @@ function TestNetJSON.test_wifi_interfaces_stats_include()
   luaunit.assertEquals(netjson["interfaces"][2]["wireless"]["channel"], 40)
   luaunit.assertEquals(netjson["interfaces"][2]["wireless"]["mode"], "802.11s")
   luaunit.assertEquals(netjson["interfaces"][6]["statistics"]["rx_packets"], 198)
-  luaunit.assertEquals(netjson["interfaces"][4]["statistics"]["rx_packets"],
-    2367515)
+  luaunit.assertEquals(netjson["interfaces"][4]["statistics"]["rx_packets"], 2367515)
   luaunit.assertEquals(netjson["interfaces"][6]["statistics"]["rx_bytes"], 25967)
-  luaunit.assertEquals(netjson["interfaces"][6]["statistics"]["tx_bytes"],
-    531641723)
-  luaunit.assertEquals(netjson["interfaces"][2]["statistics"]["tx_bytes"],
-    151599685066)
-  luaunit.assertEquals(netjson["interfaces"][6]["statistics"]["tx_packets"],
-    2367747)
+  luaunit.assertEquals(netjson["interfaces"][6]["statistics"]["tx_bytes"], 531641723)
+  luaunit.assertEquals(netjson["interfaces"][2]["statistics"]["tx_bytes"], 151599685066)
+  luaunit.assertEquals(netjson["interfaces"][6]["statistics"]["tx_packets"], 2367747)
   luaunit.assertEquals(netjson["interfaces"][2]["statistics"]["tx_errors"], 0)
   luaunit.assertEquals(netjson["interfaces"][4]["statistics"]["tx_errors"], 0)
   luaunit.assertEquals(netjson["interfaces"][6]["statistics"]["tx_errors"], 0)

@@ -138,15 +138,7 @@ test_data.wlan0_clients = {
       ["mesh local PS"] = "",
       ["mesh peer PS"] = "",
       ["mesh non-peer PS"] = "",
-      rx = {
-        drop_misc = 64,
-        packets = 26932,
-        bytes = 2767915,
-        ht = false,
-        vht = false,
-        mhz = 20,
-        rate = 6000
-      },
+      rx = {drop_misc = 64, packets = 26932, bytes = 2767915, ht = false, vht = false, mhz = 20, rate = 6000},
       tx = {
         failed = 0,
         retries = 0,
@@ -246,12 +238,7 @@ test_data.mesh0_iwinfo = {
   signal = -67,
   noise = 0,
   bitrate = 6500,
-  encryption = {
-    enabled = true,
-    wpa = {3},
-    authentication = {"sae"},
-    ciphers = {"ccmp"}
-  },
+  encryption = {enabled = true, wpa = {3}, authentication = {"sae"}, ciphers = {"ccmp"}},
   htmodes = {"HT20", "HT40"},
   hwmodes = {"b", "g", "n"},
   hwmode = "n",
@@ -275,12 +262,7 @@ test_data.mesh1_iwinfo = {
   signal = -76,
   noise = -87,
   bitrate = 195100,
-  encryption = {
-    enabled = true,
-    wpa = {3},
-    authentication = {"sae"},
-    ciphers = {"ccmp"}
-  },
+  encryption = {enabled = true, wpa = {3}, authentication = {"sae"}, ciphers = {"ccmp"}},
   htmodes = {"HT20", "HT40", "VHT20", "VHT40", "VHT80", "VHT80+80", "VHT160"},
   hwmodes = {"ac", "n"},
   hwmode = "ac",
