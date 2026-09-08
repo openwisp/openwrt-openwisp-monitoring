@@ -10,12 +10,24 @@ TestUla = {
     package.loaded.ubus = env.ubus
     package.loaded.uci = {
       cursor = function()
-        return {get = function(...) return nil end, foreach = function(...) return nil end}
+        return {
+          get = function(...)
+            return nil
+          end,
+          foreach = function(...)
+            return nil
+          end
+        }
       end
     }
-    package.loaded.nixio = {getifaddrs = function() return require('test_files/nixio_data') end}
+    package.loaded.nixio = {
+      getifaddrs = function()
+        return require('test_files/nixio_data')
+      end
+    }
   end,
-  tearDown = function() end
+  tearDown = function()
+  end
 }
 
 function TestUla.test_ula_prefix()

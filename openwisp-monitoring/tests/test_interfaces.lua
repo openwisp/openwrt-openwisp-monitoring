@@ -12,9 +12,14 @@ TestInterface = {
     package.loaded.uci = env.uci
     package.loaded.ubus = env.ubus
     package.loaded.io = env.io
-    package.loaded.nixio = {getifaddrs = function() return require('test_files/nixio_data') end}
+    package.loaded.nixio = {
+      getifaddrs = function()
+        return require('test_files/nixio_data')
+      end
+    }
   end,
-  tearDown = function() end
+  tearDown = function()
+  end
 }
 
 TestNetJSON = {
@@ -40,13 +45,19 @@ TestNetJSON = {
         f:seek('set', 0)
         return f
       end,
-      open = function(arg) return nil end,
-      write = function(...) return nil end
+      open = function(arg)
+        return nil
+      end,
+      write = function(...)
+        return nil
+      end
     }
     package.loaded.uci = {
       cursor = function()
         return {
-          get_all = function(...) return nil end,
+          get_all = function(...)
+            return nil
+          end,
           get = function(...)
             local arg = {...}
             if arg[1] == 'network' and arg[3] == 'stp' then
@@ -56,7 +67,9 @@ TestNetJSON = {
             end
             return nil
           end,
-          foreach = function(...) return nil end
+          foreach = function(...)
+            return nil
+          end
         }
       end
     }
@@ -82,9 +95,14 @@ TestNetJSON = {
         }
       end
     }
-    package.loaded.nixio = {getifaddrs = function() return require('test_files/nixio_data') end}
+    package.loaded.nixio = {
+      getifaddrs = function()
+        return require('test_files/nixio_data')
+      end
+    }
   end,
-  tearDown = function() end
+  tearDown = function()
+  end
 }
 
 function TestInterface.test_find_default_gateway()

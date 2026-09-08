@@ -5,7 +5,12 @@ local luaunit = require('luaunit')
 local wifi_functions = require('wifi')
 local wifi_data = require('test_files/wireless_data')
 
-TestWifi = {setUp = function() end, tearDown = function() end}
+TestWifi = {
+  setUp = function()
+  end,
+  tearDown = function()
+  end
+}
 
 TestNetJSON = {
   setUp = function()
@@ -56,7 +61,8 @@ TestNetJSON = {
       end
     }
   end,
-  tearDown = function() end
+  tearDown = function()
+  end
 }
 
 function TestWifi.test_parse_hostapd_clients()

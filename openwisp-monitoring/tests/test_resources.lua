@@ -9,7 +9,8 @@ TestResources = {
     local env = require('main_env')
     package.loaded.io = env.io
   end,
-  tearDown = function() end
+  tearDown = function()
+  end
 }
 
 TestNetJSON = {
@@ -18,7 +19,8 @@ TestNetJSON = {
     package.loaded.uci = env.uci
     package.loaded.ubus = env.ubus
   end,
-  tearDown = function() end
+  tearDown = function()
+  end
 }
 
 function TestResources.test_disk_usage()
@@ -54,8 +56,12 @@ function TestNetJSON.test_resources()
       f:seek('set', 0)
       return f
     end,
-    open = function(arg) return nil end,
-    write = function(...) return nil end
+    open = function(arg)
+      return nil
+    end,
+    write = function(...)
+      return nil
+    end
   }
   local netjson_string = require('netjson-monitoring')
   local netjson = cjson.decode(netjson_string)

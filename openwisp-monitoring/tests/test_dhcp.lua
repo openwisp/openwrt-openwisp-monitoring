@@ -22,7 +22,8 @@ TestDhcp = {
     package.loaded.io = env.io
     package.loaded.io.open = dhcp_open
   end,
-  tearDown = function() end
+  tearDown = function()
+  end
 }
 
 TestNetJSON = {
@@ -41,7 +42,9 @@ TestNetJSON = {
         return f
       end,
       open = dhcp_open,
-      write = function(...) return nil end
+      write = function(...)
+        return nil
+      end
     }
     package.loaded.uci = {
       cursor = function()
@@ -54,13 +57,18 @@ TestNetJSON = {
               return nil
             end
           end,
-          get = function(...) return nil end,
-          foreach = function(...) return nil end
+          get = function(...)
+            return nil
+          end,
+          foreach = function(...)
+            return nil
+          end
         }
       end
     }
   end,
-  tearDown = function() end
+  tearDown = function()
+  end
 }
 
 function TestDhcp.test_dhcp_leases()

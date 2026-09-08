@@ -12,8 +12,12 @@ env.io = {
     f:seek('set', 0)
     return f
   end,
-  open = function(arg) return nil end,
-  write = function(...) return nil end
+  open = function(arg)
+    return nil
+  end,
+  write = function(...)
+    return nil
+  end
 }
 
 env.ubus = {
@@ -36,9 +40,15 @@ env.ubus = {
 env.uci = {
   cursor = function()
     return {
-      get_all = function(...) return nil end,
-      get = function(...) return nil end,
-      foreach = function(...) return nil end
+      get_all = function(...)
+        return nil
+      end,
+      get = function(...)
+        return nil
+      end,
+      foreach = function(...)
+        return nil
+      end
     }
   end
 }
