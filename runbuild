@@ -34,6 +34,7 @@ git reset --hard origin/$OPENWRT_BRANCH
 if [ -n "${OPENWRT_APK_PRIVATE_KEY:-}" ]; then
 	printf '%s\n' "$OPENWRT_APK_PRIVATE_KEY" >private-key.pem
 	chmod 600 private-key.pem
+	trap 'rm -f private-key.pem' EXIT
 fi
 
 # configure feeds
