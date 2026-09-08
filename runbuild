@@ -47,6 +47,7 @@ sed -i '/routing/d' feeds.conf
 ./scripts/feeds install -a
 # add required packages
 {
+	echo "CONFIG_USE_APK=y"
 	echo "CONFIG_SIGNED_PACKAGES=y"
 	echo "CONFIG_PACKAGE_netjson-monitoring=y"
 	echo "CONFIG_PACKAGE_openwisp-monitoring=y"
@@ -57,6 +58,9 @@ if [ -z "$COMPILE_TARGET" ] || [ "$(printf '%s\n' "$COMPILE_TARGET" | wc -l)" -n
 	echo "ERROR: OpenWrt package architecture not found in .config"
 	exit 1
 fi
+PACKAGES_DIR="$BUILD_DIR/openwrt/bin/packages/$COMPILE_TARGET/openwisp_monitoring"
+rm -f "$PACKAGES_DIR"/*.apk "$PACKAGES_DIR"/packages.adb \
+	"$PACKAGES_DIR"/index.json "$PACKAGES_DIR"/public-key.pem
 
 if [ ! "$CI_CACHE" ]; then
 	make -j"$CORES" tools/install
@@ -69,7 +73,6 @@ make -j"$CORES" package/openwisp-monitoring/compile \
 # package/index creates packages.adb, the APK repository index used by apk,
 # and index.json, a JSON representation of the package metadata.
 make package/index V=s
-PACKAGES_DIR="$BUILD_DIR/openwrt/bin/packages/$COMPILE_TARGET/openwisp_monitoring"
 PUBLIC_KEY="$BUILD_DIR/openwrt/public-key.pem"
 if ! compgen -G "$PACKAGES_DIR/*.apk" >/dev/null; then
 	echo "ERROR: APK package files not found at $PACKAGES_DIR"
