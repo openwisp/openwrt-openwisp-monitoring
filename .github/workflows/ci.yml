@@ -124,6 +124,7 @@ jobs:
 
       - name: Delete compiled packages older than two years
         if: ${{ success() && github.event_name=='push' }}
+        shell: bash
         run: |
           cutoff=$(date -u -d '2 years ago' +%F)
           gsutil ls "$BASE_URL/" | while IFS= read -r path; do
@@ -131,8 +132,8 @@ jobs:
             dir_name=${path#"$BASE_URL/"}
             dir_name=${dir_name%/}
             date=${dir_name:0:10}
-            # Only dated build directories with a seven-character commit SHA match.
-            if [[ $dir_name =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}-[0-9a-f]{7}$ ]] && [[ $date < $cutoff ]]; then
+            # Only dated build directories with a commit SHA match.
+            if [[ $dir_name =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}-[0-9a-f]+$ ]] && [[ $date < $cutoff ]]; then
               gsutil -m rm -r "$path"
             fi
           done
