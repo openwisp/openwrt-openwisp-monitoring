@@ -121,3 +121,20 @@ jobs:
           SRC_URL: ${{ env.DOWNLOADS_DIR }}/${{ env.START_TIME }}/openwisp_monitoring
           DST_URL: gs://${{ secrets.GCS_DOWNLOADS_BUCKET_NAME }}/openwisp-monitoring/${{ env.START_TIME }}-${{ env.COMMIT_SHA }}
           LATEST_URL: gs://${{ secrets.GCS_DOWNLOADS_BUCKET_NAME }}/openwisp-monitoring/latest
+
+      - name: Delete compiled packages older than two years
+        if: ${{ success() && github.event_name=='push' }}
+        run: |
+          cutoff=$(date -u -d '2 years ago' +%F)
+          gsutil ls "$BASE_URL/" | while IFS= read -r path; do
+            # Retain only the direct child directory name.
+            dir_name=${path#"$BASE_URL/"}
+            dir_name=${dir_name%/}
+            date=${dir_name:0:10}
+            # Only dated build directories with a seven-character commit SHA match.
+            if [[ $dir_name =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}-[0-9a-f]{7}$ ]] && [[ $date < $cutoff ]]; then
+              gsutil -m rm -r "$path"
+            fi
+          done
+        env:
+          BASE_URL: gs://${{ secrets.GCS_DOWNLOADS_BUCKET_NAME }}/openwisp-monitoring
