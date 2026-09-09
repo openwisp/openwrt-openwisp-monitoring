@@ -25,6 +25,8 @@ TestInterface = {
 TestNetJSON = {
   setUp = function()
     local test_file_dir = './test_files/'
+    local ctl_modem = '/sys/devices/platform/soc/8af8800.usb3/8a00000.dwc3/' .. 'xhci-hcd.0.auto/usb2/2-1'
+    local legacy_modem = '/sys/devices/platform/soc/8af8800.usb3/8a00000.dwc3/' .. 'xhci-hcd.0.auto/usb2/2-2'
     package.loaded.io = {
       popen = function(arg)
         if arg == 'cat /proc/loadavg' then
@@ -33,10 +35,9 @@ TestNetJSON = {
           f:seek('set', 0)
           return f
         else
-          local modem = '/sys/devices/platform/soc/8af8800.usb3/8a00000.dwc3/' .. 'xhci-hcd.0.auto/usb2/2-1'
-          if arg == 'mmcli --output-json -m ' .. modem then
+          if arg == 'mmcli --output-json -m ' .. ctl_modem then
             return io.open(test_file_dir .. 'modem_data.txt')
-          elseif arg == 'mmcli --output-json -m ' .. modem .. ' --signal-get' then
+          elseif arg == 'mmcli --output-json -m ' .. ctl_modem .. ' --signal-get' then
             return io.open(test_file_dir .. 'lte_sample.txt')
           end
         end
@@ -63,9 +64,9 @@ TestNetJSON = {
             if arg[1] == 'network' and arg[3] == 'stp' then
               return '1'
             elseif arg[1] == 'network' and arg[3] == 'ctl_device' then
-              return '/sys/devices/platform/soc/8af8800.usb3/8a00000.dwc3/' .. 'xhci-hcd.0.auto/usb2/2-1'
+              return ctl_modem
             elseif arg[1] == 'network' and arg[3] == 'device' then
-              return '/sys/devices/platform/soc/8af8800.usb3/8a00000.dwc3/' .. 'xhci-hcd.0.auto/usb2/2-1'
+              return legacy_modem
             end
             return nil
           end,
