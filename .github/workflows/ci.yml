@@ -74,7 +74,7 @@ jobs:
           cache-name: cache-openwrt-dependencies
         with:
           path: "/home/runner/work/build"
-          key: ${{ runner.os }}-build-${{ env.cache-name }}
+          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ hashFiles('runbuild') }}
 
       - name: Set Environment
         run: |
