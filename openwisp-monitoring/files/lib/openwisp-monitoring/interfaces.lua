@@ -18,7 +18,8 @@ local interfaces = {}
 
 local specialized_interfaces = {
   modemmanager = function(_, interface)
-    local modem = uci_cursor.get('network', interface['interface'], 'device')
+    local modem = uci_cursor.get('network', interface['interface'], 'ctl_device') or
+                    uci_cursor.get('network', interface['interface'], 'device')
     local info = {}
     local general_file = io.popen('mmcli --output-json -m ' .. modem)
     local general = general_file:read("*a")

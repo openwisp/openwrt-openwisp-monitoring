@@ -62,6 +62,8 @@ TestNetJSON = {
             local arg = {...}
             if arg[1] == 'network' and arg[3] == 'stp' then
               return '1'
+            elseif arg[1] == 'network' and arg[3] == 'ctl_device' then
+              return '/sys/devices/platform/soc/8af8800.usb3/8a00000.dwc3/' .. 'xhci-hcd.0.auto/usb2/2-1'
             elseif arg[1] == 'network' and arg[3] == 'device' then
               return '/sys/devices/platform/soc/8af8800.usb3/8a00000.dwc3/' .. 'xhci-hcd.0.auto/usb2/2-1'
             end
