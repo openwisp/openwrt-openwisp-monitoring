@@ -103,10 +103,10 @@ Run quality assurance tests with:
 
 .. code-block:: shell
 
-    #install openwisp-utils QA tools first
-    pip install openwisp-utils[qa]
+    # install openwisp-utils QA tools first
+    pip install -r requirements-test.txt
 
-    #run QA checks before committing code
+    # run QA checks before committing code
     ./run-qa-checks
 
 Run tests
