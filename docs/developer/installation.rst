@@ -61,7 +61,7 @@ The following procedure illustrates how to compile *openwisp-monitoring*,
     make toolchain/install
     make package/openwisp-monitoring/compile
 
-The compiled packages will go in ``bin/packages/*/openwisp``.
+The compiled packages will go in ``bin/packages/*/openwisp_monitoring``.
 
 Alternatively, you can configure your build interactively with ``make
 menuconfig``, in this case you will need to select the
