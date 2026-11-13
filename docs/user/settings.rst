@@ -21,13 +21,12 @@ UCI configuration options should be placed in
   :doc:`debugging <debugging>`. The default is ``0`` (disabled).
 - ``required_memory``: Minimum available memory required to temporarily
   store data. Defaults to ``0.05`` (5 percent).
-- ``max_retries``: Maximum number of retries if there is a failure in
-  sending data to the server. The default is ``5`` retries.
+- ``max_retries``: Number of failed upload attempts in a retry cycle
+  before logging a persistent failure. The default is ``5``. The agent
+  keeps trying after each cycle, with the failure backoff continuing to
+  increase.
 - ``bootup_delay``: Maximum value, in seconds, of a random delay after
   boot-up. Defaults to ``10``. See :ref:`monitoring_agent_bootup_delay`.
-
-If the :ref:`maximum retries are reached <monitoring_agent_send_mode>`,
-the agent will attempt to send data in the next cycle.
 
 .. _monitoring_agent_collecting_vs_sending:
 
@@ -81,16 +80,40 @@ again. This process continues until data files are detected. If a signal
 is received from the other agent, the wait will be interrupted, and the
 agent will start sending data.
 
-If the agent fails to send data, a randomized backoff (between 2 and 15
-seconds) is used to retry until the ``max_retries`` limit is reached. If
-all attempts fail, the agent will try again in the next cycle.
+The agent sends accumulated snapshots in chronological order. New
+snapshots wait behind older data, because the server calculates traffic
+increments from previously processed snapshots. When there is no backlog,
+new data is sent promptly.
 
-Upon successful data transmission, the corresponding data file is deleted,
-and the agent checks for any remaining files.
+When an upload fails, the agent waits for a random interval between one
+second and a maximum that doubles after each failure: 10, 20, 40, 80, 160,
+then 300 seconds. The maximum stays at 300 seconds until an upload
+succeeds. Reaching ``max_retries`` logs the failure but does not reset
+this backoff. Connection attempts time out after 10 seconds, and complete
+requests after 60 seconds. A timed-out request may already have been
+accepted by the server.
 
-**SIGUSR1** signals are used to trigger immediate data transmission when
-new data is collected. The service will continue to attempt data
-transmission at regular intervals.
+During backlog recovery, the agent pauses for a random interval between
+one and 60 seconds between uploads. After consecutive successful uploads
+equal to 10 percent of the backlog at the start of a pacing stage, rounded
+up and with a minimum of 10 successes, the maximum pause decreases to 30
+seconds. After another such stage, it decreases to 15 seconds. The backlog
+is counted again at each stage. A retryable failure resets the pacing to
+60 seconds. The server accepting a request does not guarantee its
+background queue has finished processing it.
+
+Upon successful data transmission, the corresponding data file is deleted.
+An HTTP 400 response also discards the rejected snapshot. An HTTP 404
+response causes the agent to shut down if the configuration agent is no
+longer running; otherwise it is retried. New data continues to be
+collected while sending is delayed. The existing memory safeguard may
+discard older files when available memory is low, and slower recovery
+increases that exposure.
+
+**SIGUSR1** signals wake the sender when it is idle, but do not interrupt
+failure backoff or backlog pacing. A service restart resets the in-memory
+backoff and pacing stages. Temporary snapshots are stored under ``/tmp``
+and do not survive a device reboot.
 
 .. _monitoring_agent_bootup_delay:
 
