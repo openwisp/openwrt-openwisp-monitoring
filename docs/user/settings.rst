@@ -108,7 +108,10 @@ response causes the agent to shut down if the configuration agent is no
 longer running; otherwise it is retried. New data continues to be
 collected while sending is delayed. The existing memory safeguard may
 discard older files when available memory is low, and slower recovery
-increases that exposure.
+increases that exposure. If the device clock moves backward and a snapshot
+with the same timestamp is already queued, the new snapshot is skipped to
+avoid overwriting retained data. A snapshot that cannot be decompressed is
+discarded after ``max_retries`` attempts so it cannot block later uploads.
 
 **SIGUSR1** signals wake the sender when it is idle, but do not interrupt
 failure backoff or backlog pacing. A service restart resets the in-memory

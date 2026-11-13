@@ -139,7 +139,9 @@ save_data() {
 		if check_available_memory; then
 			data="$(collect_data)"
 			filename="$(date -u +'%d-%m-%Y_%H:%M:%S')"
-			if printf '%s\n' "$data" | gzip >"$TMP_DIR/.pending-$$" \
+			if [ -e "$TMP_DIR/$filename" ] || [ -e "$TMP_DIR/$filename.gz" ]; then
+				log -w -n "Data snapshot with timestamp $filename already exists, skipping collected data."
+			elif printf '%s\n' "$data" | gzip >"$TMP_DIR/.pending-$$" \
 				&& mv "$TMP_DIR/.pending-$$" "$TMP_DIR/$filename.gz"; then
 				log -i -v "Data saved temporarily."
 			else
@@ -209,12 +211,12 @@ send_data() {
 		file="$TMP_DIR/$basefilename"
 		url="$URL&time=$filename.000000"
 		[ "$count" -eq 1 ] && url="$url&current=true"
-		ready=1
+		decompression_failed=0
 		if [ "$basefilename" != "$filename" ] && ! gzip -d "$file"; then
-			ready=0
+			decompression_failed=1
 		fi
 		filename="$TMP_DIR/$filename"
-		if [ "$ready" -eq 0 ] && [ -f "$file" ]; then
+		if [ "$decompression_failed" -eq 1 ] && [ -f "$file" ]; then
 			log -e -v "Unable to decompress data file $file."
 			response_code=000
 		elif ! [ -f "$filename" ]; then
@@ -262,6 +264,14 @@ send_data() {
 				[ -f "$RESPONSE_FILE" ] && error_message="\"$(cat "$RESPONSE_FILE")\"" || error_message='"".'
 				log -e -v "Data not sent successfully. Response code is \"$response_code\"." \
 					"Error message is $error_message"
+				if [ "$decompression_failed" -eq 1 ]; then
+					log -e -n "Unable to decompress data file $file, discarding data."
+					rm -f "$file"
+					failures=0
+					backoff=10
+					[ "$count" -gt 1 ] && pause=1
+					continue
+				fi
 				if [ "$FAILING" -eq "0" ]; then
 					FAILING=1
 					[ "$VERBOSE_MODE" -ne "1" ] && log -e -n "Data not sent successfully. Response code is \"$response_code\"." \
